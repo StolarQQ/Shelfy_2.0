@@ -20,7 +20,7 @@ namespace Shelfy.Core.Domain
         public int Pages { get; protected set; }
         public string Publisher { get; protected set; }
         public DateTime PublishedAt { get; protected set; }
-        public DateTime UpdateAt { get; protected set; }
+        public DateTime UpdatedAt { get; protected set; }
         public string ImageUrl { get; protected set; }
 
 
@@ -44,6 +44,7 @@ namespace Shelfy.Core.Domain
             SetPages(pages);
             SetPublisher(publisher);
             PublishedAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
             SetImageUrl(imageUrl);
         }
 
@@ -55,7 +56,7 @@ namespace Shelfy.Core.Domain
             }
 
             Title = title;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
         
         public void SetDescription(string description)
@@ -77,7 +78,7 @@ namespace Shelfy.Core.Domain
             }
 
             Description = description;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetIsbn(string isbn)
@@ -88,7 +89,7 @@ namespace Shelfy.Core.Domain
             }
 
             ISBN = isbn;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetPages(int pages)
@@ -99,7 +100,7 @@ namespace Shelfy.Core.Domain
             }
 
             Pages = pages;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
         
         public void SetImageUrl(string imageUrl)
@@ -110,7 +111,7 @@ namespace Shelfy.Core.Domain
             }
 
             ImageUrl = imageUrl;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetPublisher(string publisher)
@@ -121,7 +122,7 @@ namespace Shelfy.Core.Domain
             }
 
             Publisher = publisher;
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void AddAuthor(Author author)
@@ -133,7 +134,7 @@ namespace Shelfy.Core.Domain
             }
 
             _authors.Add(author);
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void RemoveAuthor(Author author)
@@ -145,7 +146,7 @@ namespace Shelfy.Core.Domain
             }
 
             _authors.Remove(author);
-            UpdateAt = DateTime.UtcNow;
+            UpdatedAt = DateTime.UtcNow;
         }
         
         // TODO AddReview, DeleteReview, Update?,
