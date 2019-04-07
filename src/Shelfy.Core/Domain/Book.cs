@@ -7,7 +7,7 @@ namespace Shelfy.Core.Domain
 {
     public class Book
     {
-        private static readonly Regex UrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
+        private static readonly Regex ImageUrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
         private ISet<Author> _authors = new HashSet<Author>();
         private ISet<Review> _reviews = new HashSet<Review>();
@@ -21,6 +21,7 @@ namespace Shelfy.Core.Domain
         public string Publisher { get; protected set; }
         public DateTime PublishedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
+        // Path to book photo
         public string ImageUrl { get; protected set; }
 
 
@@ -34,7 +35,7 @@ namespace Shelfy.Core.Domain
         }
 
         public Book(Guid bookId, string title, string originalTitle,
-            string description, string isbn, int pages, string publisher, string imageUrl)
+            string description, string isbn, int pages, string publisher, DateTime publishedAt, string imageUrl)
         {
             BookId = bookId;
             SetTitle(title);
@@ -43,7 +44,7 @@ namespace Shelfy.Core.Domain
             SetIsbn(isbn);
             SetPages(pages);
             SetPublisher(publisher);
-            PublishedAt = DateTime.UtcNow;
+            PublishedAt = publishedAt;
             UpdatedAt = DateTime.UtcNow;
             SetImageUrl(imageUrl);
         }
@@ -105,7 +106,7 @@ namespace Shelfy.Core.Domain
         
         public void SetImageUrl(string imageUrl)
         {
-            if (UrlRegex.IsMatch(imageUrl) == false)
+            if (ImageUrlRegex.IsMatch(imageUrl) == false)
             {
                 throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
             }

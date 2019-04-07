@@ -7,22 +7,22 @@ namespace Shelfy.Core.Domain
     {
         private static readonly Regex ImageUrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
         
-        public Guid AuthorId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Description { get; set; }
+        public Guid AuthorId { get; protected set; }
+        public string FirstName { get; protected set; }
+        public string LastName { get; protected set; }
+        public string Description { get; protected set; }
         // Path to Author photo
-        public string ImageUrl { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public DateTime? DateOfDeath { get; set; }
-        public string BirthPlace { get; set; }
-        public string AuthorWebsite { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string ImageUrl { get; protected set; }
+        public DateTime? DateOfBirth { get; protected set; }
+        public DateTime? DateOfDeath { get; protected set; }
+        public string BirthPlace { get; protected set; }
+        public string AuthorWebsite { get; protected set; }
+        public DateTime CreatedAt { get; protected set; }
+        public DateTime UpdatedAt { get; protected set; }
         // Evidence that showing the authenticity of author.
-        public string AuthorSource { get; set; }
+        public string AuthorSource { get; protected set; }
         // User that send request for add an author.
-        public Guid UserId { get; set; }
+        public Guid UserId { get; protected set; }
 
         // EF mapping
         protected Author()

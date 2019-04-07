@@ -45,7 +45,7 @@ namespace Shelfy.Core.Domain
             {
                 throw new ArgumentException($"Email is invalid {email}.");
             }
-
+            
             Email = email.ToLowerInvariant();
             UpdatedAt = DateTime.UtcNow;
         }
@@ -106,6 +106,9 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// After email confirmation, account it's activated.
+        /// </summary>
         public void Activated()
         {
             if (State == States.Active)
@@ -116,6 +119,9 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Lock()
         {
             if (State == States.Locked)
