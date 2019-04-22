@@ -13,8 +13,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Servers;
 using Shelfy.Core.Repositories;
+using Shelfy.Infrastructure.AutoMapper;
 using Shelfy.Infrastructure.Mongodb;
 using Shelfy.Infrastructure.Repositories;
+using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.API
 {
@@ -35,8 +37,13 @@ namespace Shelfy.API
             services.AddTransient<IMongoDatabase>(x =>
                 x.GetRequiredService<IMongoClient>().GetDatabase(Configuration["Mongo:Database"]));
 
+            services.AddSingleton(AutoMapperConfig.Initialize());
+
             services.AddScoped<IUserRepository, UserRepository>();
-            //services.AddTransient<MongoContext>();
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IAuthorService, AuthorService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -53,7 +60,7 @@ namespace Shelfy.API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             // Register conventions for mongodb
             MongoConfiguration.Initialize();
 
