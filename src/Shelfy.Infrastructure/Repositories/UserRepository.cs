@@ -17,17 +17,17 @@ namespace Shelfy.Infrastructure.Repositories
             _database = database;
         }
 
-        public async Task<User> GetAsync(Guid id)
+        public async Task<User> GetByIdAsync(Guid id)
         {
             return await Users.AsQueryable().FirstOrDefaultAsync(x => x.UserId == id);
         }
 
-        public async Task<User> GetAsync(string email)
+        public async Task<User> GetByEmailAsync(string email)
         {
             return await Users.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync(string name)
+        public async Task<IEnumerable<User>> BrowseAsync(string name)
         {
             return await Users.AsQueryable().ToListAsync();
         }

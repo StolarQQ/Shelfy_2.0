@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -8,7 +9,7 @@ using Shelfy.Core.Repositories;
 
 namespace Shelfy.Infrastructure.Repositories
 {
-    public class AuthorRepository : IAuthorRepository
+    public class AuthorRepository : IAuthorRepository, IMongoRepository
     {
         private readonly IMongoDatabase _database;
 
@@ -17,14 +18,15 @@ namespace Shelfy.Infrastructure.Repositories
             _database = database;
         }
 
-        public async Task<Author> GetAsync(Guid id)
+        public async Task<Author> GetByIdAsync(Guid id)
         {
             return await Authors.AsQueryable().FirstOrDefaultAsync(x => x.AuthorId == id);
         }
 
-        public async Task<Author> GetAsync(string lastName)
+        public async Task<IEnumerable<Author>> BrowseByPhraseAsync(string phrase)
         {
-            return await Authors.AsQueryable().FirstOrDefaultAsync(x => x.LastName == lastName);
+            return await Authors.AsQueryable().Where(x => x.FullName.ToLowerInvariant()
+                .Contains(phrase.ToLowerInvariant())).Take(10).ToListAsync();
         }
 
         public async Task<IEnumerable<Author>> BrowseAsync()
@@ -49,6 +51,4 @@ namespace Shelfy.Infrastructure.Repositories
 
         private IMongoCollection<Author> Authors => _database.GetCollection<Author>("Authors");
     }
-
-  
 }

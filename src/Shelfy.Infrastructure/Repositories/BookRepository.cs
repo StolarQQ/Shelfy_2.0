@@ -17,14 +17,14 @@ namespace Shelfy.Infrastructure.Repositories
             _database = database;
         }
 
-        public async Task<Book> GetAsync(Guid id)
+        public async Task<Book> GetByIdAsync(Guid id)
         {
             return await Books.AsQueryable().FirstOrDefaultAsync(x => x.BookId == id);
         }
 
-        public async Task<Book> GetAsync(string title)
+        public async Task<Book> GetByIsbnAsync(string isbn)
         {
-            return await Books.AsQueryable().FirstOrDefaultAsync(x => x.Title == title);
+            return await Books.AsQueryable().FirstOrDefaultAsync(x => x.ISBN == isbn);
         }
 
         public async Task<IEnumerable<Book>> BrowseAsync()

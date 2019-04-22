@@ -7,8 +7,8 @@ namespace Shelfy.Core.Repositories
 {
     public interface IAuthorRepository
     {
-        Task<Author> GetAsync(Guid id);
-        Task<Author> GetAsync(string lastName);
+        Task<Author> GetByIdAsync(Guid id);
+        Task<IEnumerable<Author>> BrowseByPhraseAsync(string phrase);
         Task<IEnumerable<Author>> BrowseAsync();
         Task AddAsync(Author author);
         Task UpdateAsync(Author author);
