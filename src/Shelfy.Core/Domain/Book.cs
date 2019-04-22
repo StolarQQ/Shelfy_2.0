@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Shelfy.Core.Domain
 {
@@ -9,7 +10,9 @@ namespace Shelfy.Core.Domain
     {
         private static readonly Regex ImageUrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
-        private ISet<Author> _authors = new HashSet<Author>();
+        [BsonElement]
+        private ISet<Guid> _authors = new HashSet<Guid>();
+        [BsonElement]
         private ISet<Review> _reviews = new HashSet<Review>();
 
         public Guid BookId { get; protected set; }
@@ -21,23 +24,22 @@ namespace Shelfy.Core.Domain
         public string Publisher { get; protected set; }
         public DateTime PublishedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
-        // Path to book photo
+        // Path to book cover
         public string ImageUrl { get; protected set; }
 
-
-        public IEnumerable<Author> Authors => _authors;
+        public IEnumerable<Guid> Authors => _authors;
         public IEnumerable<Review> Reviews => _reviews;
 
-        // For entity framework mapping
+        // For mongo driver 
         protected Book()
         {
 
         }
 
-        public Book(Guid bookId, string title, string originalTitle,
-            string description, string isbn, int pages, string publisher, DateTime publishedAt, string imageUrl)
+        public Book(string title, string originalTitle,
+            string description, string isbn, int pages, string publisher, DateTime publishedAt)
         {
-            BookId = bookId;
+            BookId = Guid.NewGuid();
             SetTitle(title);
             OriginalTitle = originalTitle;
             SetDescription(description);
@@ -46,7 +48,6 @@ namespace Shelfy.Core.Domain
             SetPublisher(publisher);
             PublishedAt = publishedAt;
             UpdatedAt = DateTime.UtcNow;
-            SetImageUrl(imageUrl);
         }
 
         public void SetTitle(string title)
@@ -73,7 +74,7 @@ namespace Shelfy.Core.Domain
 
             }
             
-            if (description.Length > 300)
+            if (description.Length > 500)
             {
                 throw new ArgumentException("Description cannot contain more than 300 characters");
             }
@@ -126,29 +127,29 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void AddAuthor(Author author)
+        public void AddAuthor(Guid authorId)
         {
-            var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
-            if (authorExist != null)
+            var authorExist = Authors.SingleOrDefault(x => x == authorId);
+            if (authorExist != Guid.Empty)
             {
-                throw new ArgumentException($"Author with id: '{author.AuthorId}' already added for Book: '{Title}'. ");
+                throw new ArgumentException($"Author with id: '{authorId}' already added for Book: '{Title}'. ");
             }
 
-            _authors.Add(author);
+            _authors.Add(authorId);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RemoveAuthor(Author author)
-        {
-            var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
-            if (authorExist == null)
-            {
-                throw new ArgumentException($"Author with id: '{author.AuthorId}' was not found for Book: '{Title}'. ");
-            }
+        //public void RemoveAuthor(Author author)
+        //{
+        //    var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
+        //    if (authorExist == null)
+        //    {
+        //        throw new ArgumentException($"Author with id: '{author.AuthorId}' was not found for Book: '{Title}'. ");
+        //    }
 
-            _authors.Remove(author);
-            UpdatedAt = DateTime.UtcNow;
-        }
+        //    _authors.Remove(author);
+        //    UpdatedAt = DateTime.UtcNow;
+        //}
         
         // TODO AddReview, DeleteReview, Update?,
     }

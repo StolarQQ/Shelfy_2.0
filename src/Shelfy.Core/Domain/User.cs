@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Shelfy.Core.Domain
 {
@@ -8,6 +9,7 @@ namespace Shelfy.Core.Domain
         private static readonly Regex UrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
         private static readonly Regex EmailRegex = new Regex("^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
 
+        [BsonId]
         public Guid UserId { get; protected set; }
         public string Email { get; protected set; }
         public string Username { get; protected set; }
@@ -25,7 +27,7 @@ namespace Shelfy.Core.Domain
 
         }
 
-        public User(Guid userid, string email, string username, string password, string salt, string role, string imgUrl)
+        public User(Guid userid, string email, string username, string password, string salt, string role, string imageUrl)
         {
             UserId = userid;
             SetEmail(email);
@@ -34,11 +36,11 @@ namespace Shelfy.Core.Domain
             Salt = salt;
             Role = role;
             State = States.Unverified;
-            SetImageUrl(imgUrl);
+            ImageUrl = imageUrl;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
-        
+
         public void SetEmail(string email)
         {
             if (EmailRegex.IsMatch(email) == false)
@@ -120,7 +122,7 @@ namespace Shelfy.Core.Domain
         }
 
         /// <summary>
-        /// 
+        /// Account should be locked after breaking community guidelines
         /// </summary>
         public void Lock()
         {
@@ -132,6 +134,9 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Unlock()
         {
             if (State != States.Locked)
