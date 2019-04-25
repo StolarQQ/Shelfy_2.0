@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Shelfy.Core.Domain;
@@ -18,7 +19,7 @@ namespace Shelfy.Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<AuthorDto> GetAsync(Guid id)
+        public async Task<AuthorDto> GetByIdAsync(Guid id)
         {
             var author = await _authorRepository.GetByIdAsync(id);
             if (author == null)
@@ -29,6 +30,18 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<AuthorDto>(author);
         }
 
+        public async Task<IEnumerable<AuthorSearchDto>> BrowseByPhraseAsync(string phrase)
+        {
+            if (phrase.Length < 3)
+            {
+                throw new Exception("Phrase must contains at least 3 characters");
+            }
+
+            var authors = await _authorRepository.BrowseByPhraseAsync(phrase);
+
+            return _mapper.Map<IEnumerable<AuthorSearchDto>>(authors);
+        }
+
         public async Task RegisterAsync(Guid authorId, string firstName, string lastName, string description, string imageUrl, DateTime? dateOfBirth,
             DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource)
         {
@@ -37,6 +50,5 @@ namespace Shelfy.Infrastructure.Services
 
             await _authorRepository.AddAsync(author);
         }
-
     }
 }

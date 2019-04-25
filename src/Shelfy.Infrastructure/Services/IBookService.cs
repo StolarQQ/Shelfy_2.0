@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shelfy.Core.Domain;
-using Shelfy.Infrastructure.DTO;
+using Microsoft.AspNetCore.JsonPatch;
+using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Book;
 
 namespace Shelfy.Infrastructure.Services
@@ -13,8 +13,8 @@ namespace Shelfy.Infrastructure.Services
         Task<BookDto> GetAsync(string title);
         Task<IEnumerable<BookDto>> BrowseAsync();
         Task AddAsync(string title, string originalTitle,string description,
-            string isbn, int pages, string publisher, DateTime publishedAt);
-        Task UpdateAsync(Book book);
+            string isbn, int pages, string publisher, DateTime publishedAt, IEnumerable<Guid> authorsId);
+        Task UpdateAsync(Guid id, JsonPatchDocument<UpdateBook> patchBook);
         Task DeleteAsync(Guid id);
     }
 }
