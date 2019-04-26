@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Shelfy.Infrastructure.DTO.Test;
+using Shelfy.Infrastructure.DTO.Author;
 
 namespace Shelfy.Infrastructure.DTO.Book
 {

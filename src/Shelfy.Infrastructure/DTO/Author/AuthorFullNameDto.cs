@@ -1,8 +1,10 @@
-﻿namespace Shelfy.Infrastructure.DTO.Author
+﻿using System;
+
+namespace Shelfy.Infrastructure.DTO.Author
 {
     public class AuthorFullNameDto
     {
-        public string AuthorId { get; set; }
+        public Guid AuthorId { get; set; }
         public string FullName { get; set; }
     }
 }

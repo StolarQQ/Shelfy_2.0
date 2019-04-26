@@ -2,7 +2,7 @@
 
 namespace Shelfy.Infrastructure.Commands
 {
-    public class CreateAuthor
+    public class UpdateAuthor
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

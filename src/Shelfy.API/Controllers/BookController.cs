@@ -30,8 +30,7 @@ namespace Shelfy.API.Controllers
             return Ok(book);
         }
 
-
-        [HttpGet("{isbn}", Name = "GetBookByIsbn")]
+        [HttpGet("isbn/{isbn}", Name = "GetBookByIsbn")]
         public async Task<IActionResult> Get(string isbn)
         {
             var book = await _bookService.GetAsync(isbn);
@@ -43,13 +42,21 @@ namespace Shelfy.API.Controllers
             return Ok(book);
         }
 
+        [HttpGet(Name = "BrowseAsync")]
+        public async Task<IActionResult> Browse()
+        {
+            var book = await _bookService.BrowseAsync();
+         
+            return Ok(book);
+        }
+        
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateBook book)
+        public async Task<IActionResult> Post([FromBody]CreateBook book)
         {
             await _bookService.AddAsync(book.Title, book.OriginalTitle,
                 book.Description, book.ISBN, book.Pages, book.Publisher, book.PublishedAt, book.AuthorsId);
 
-            return Created("GetBookById", null);
+            return CreatedAtRoute("GetBookByIsbn", new { Isbn = book.ISBN}, book);
         }
 
         [HttpPatch("{id}")]
