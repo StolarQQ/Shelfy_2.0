@@ -8,13 +8,14 @@ namespace Shelfy.Core.Domain
 {
     public class Book
     {
-        private static readonly Regex ImageUrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
+        private static readonly Regex CoverRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
         [BsonElement]
         private ISet<Guid> _authors = new HashSet<Guid>();
         [BsonElement]
         private ISet<Review> _reviews = new HashSet<Review>();
 
+        [BsonId]
         public Guid BookId { get; protected set; }
         public string Title { get; protected set; }
         public string OriginalTitle { get; protected set; }
@@ -23,9 +24,10 @@ namespace Shelfy.Core.Domain
         public int Pages { get; protected set; }
         public string Publisher { get; protected set; }
         public DateTime PublishedAt { get; protected set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; protected set; }
         // Path to book cover
-        public string ImageUrl { get; protected set; }
+        public string Cover { get; protected set; }
 
         public IEnumerable<Guid> Authors => _authors;
         public IEnumerable<Review> Reviews => _reviews;
@@ -48,6 +50,7 @@ namespace Shelfy.Core.Domain
             SetPublisher(publisher);
             PublishedAt = publishedAt;
             UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public void SetTitle(string title)
@@ -60,7 +63,7 @@ namespace Shelfy.Core.Domain
             Title = title;
             UpdatedAt = DateTime.UtcNow;
         }
-        
+
         public void SetDescription(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
@@ -107,12 +110,12 @@ namespace Shelfy.Core.Domain
         
         public void SetImageUrl(string imageUrl)
         {
-            if (ImageUrlRegex.IsMatch(imageUrl) == false)
+            if (CoverRegex.IsMatch(imageUrl) == false)
             {
                 throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
             }
 
-            ImageUrl = imageUrl;
+            Cover = imageUrl;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -139,18 +142,18 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        //public void RemoveAuthor(Author author)
-        //{
-        //    var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
-        //    if (authorExist == null)
-        //    {
-        //        throw new ArgumentException($"Author with id: '{author.AuthorId}' was not found for Book: '{Title}'. ");
-        //    }
+        public void RemoveAuthor(Guid authorId)
+        {
+            var authorExist = Authors.SingleOrDefault(x => x == authorId);
+            if (authorExist == null)
+            {
+                throw new ArgumentException($"Author with id: '{authorId}' was not found for Book: '{Title}'. ");
+            }
 
-        //    _authors.Remove(author);
-        //    UpdatedAt = DateTime.UtcNow;
-        //}
-        
+            _authors.Remove(authorId);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         // TODO AddReview, DeleteReview, Update?,
     }
 }

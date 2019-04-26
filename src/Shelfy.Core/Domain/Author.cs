@@ -32,78 +32,56 @@ namespace Shelfy.Core.Domain
         {
             
         }
-        // TODO Avatar, UserId
+
+        // TODO : UserId
         public Author(Guid authorId, string firstName, string lastName, string description, string imageUrl,
             DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource)
         {
             AuthorId = authorId;
             SetFirstName(firstName);
             SetLastName(lastName);
+            SetFullName(firstName,lastName);
             SetDescription(description);
-            FullName = FirstName + " " + LastName;
             ImageUrl = imageUrl;
             SetDateOfBirth(dateOfBirth);
             SetDateOfDeath(dateOfDeath);
             SetBirthPlace(birthPlace);
-            SetAuthorWebiste(authorWebsite);
+            SetAuthorWebsite(authorWebsite);
             SetAuthorSource(authorSource);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
             //UserId = user.UserId;
         }
 
-        private void SetAuthorSource(string authorSource)
+        public void SetFirstName(string firstName)
         {
-            if (Uri.IsWellFormedUriString(authorSource, UriKind.RelativeOrAbsolute) == false)
+            if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw new ArgumentException($"URL {authorSource} doesn't meet required criteria");
+                throw new ArgumentException($"Author with {AuthorId} cannot have an empty FirstName");
             }
 
-            AuthorSource = authorSource;
+            FirstName = firstName;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void SetAuthorWebiste(string authorWebsite)
+        public void SetLastName(string lastName)
         {
-            if (Uri.IsWellFormedUriString(authorWebsite, UriKind.RelativeOrAbsolute) == false)
+            if (string.IsNullOrWhiteSpace(lastName))
             {
-                throw new ArgumentException($"URL {authorWebsite} doesn't meet required criteria");
+                throw new ArgumentException($"Author with {AuthorId} cannot have an empty LastName");
             }
 
-            AuthorWebsite = authorWebsite;
+            LastName = lastName;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void SetBirthPlace(string birthPlace)
+        private void SetFullName(string firstName, string lastName)
         {
-            BirthPlace = birthPlace;
+            FullName = $"{firstName} {lastName}";
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void SetDateOfBirth(DateTime? dateOfBirth)
-        {
-            DateOfBirth = dateOfBirth;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        private void SetDateOfDeath(DateTime? dateOfDeath)
-        {
-            DateOfDeath = dateOfDeath;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        private void SetImageUrl(string imageUrl)
-        {
-            if (ImageUrlRegex.IsMatch(imageUrl) == false)
-            {
-                throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
-            }
-
-            ImageUrl = imageUrl;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        private void SetDescription(string description)
+        public void SetDescription(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -125,15 +103,54 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void SetLastName(string lastName)
+        public void SetDateOfBirth(DateTime? dateOfBirth)
         {
-            LastName = lastName;
+            DateOfBirth = dateOfBirth;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void SetFirstName(string firstName)
+        public void SetDateOfDeath(DateTime? dateOfDeath)
         {
-            FirstName = firstName;
+            DateOfDeath = dateOfDeath;
+            UpdatedAt = DateTime.UtcNow;
+        }
+        
+        public void SetAuthorWebsite(string authorWebsite)
+        {
+            if (Uri.IsWellFormedUriString(authorWebsite, UriKind.RelativeOrAbsolute) == false)
+            {
+                throw new ArgumentException($"URL {authorWebsite} doesn't meet required criteria");
+            }
+
+            AuthorWebsite = authorWebsite;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetAuthorSource(string authorSource)
+        {
+            if (Uri.IsWellFormedUriString(authorSource, UriKind.RelativeOrAbsolute) == false)
+            {
+                throw new ArgumentException($"URL {authorSource} doesn't meet required criteria");
+            }
+
+            AuthorSource = authorSource;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetBirthPlace(string birthPlace)
+        {
+            BirthPlace = birthPlace;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetImageUrl(string imageUrl)
+        {
+            if (ImageUrlRegex.IsMatch(imageUrl) == false)
+            {
+                throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
+            }
+
+            ImageUrl = imageUrl;
             UpdatedAt = DateTime.UtcNow;
         }
     }

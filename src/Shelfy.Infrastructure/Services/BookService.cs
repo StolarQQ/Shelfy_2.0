@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
-using Shelfy.Infrastructure.DTO.Test;
+using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -33,11 +34,8 @@ namespace Shelfy.Infrastructure.Services
                 throw new ArgumentException($"Book with id '{id}' was not found.");
             }
             
-            var authors = GetAuthors(book.Authors);
-
-            var authorsDto = _mapper.Map<IEnumerable<AuthorFullNameDto>>(authors);
-            var bookDto = _mapper.Map<BookDto>(book);
-            bookDto.Authors = authorsDto;
+            var authors = await GetAuthors(book.Authors);
+            var bookDto = SetUpBook(book, authors);
 
             return bookDto;
         }
@@ -50,11 +48,8 @@ namespace Shelfy.Infrastructure.Services
                 throw new ArgumentException($"Book with ISBN '{isbn}' was not found.");
             }
 
-            var authors = GetAuthors(book.Authors);
-
-            var authorsDto = _mapper.Map<IEnumerable<AuthorFullNameDto>>(authors);
-            var bookDto = _mapper.Map<BookDto>(book);
-            bookDto.Authors = authorsDto;
+            var authors = await GetAuthors(book.Authors);
+            var bookDto = SetUpBook(book, authors);
 
             return bookDto;
         }
@@ -102,17 +97,15 @@ namespace Shelfy.Infrastructure.Services
             }
 
             var book = _mapper.Map<UpdateBook>(existedBook);
-
             patchBook.ApplyTo(book);
-
+            
             // Mapping changes to bookToUpdate
             existedBook = _mapper.Map(book, existedBook);
-
-            // Valid data
-            var validModel = new Book(existedBook.Title, existedBook.OriginalTitle, existedBook.Description,
-                existedBook.ISBN, existedBook.Pages, existedBook.Publisher, existedBook.PublishedAt);
             
-            await _bookRepository.UpdateAsync(existedBook);
+            if (existedBook.IsValid())
+            {
+                await _bookRepository.UpdateAsync(existedBook);
+            }
         }
 
         public async Task DeleteAsync(Guid id)
@@ -142,6 +135,21 @@ namespace Shelfy.Infrastructure.Services
             }
 
             return authors;
+        }
+
+        /// <summary>
+        /// Set up bookDto, assign name of authors
+        /// </summary>
+        /// <param name="book"></param>
+        /// <param name="authors"></param>
+        /// <returns></returns>
+        private BookDto SetUpBook(Book book, IEnumerable<Author> authors)
+        {
+            var bookDto = _mapper.Map<BookDto>(book);
+            var authorsDto = _mapper.Map<IEnumerable<AuthorFullNameDto>>(authors);
+            bookDto.Authors = authorsDto;
+
+            return bookDto;
         }
     }
 }
