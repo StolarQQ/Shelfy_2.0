@@ -17,6 +17,7 @@ using Shelfy.Infrastructure.AutoMapper;
 using Shelfy.Infrastructure.Mongodb;
 using Shelfy.Infrastructure.Repositories;
 using Shelfy.Infrastructure.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Shelfy.API
 {
@@ -45,6 +46,11 @@ namespace Shelfy.API
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Shelfy API", Version = "v1" });
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -60,6 +66,16 @@ namespace Shelfy.API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shelfy API V1");
+            });
             
             // Register conventions for mongodb
             MongoConfiguration.Initialize();
