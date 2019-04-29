@@ -5,7 +5,7 @@ namespace Shelfy.Infrastructure.Commands
 {
     public class CreateBook
     {
-       public string Title { get; set; }
+        public string Title { get; set; }
         public string OriginalTitle { get; set; }
         public string Description { get; set; }
         public string ISBN { get; set; }

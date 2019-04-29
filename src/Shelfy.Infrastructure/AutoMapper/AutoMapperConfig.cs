@@ -1,9 +1,8 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using AutoMapper;
+﻿using AutoMapper;
 using Shelfy.Core.Domain;
+using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
-using Shelfy.Infrastructure.DTO.Test;
 using Shelfy.Infrastructure.DTO.User;
 
 namespace Shelfy.Infrastructure.AutoMapper
@@ -15,10 +14,11 @@ namespace Shelfy.Infrastructure.AutoMapper
                 {
                     cfg.CreateMap<Book, BookDto>().ForSourceMember(x => x.Authors, opt => opt.DoNotValidate())
                         .ForMember(x => x.Authors, opt => opt.Ignore());
-                    cfg.CreateMap<User, UserDto>();
                     cfg.CreateMap<Author, AuthorDto>();
                     cfg.CreateMap<Author, AuthorSearchDto>();
-                    cfg.CreateMap<Author, BookAuthorDto>();
+                    cfg.CreateMap<Author, AuthorFullNameDto>();
+                    cfg.CreateMap<UpdateBook, Book>();
+                    cfg.CreateMap<User, UserDto>();
                 })
                 .CreateMapper();
     }

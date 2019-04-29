@@ -50,7 +50,7 @@ namespace Shelfy.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]CreateAuthor author)
         {
-            var authorId = Guid.NewGuid();
+            var authorId = Guid.NewGuid(); 
             await _authorService.RegisterAsync(authorId, author.FirstName, author.LastName, author.Description, author.ImageUrl,
                 author.DateOfBirth, author.DateOfDeath, author.BirthPlace, author.AuthorWebsite, author.AuthorSource);
 

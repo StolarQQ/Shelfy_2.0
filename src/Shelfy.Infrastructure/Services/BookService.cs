@@ -90,21 +90,21 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task UpdateAsync(Guid id, JsonPatchDocument<UpdateBook> patchBook)
         {
-            var existedBook = await _bookRepository.GetByIdAsync(id);
-            if (existedBook == null)
+            var bookToUpdate = await _bookRepository.GetByIdAsync(id);
+            if (bookToUpdate == null)
             {
                 throw new ArgumentException($"Book with id '{id}' was not found");
             }
 
-            var book = _mapper.Map<UpdateBook>(existedBook);
+            var book = _mapper.Map<UpdateBook>(bookToUpdate);
             patchBook.ApplyTo(book);
             
             // Mapping changes to bookToUpdate
-            existedBook = _mapper.Map(book, existedBook);
+            bookToUpdate = _mapper.Map(book, bookToUpdate);
             
-            if (existedBook.IsValid())
+            if (bookToUpdate.IsValid())
             {
-                await _bookRepository.UpdateAsync(existedBook);
+                await _bookRepository.UpdateAsync(bookToUpdate);
             }
         }
 

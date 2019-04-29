@@ -67,23 +67,24 @@ namespace Shelfy.Infrastructure.Services
             await _authorRepository.AddAsync(author);
         }
 
-        public async Task UpdateAsync(Guid id, JsonPatchDocument<UpdateAuthor> updateAuthor)
+        public async Task 
+            UpdateAsync(Guid id, JsonPatchDocument<UpdateAuthor> updateAuthor)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
-            if (author == null)
+            var authorToUpdate = await _authorRepository.GetByIdAsync(id);
+            if (authorToUpdate == null)
             {
                 throw new Exception($"Author with id '{id}' not exist");
             }
 
-            var authorToUpdate = _mapper.Map<UpdateAuthor>(author);
+            var author = _mapper.Map<UpdateAuthor>(authorToUpdate);
 
-            updateAuthor.ApplyTo(authorToUpdate);
+            updateAuthor.ApplyTo(author);
 
-            author = _mapper.Map(authorToUpdate, author);
+            authorToUpdate = _mapper.Map(author, authorToUpdate);
 
-            if (author.IsValid())
+            if (authorToUpdate.IsValid())
             {
-                await _authorRepository.UpdateAsync(author);
+                await _authorRepository.UpdateAsync(authorToUpdate);
             }
         }
 
