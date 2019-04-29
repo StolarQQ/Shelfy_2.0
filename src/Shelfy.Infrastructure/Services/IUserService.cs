@@ -8,9 +8,12 @@ namespace Shelfy.Infrastructure.Services
     public interface IUserService
     {
         Task<UserDto> GetByIdAsync(Guid id);
-        Task<UserDto> GetByEmailAsync(string email);
-        Task<IEnumerable<UserDto>> GetAllAsync(string name);
+        Task<UserDto> GetByUserNameAsync(string username);
+        Task<IEnumerable<UserDto>> GetAllAsync();
         Task RegisterAsync(Guid userid, string email, string username,
-             string password, string salt, string imgUrl, string role = "user");
+             string password);
+        Task LoginAsync(string email, string password);
+        Task ChangePassword(Guid id, string oldPassword, string newPassword);
+        Task SetAvatar(Guid id, string avatar);
     }
 }
