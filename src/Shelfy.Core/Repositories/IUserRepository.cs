@@ -9,7 +9,8 @@ namespace Shelfy.Core.Repositories
     {
         Task<User> GetByIdAsync(Guid id);
         Task<User> GetByEmailAsync(string email);
-        Task<IEnumerable<User>> BrowseAsync(string name = "");
+        Task<User> GetByUsernameAsync(string username);
+        Task<IEnumerable<User>> BrowseAsync();
         Task AddAsync(User user);
         Task UpdateAsync(User user);
         Task RemoveAsync(Guid id);

@@ -27,7 +27,12 @@ namespace Shelfy.Infrastructure.Repositories
             return await Users.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<IEnumerable<User>> BrowseAsync(string name)
+        public async Task<User> GetByUsernameAsync(string username)
+        {
+            return await Users.AsQueryable().FirstOrDefaultAsync(x => x.Username == username);
+        }
+
+        public async Task<IEnumerable<User>> BrowseAsync()
         {
             return await Users.AsQueryable().ToListAsync();
         }
