@@ -32,6 +32,9 @@ namespace Shelfy.Core.Domain
         public IEnumerable<Guid> Authors => _authors;
         public IEnumerable<Review> Reviews => _reviews;
 
+        public int ReviewCount => _reviews.Count;
+        public double Rating => _reviews.Average(x => x.Rating);
+
         // For mongo driver 
         protected Book()
         {
