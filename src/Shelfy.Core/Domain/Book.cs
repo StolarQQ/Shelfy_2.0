@@ -28,6 +28,8 @@ namespace Shelfy.Core.Domain
         public DateTime UpdatedAt { get; protected set; }
         // Path to book cover
         public string Cover { get; protected set; }
+        //User that added book
+        public Guid UserId { get; set; }
 
         public IEnumerable<Guid> Authors => _authors;
         public IEnumerable<Review> Reviews => _reviews;
@@ -42,18 +44,21 @@ namespace Shelfy.Core.Domain
         }
 
         public Book(string title, string originalTitle,
-            string description, string isbn, int pages, string publisher, DateTime publishedAt)
+            string description, string isbn, string cover,
+            int pages, string publisher, DateTime publishedAt, Guid userId)
         {
             BookId = Guid.NewGuid();
             SetTitle(title);
             OriginalTitle = originalTitle;
             SetDescription(description);
             SetIsbn(isbn);
+            SetCover(cover);
             SetPages(pages);
             SetPublisher(publisher);
             PublishedAt = publishedAt;
             UpdatedAt = DateTime.UtcNow;
             CreatedAt = DateTime.UtcNow;
+            UserId = userId;
         }
 
         public void SetTitle(string title)
@@ -111,14 +116,14 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
         
-        public void SetImageUrl(string imageUrl)
+        public void SetCover(string cover)
         {
-            if (CoverRegex.IsMatch(imageUrl) == false)
+            if (CoverRegex.IsMatch(cover) == false)
             {
-                throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
+                throw new ArgumentException($"Cover URL {cover} doesn't meet required criteria");
             }
 
-            Cover = imageUrl;
+            Cover = cover;
             UpdatedAt = DateTime.UtcNow;
         }
 

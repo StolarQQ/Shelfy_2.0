@@ -25,7 +25,7 @@ namespace Shelfy.Core.Domain
         // Evidence that showing the authenticity of author.
         public string AuthorSource { get; protected set; }
         // User that send request for add an author.
-        //public Guid UserId { get; protected set; }
+        public Guid UserId { get; protected set; }
 
         // For mongo driver
         protected Author()
@@ -35,14 +35,14 @@ namespace Shelfy.Core.Domain
 
         // TODO : UserId
         public Author(Guid authorId, string firstName, string lastName, string description, string imageUrl,
-            DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource)
+            DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource, Guid userId)
         {
             AuthorId = authorId;
             SetFirstName(firstName);
             SetLastName(lastName);
             SetFullName(firstName,lastName);
             SetDescription(description);
-            ImageUrl = imageUrl;
+            SetImageUrl(imageUrl);
             SetDateOfBirth(dateOfBirth);
             SetDateOfDeath(dateOfDeath);
             SetBirthPlace(birthPlace);
@@ -50,7 +50,7 @@ namespace Shelfy.Core.Domain
             SetAuthorSource(authorSource);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-            //UserId = user.UserId;
+            UserId = userId;
         }
 
         public void SetFirstName(string firstName)
