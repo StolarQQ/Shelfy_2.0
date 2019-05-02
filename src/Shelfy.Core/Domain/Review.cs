@@ -1,9 +1,11 @@
 ﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Shelfy.Core.Domain
 {
     public class Review
     {
+        [BsonId]
         public Guid ReviewId { get; private set; }
         public int Rating { get; private set; }
         public string Comment { get; private set; }
