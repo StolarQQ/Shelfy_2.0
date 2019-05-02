@@ -16,5 +16,6 @@ namespace Shelfy.Infrastructure.DTO.Book
         public string Publisher { get; set; }
         public DateTime PublishedAt { get; set; }
         public string Cover { get; set; }
+        public Guid UserId { get; set; }
     }
 }

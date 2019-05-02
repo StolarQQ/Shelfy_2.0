@@ -14,5 +14,6 @@ namespace Shelfy.Infrastructure.DTO.Author
         public string BirthPlace { get; set; }
         public string AuthorWebsite { get; set; }
         public string AuthorSource { get; set; }
+        public Guid UserId { get; set; }
     }
 }
