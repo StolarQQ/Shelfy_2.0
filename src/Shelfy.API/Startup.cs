@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using Newtonsoft.Json;
+using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.AutoMapper;
 using Shelfy.Infrastructure.Mongodb;
@@ -24,12 +29,17 @@ namespace Shelfy.API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthorization(x =>
+            {
+                x.AddPolicy("HasUserRole", p => p.RequireRole(Role.User.ToString(), Role.Admin.ToString()));
+                x.AddPolicy("HasModeratorRole", p => p.RequireRole(Role.Moderator.ToString(), Role.Admin.ToString()));
+                x.AddPolicy("HasAdminRole", p => p.RequireRole(Role.Admin.ToString()));
+            });
+
             services.AddSingleton<IMongoClient, MongoClient>(x =>
                 new MongoClient(Configuration["ConnectionStrings:ShelfyDatabase"]));
             services.AddTransient<IMongoDatabase>(x =>
                 x.GetRequiredService<IMongoClient>().GetDatabase(Configuration["Mongo:Database"]));
-
-            services.AddSingleton(AutoMapperConfig.Initialize());
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
@@ -39,14 +49,45 @@ namespace Shelfy.API
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEncrypterService, EncrypterService>();
 
+            services.AddSingleton<IJwtHandler, JwtHandler>();
+            services.AddSingleton(AutoMapperConfig.Initialize());
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Shelfy API", Version = "v1" });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // JWT configuration
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    //cfg.RequireHttpsMetadata = false;
+                    //cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        // validate recipient of the token, 
+                        ValidateAudience = false,
+                        //  verify that the key used to sign the incoming token is part of a list of trusted keys 
+                        ValidateIssuerSigningKey = true,
+                        // creator of Token
+                        ValidIssuer = Configuration["Jwt:issuer"],
+                        ValidateLifetime = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
+                    };
+                });
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
+
+
+
         }
-        
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -71,6 +112,7 @@ namespace Shelfy.API
             // Register conventions for mongodb
             MongoConfiguration.Initialize();
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
         }

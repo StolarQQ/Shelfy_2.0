@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shelfy.Infrastructure.Commands;
@@ -9,7 +10,7 @@ namespace Shelfy.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BookController : Controller
+    public class BookController : ApiControllerBase
     {
         private readonly IBookService _bookService;
 
@@ -19,6 +20,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetBookById")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(Guid id)
         {
             var book = await _bookService.GetAsync(id);
@@ -31,6 +33,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpGet("isbn/{isbn}", Name = "GetBookByIsbn")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(string isbn)
         {
             var book = await _bookService.GetAsync(isbn);
@@ -42,24 +45,26 @@ namespace Shelfy.API.Controllers
             return Ok(book);
         }
 
-        [HttpGet(Name = "BrowseAsync")]
-        public async Task<IActionResult> Browse()
-        {
-            var book = await _bookService.BrowseAsync();
+        //[HttpGet(Name = "BrowseAsync")]
+        //public async Task<IActionResult> Browse()
+        //{
+        //    var book = await _bookService.BrowseAsync();
          
-            return Ok(book);
-        }
+        //    return Ok(book);
+        //}
         
         [HttpPost]
+        [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateBook book)
         {
             await _bookService.AddAsync(book.Title, book.OriginalTitle,
-                book.Description, book.ISBN, book.Pages, book.Publisher, book.PublishedAt, book.AuthorsId);
+                book.Description, book.ISBN, book.Cover, book.Pages, book.Publisher, book.PublishedAt, book.AuthorsId, UserId);
 
             return CreatedAtRoute("GetBookByIsbn", new { Isbn = book.ISBN}, book);
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Policy = "HasModeratorRole")]
         public async Task<IActionResult> Patch(Guid id,
             [FromBody] JsonPatchDocument<UpdateBook> patchBook)
         {
@@ -69,6 +74,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "HasAdminRole")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _bookService.DeleteAsync(id);

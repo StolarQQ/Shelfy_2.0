@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shelfy.Infrastructure.Commands;
@@ -9,7 +10,7 @@ namespace Shelfy.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorController : ApiControllerBase
     {
         private readonly IAuthorService _authorService;
 
@@ -19,6 +20,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpGet("{id}", Name = "Get")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(Guid id)
         {
             var author = await _authorService.GetByIdAsync(id);
@@ -31,6 +33,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpGet(Name = "BrowseByPhraseAsync")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(string phrase)
         {
             var authors = await _authorService.BrowseByPhraseAsync(phrase);
@@ -48,16 +51,18 @@ namespace Shelfy.API.Controllers
 
 
         [HttpPost]
+        [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateAuthor author)
         {
             var authorId = Guid.NewGuid(); 
             await _authorService.RegisterAsync(authorId, author.FirstName, author.LastName, author.Description, author.ImageUrl,
-                author.DateOfBirth, author.DateOfDeath, author.BirthPlace, author.AuthorWebsite, author.AuthorSource);
+                author.DateOfBirth, author.DateOfDeath, author.BirthPlace, author.AuthorWebsite, author.AuthorSource, UserId);
 
             return CreatedAtRoute("Get", new {id = authorId}, author);
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Policy = "HasModeratorRole")]
         public async Task<IActionResult> Patch(Guid id,
             [FromBody]JsonPatchDocument<UpdateAuthor> patchBook)
         {
@@ -67,6 +72,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _authorService.DeleteAsync(id);
