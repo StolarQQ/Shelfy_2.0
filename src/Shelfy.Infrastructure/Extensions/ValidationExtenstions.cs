@@ -1,4 +1,5 @@
-﻿using Shelfy.Core.Domain;
+﻿using System;
+using Shelfy.Core.Domain;
 
 namespace Shelfy.Infrastructure.Extensions
 {
@@ -33,6 +34,30 @@ namespace Shelfy.Infrastructure.Extensions
             author.SetAuthorSource(author.AuthorSource);
 
             return true;
+        }
+
+        /// <summary>
+        /// Validate password before generate hash
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="min">Minimum length of password</param>
+        /// <param name="max">Maximum length of password</param>
+        public static void PasswordValidation(this string password, int min = 5, int max = 25)
+        {
+            if (password.IsEmpty())
+            {
+                throw new Exception("Password cannot be empty.");
+            }
+
+            if (password.Length < min)
+            {
+                throw new Exception($"Password must contain at least {min} characters.");
+            }
+
+            if (password.Length > max)
+            {
+                throw new Exception($"Password cannot contain more than {max} characters.");
+            }
         }
     }
 }

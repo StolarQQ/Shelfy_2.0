@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Repositories;
 
 namespace Shelfy.Infrastructure.Extensions
 {
@@ -15,6 +14,18 @@ namespace Shelfy.Infrastructure.Extensions
             if (book == null)
             {
                 throw new ArgumentException($"Book with id '{id}' was not found.");
+            }
+
+            return book;
+        }
+
+        public static async Task<Book> GetOrFailAsync(this IBookRepository bookRepository, string isbn)
+        {
+            var book = await bookRepository.GetByIsbnAsync(isbn);
+
+            if (book == null)
+            {
+                throw new ArgumentException($"Book with isbn '{isbn}' was not found.");
             }
 
             return book;
