@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.DTO;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Extensions;
@@ -17,14 +17,16 @@ namespace Shelfy.Infrastructure.Services
         private readonly IEncrypterService _encrypterService;
         private readonly IJwtHandler _jwtHandler;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserService> _logger;
 
         public UserService(IUserRepository userRepository, IEncrypterService encrypterService,
-            IJwtHandler jwtHandler, IMapper mapper)
+            IJwtHandler jwtHandler, IMapper mapper, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _encrypterService = encrypterService;
             _jwtHandler = jwtHandler;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -51,13 +53,13 @@ namespace Shelfy.Infrastructure.Services
         public async Task RegisterAsync(Guid userid, string email, string username,
             string password)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmailAsync(email.ToLowerInvariant());
             if (user != null)
             {
                 throw new Exception($"User with email '{email}' already exist.");
             }
 
-            user = await _userRepository.GetByUsernameAsync(username);
+            user = await _userRepository.GetByUsernameAsync(username.ToLowerInvariant());
             if (user != null)
             {
                 throw new Exception($"User with username '{username}' already exist.");
@@ -70,6 +72,8 @@ namespace Shelfy.Infrastructure.Services
             var defaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
             user = new User(userid, email, username, hash, salt, Role.User, defaultAvatar);
+
+            _logger.LogWarning($"User with email '{user.Email}' as role '{user.Role}' was created at '{user.CreatedAt}'");
 
             await _userRepository.AddAsync(user);
         }
@@ -90,6 +94,8 @@ namespace Shelfy.Infrastructure.Services
 
             var jwt = _jwtHandler.CreateToken(user.UserId, user.Role);
 
+            _logger.LogInformation($"User '{user.Username}' logged in.");
+
             return new TokenDto
             {
                 Token = jwt.Token,
@@ -101,8 +107,10 @@ namespace Shelfy.Infrastructure.Services
         public async Task DeleteAsync(Guid id)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-
+            
             await _userRepository.RemoveAsync(user.UserId);
+
+            _logger.LogInformation($"User with id '{user.UserId}' was deleted at '{DateTime.UtcNow}'");
         }
 
         public async Task ChangePassword(Guid id, string oldPassword, string newPassword)
@@ -118,15 +126,18 @@ namespace Shelfy.Infrastructure.Services
             }
 
             newPassword.PasswordValidation();
-
             user.SetPassword(newPassword);
+
+            _logger.LogInformation($"User '{user.Username}' changed password");
         }
 
         public async Task SetAvatar(Guid id, string avatar)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-
+            
             user.SetAvatar(avatar);
+
+            _logger.LogInformation($"User '{user.Username}' set up new avatar");
         }
     }
 }
