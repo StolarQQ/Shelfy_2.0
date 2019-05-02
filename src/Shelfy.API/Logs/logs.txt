@@ -1,0 +1,3 @@
+2019-05-02 20:28:29.632 +02:00 [FTL] User with name '492981f4-e34f-4843-9ba8-3c4c33949846' as role 'User' was created at '5/2/2019 6:28:29 PM'
+2019-05-02 20:48:56.257 +02:00 [WRN] User with email 'marek22sss2588@gmail.com' as role 'User' was created at '5/2/2019 6:48:56 PM'
+2019-05-02 20:49:02.934 +02:00 [WRN] User with email 'marek2s2sss2588@gmail.com' as role 'User' was created at '5/2/2019 6:49:02 PM'
