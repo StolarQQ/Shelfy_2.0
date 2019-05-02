@@ -27,12 +27,7 @@ namespace Shelfy.Infrastructure.Services
      
         public async Task<BookDto> GetAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
-
-            if (book == null)
-            {
-                throw new ArgumentException($"Book with id '{id}' was not found.");
-            }
+            var book = await _bookRepository.GetOrFailAsync(id);
             
             var authors = await GetAuthors(book.Authors);
             var bookDto = SetUpBook(book, authors);
@@ -42,11 +37,7 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task<BookDto> GetAsync(string isbn)
         {
-            var book = await _bookRepository.GetByIsbnAsync(isbn);
-            if (book == null)
-            {
-                throw new ArgumentException($"Book with ISBN '{isbn}' was not found.");
-            }
+            var book = await _bookRepository.GetOrFailAsync(isbn);
 
             var authors = await GetAuthors(book.Authors);
             var bookDto = SetUpBook(book, authors);
@@ -63,8 +54,8 @@ namespace Shelfy.Infrastructure.Services
         }
 
         public async Task AddAsync(string title, string originalTitle,
-            string description, string isbn, int pages, string publisher,
-            DateTime publishedAt, IEnumerable<Guid> authorsId)
+            string description, string isbn, string cover, int pages, string publisher,
+            DateTime publishedAt, IEnumerable<Guid> authorsId, Guid userId)
         {
             var book = await _bookRepository.GetByIsbnAsync(isbn);
             if (book != null)
@@ -72,7 +63,8 @@ namespace Shelfy.Infrastructure.Services
                 throw new Exception($"Book with ISBN {isbn} already exist");
             }
 
-            book = new Book(title, originalTitle, description, isbn, pages, publisher, publishedAt);
+            var validCover = cover.DefaultBookCoverValidation(); 
+            book = new Book(title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
 
             foreach (var id in authorsId)
             {
@@ -90,12 +82,8 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task UpdateAsync(Guid id, JsonPatchDocument<UpdateBook> patchBook)
         {
-            var bookToUpdate = await _bookRepository.GetByIdAsync(id);
-            if (bookToUpdate == null)
-            {
-                throw new ArgumentException($"Book with id '{id}' was not found");
-            }
-
+            var bookToUpdate = await _bookRepository.GetOrFailAsync(id);
+          
             var book = _mapper.Map<UpdateBook>(bookToUpdate);
             patchBook.ApplyTo(book);
             
@@ -110,13 +98,9 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task DeleteAsync(Guid id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null)
-            {
-                throw new ArgumentException($"Book with id '{id}' was not found");
-            }
+            var book = await _bookRepository.GetOrFailAsync(id);
 
-            await _bookRepository.RemoveAsync(id);
+            await _bookRepository.RemoveAsync(book.BookId);
         }
 
         /// <summary>

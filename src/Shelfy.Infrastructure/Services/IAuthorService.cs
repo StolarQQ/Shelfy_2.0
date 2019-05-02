@@ -14,7 +14,7 @@ namespace Shelfy.Infrastructure.Services
         Task<IEnumerable<AuthorDto>> BrowseAsync(); 
         Task RegisterAsync(Guid authorId, string firstName, string lastName, string description,
             string imageUrl, DateTime? dateOfBirth, DateTime? dateOfDeath,
-            string birthPlace, string authorWebsite, string authorSource);
+            string birthPlace, string authorWebsite, string authorSource, Guid userId);
         Task UpdateAsync(Guid id, JsonPatchDocument<UpdateAuthor> updateAuthor);
         Task DeleteAsync(Guid id);
     }

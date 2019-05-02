@@ -24,15 +24,11 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task<AuthorDto> GetByIdAsync(Guid id)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
-            if (author == null)
-            {
-                throw new Exception("Author not exist");
-            }
+            var author = await _authorRepository.GetOrFailAsync(id);
 
             return _mapper.Map<AuthorDto>(author);
         }
-
+        // TODO Replace pagination
         public async Task<IEnumerable<AuthorSearchDto>> BrowseByPhraseAsync(string phrase)
         {
             if (string.IsNullOrWhiteSpace(phrase) || phrase.Length < 3)
@@ -44,7 +40,7 @@ namespace Shelfy.Infrastructure.Services
 
             return _mapper.Map<IEnumerable<AuthorSearchDto>>(authors);
         }
-
+        // TODO Replace pagination
         public async Task<IEnumerable<AuthorDto>> BrowseAsync()
         {
             var authors = await _authorRepository.BrowseAsync();
@@ -52,11 +48,14 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<IEnumerable<AuthorDto>>(authors);
         }
 
-        public async Task RegisterAsync(Guid authorId, string firstName, string lastName, string description, string imageUrl, DateTime? dateOfBirth,
-            DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource)
+        public async Task RegisterAsync(Guid authorId, string firstName, string lastName,
+            string description, string imageUrl, DateTime? dateOfBirth, DateTime? dateOfDeath,
+            string birthPlace, string authorWebsite, string authorSource, Guid userId)
         {
-            var author = new Author(authorId, firstName, lastName, description, imageUrl,
-                dateOfBirth, dateOfDeath, birthPlace, authorWebsite, authorSource);
+            var authorImage = imageUrl.DefaultAuthorImageValidation();
+
+            var author = new Author(authorId, firstName, lastName, description, authorImage,
+                dateOfBirth, dateOfDeath, birthPlace, authorWebsite, authorSource, userId);
 
             var authorExist = await _authorRepository.GetByIdAsync(author.AuthorId);
             if (authorExist != null)
@@ -67,14 +66,9 @@ namespace Shelfy.Infrastructure.Services
             await _authorRepository.AddAsync(author);
         }
 
-        public async Task 
-            UpdateAsync(Guid id, JsonPatchDocument<UpdateAuthor> updateAuthor)
+        public async Task UpdateAsync(Guid id, JsonPatchDocument<UpdateAuthor> updateAuthor)
         {
-            var authorToUpdate = await _authorRepository.GetByIdAsync(id);
-            if (authorToUpdate == null)
-            {
-                throw new Exception($"Author with id '{id}' not exist");
-            }
+            var authorToUpdate = await _authorRepository.GetOrFailAsync(id);
 
             var author = _mapper.Map<UpdateAuthor>(authorToUpdate);
 
@@ -90,13 +84,9 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task DeleteAsync(Guid id)
         {
-            var author = await _authorRepository.GetByIdAsync(id);
-            if (author == null)
-            {
-                throw new Exception($"Author with id '{id}' not exist");
-            }
+            var author = await _authorRepository.GetOrFailAsync(id);
 
-            await _authorRepository.RemoveAsync(id);
+            await _authorRepository.RemoveAsync(author.AuthorId);
         }
     }
 }

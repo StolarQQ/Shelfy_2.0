@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
+using Shelfy.Infrastructure.DTO;
+using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Extensions;
 
@@ -13,12 +15,15 @@ namespace Shelfy.Infrastructure.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEncrypterService _encrypterService;
+        private readonly IJwtHandler _jwtHandler;
         private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository, IEncrypterService encrypterService, IMapper mapper)
+        public UserService(IUserRepository userRepository, IEncrypterService encrypterService,
+            IJwtHandler jwtHandler, IMapper mapper)
         {
             _userRepository = userRepository;
             _encrypterService = encrypterService;
+            _jwtHandler = jwtHandler;
             _mapper = mapper;
         }
 
@@ -58,16 +63,18 @@ namespace Shelfy.Infrastructure.Services
                 throw new Exception($"User with username '{username}' already exist.");
             }
 
+            password.PasswordValidation();
+
             var salt = _encrypterService.GetSalt();
             var hash = _encrypterService.GetHash(password, salt);
             var defaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
-            user = new User(userid, email, username, hash, salt, 0, defaultAvatar);
+            user = new User(userid, email, username, hash, salt, Role.User, defaultAvatar);
 
             await _userRepository.AddAsync(user);
         }
 
-        public async Task LoginAsync(string email, string password)
+        public async Task<TokenDto> LoginAsync(string email, string password)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
@@ -76,11 +83,26 @@ namespace Shelfy.Infrastructure.Services
             }
 
             var hash = _encrypterService.GetHash(password, user.Salt);
-            if (user.Password == hash)
+            if (user.Password != hash)
             {
-                return;
+                throw new Exception("Invalid credentials, try again.");
             }
-            throw new Exception("Invalid credentials, try again.");
+
+            var jwt = _jwtHandler.CreateToken(user.UserId, user.Role);
+
+            return new TokenDto
+            {
+                Token = jwt.Token,
+                Role = user.Role,
+                Expires = jwt.Expires
+            };
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var user = await _userRepository.GetOrFailAsync(id);
+
+            await _userRepository.RemoveAsync(user.UserId);
         }
 
         public async Task ChangePassword(Guid id, string oldPassword, string newPassword)
@@ -94,6 +116,8 @@ namespace Shelfy.Infrastructure.Services
             {
                 throw new Exception("Your old password is incorrect, try again.");
             }
+
+            newPassword.PasswordValidation();
 
             user.SetPassword(newPassword);
         }
