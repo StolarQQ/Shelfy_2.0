@@ -35,20 +35,20 @@ namespace Shelfy.Core.Domain
             SetUsername(username);
             SetPassword(password);
             Salt = salt;
-            Role = Role.User;
+            SetRole(role);
             SetAvatar(avatar);
             State = State.Active;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
-        
+
         public void SetEmail(string email)
         {
             if (EmailRegex.IsMatch(email) == false)
             {
                 throw new ArgumentException($"Email is invalid {email}.");
             }
-            
+
             Email = email.ToLowerInvariant();
             UpdatedAt = DateTime.UtcNow;
         }
@@ -67,7 +67,7 @@ namespace Shelfy.Core.Domain
 
             if (username.Length > 20)
             {
-                throw new ArgumentException("Username can not contain more than 20 characters.");
+                throw new ArgumentException("Username cannot contain more than 20 characters.");
             }
 
             Username = username.ToLowerInvariant();
@@ -78,17 +78,17 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Password can not be empty.");
+                throw new ArgumentException("Password cannot be empty.");
             }
 
-            if (password.Length < 4)
+            if (password.Length < 5)
             {
-                throw new ArgumentException("Password must contain at least 4 characters.");
+                throw new ArgumentException("Password must contain at least 5 characters.");
             }
 
-            if (password.Length > 15000)
+            if (password.Length > 75)
             {
-                throw new ArgumentException("Password can not contain more than 55 characters.");
+                throw new ArgumentException("Password can not contain more than 75 characters.");
             }
 
             Password = password;
@@ -98,14 +98,33 @@ namespace Shelfy.Core.Domain
 
         public void SetRole(Role role)
         {
-            if (role.Equals(0) || role.Equals(1) || role.Equals(2))
+            var isValid = role.Equals(Role.User) ||
+                          role.Equals(Role.Moderator) ||
+                          role.Equals(Role.Admin);
+
+            if (!isValid)
             {
-                Role = role;
-                UpdatedAt = DateTime.UtcNow;
+                throw new ArgumentException("Invalid role.");
             }
-            throw new ArgumentException("Invalid role");
 
+            Role = role;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
+        public void SetState(State state)
+        {
+            var isValid = state.Equals(State.Active) ||
+                          state.Equals(State.Unconfirmed) ||
+                          state.Equals(State.Locked) ||
+                          state.Equals(State.Deleted);
+
+            if (!isValid)
+            {
+                throw new ArgumentException("Invalid account state.");
+            }
+
+            State = state;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetAvatar(string avatar)
@@ -115,7 +134,7 @@ namespace Shelfy.Core.Domain
                 throw new ArgumentException($"URL {avatar} doesn't meet required criteria");
             }
 
-            if(Avatar == avatar)
+            if (Avatar == avatar)
                 return;
 
             Avatar = avatar;
@@ -166,7 +185,7 @@ namespace Shelfy.Core.Domain
         //    State = States.Active;
         //    UpdatedAt = DateTime.UtcNow;
         //}
-        
+
         // Regex extensions class, 
         // Shelf, WantToRead, currently-reading, read, list of Reviews.
     }
