@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -22,7 +21,7 @@ namespace Shelfy.Infrastructure.Repositories
         {
             return await Authors.AsQueryable().FirstOrDefaultAsync(x => x.AuthorId == id);
         }
-
+        
         public async Task<IEnumerable<Author>> BrowseByPhraseAsync(string phrase)
         {
             return await Authors.AsQueryable().Where(x => x.FullName.ToLowerInvariant()
