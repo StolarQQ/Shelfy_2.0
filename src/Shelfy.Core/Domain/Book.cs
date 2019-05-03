@@ -11,7 +11,7 @@ namespace Shelfy.Core.Domain
         private static readonly Regex CoverRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
         [BsonElement]
-        private ISet<Guid> _authors = new HashSet<Guid>();
+        private ISet<Guid> _authorsIds = new HashSet<Guid>();
         [BsonElement]
         private ISet<Review> _reviews = new HashSet<Review>();
 
@@ -24,18 +24,18 @@ namespace Shelfy.Core.Domain
         public int Pages { get; protected set; }
         public string Publisher { get; protected set; }
         public DateTime PublishedAt { get; protected set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
         // Path to book cover
         public string Cover { get; protected set; }
         //User that added book
-        public Guid UserId { get; set; }
-
-        public IEnumerable<Guid> Authors => _authors;
-        public IEnumerable<Review> Reviews => _reviews;
+        public Guid UserId { get; protected set; }
 
         public int ReviewCount => _reviews.Count;
         public double Rating => _reviews.Average(x => x.Rating);
+
+        public IEnumerable<Guid> AuthorsIds => _authorsIds;
+        public IEnumerable<Review> Reviews => _reviews;
 
         // For mongo driver 
         protected Book()
@@ -140,28 +140,55 @@ namespace Shelfy.Core.Domain
 
         public void AddAuthor(Guid authorId)
         {
-            var authorExist = Authors.SingleOrDefault(x => x == authorId);
+            var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
             if (authorExist != Guid.Empty)
             {
                 throw new ArgumentException($"Author with id: '{authorId}' already added for Book: '{Title}'. ");
             }
 
-            _authors.Add(authorId);
+            _authorsIds.Add(authorId);
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void RemoveAuthor(Guid authorId)
         {
-            var authorExist = Authors.SingleOrDefault(x => x == authorId);
+            var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
             if (authorExist == null)
             {
                 throw new ArgumentException($"Author with id: '{authorId}' was not found for Book: '{Title}'. ");
             }
 
-            _authors.Remove(authorId);
+            _authorsIds.Remove(authorId);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        // TODO AddReview, DeleteReview, Update?,
+        public void AddReview(Review review)
+        {
+            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == review.UserId);
+            if (reviewExist != null)
+            {
+                throw new Exception($"User with id '{review.UserId}' already added review for book {Title}");
+            }
+
+            _reviews.Add(review);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void DeleteReview(Guid reviewId)
+        {
+            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == reviewId);
+            if (reviewExist == null)
+            {
+                throw new Exception($"Review with id '{reviewId}' not exist in book {Title}");
+            }
+
+            _reviews.Remove(reviewExist);
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+       
+
+
+        // TODO UpdateReview ?
     }
 }

@@ -19,18 +19,18 @@ namespace Shelfy.Core.Domain
             
         }
         
-        public Review(Guid reviewId, int rating, string comment, User user, Book book)
+        public Review(Guid reviewId, int rating, string comment, Guid userId, Guid bookId)
         {
             ReviewId = reviewId;
             Rating = rating;
             Comment = comment;
-            UserId = user.UserId;
-            BookId = book.BookId;
+            UserId = userId;
+            BookId = bookId;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public static Review Create(Guid reviewId, int rating, string comment, User user, Book book)
-            => new Review(reviewId, rating, comment, user, book);
+        public static Review Create(Guid reviewId, int rating, string comment, Guid userId, Guid bookId)
+            => new Review(reviewId, rating, comment, userId, bookId);
     }
 }
