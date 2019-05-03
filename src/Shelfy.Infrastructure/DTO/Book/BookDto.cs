@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Shelfy.Infrastructure.DTO.Author;
+using Shelfy.Infrastructure.DTO.Review;
 
 namespace Shelfy.Infrastructure.DTO.Book
 {
@@ -15,6 +16,9 @@ namespace Shelfy.Infrastructure.DTO.Book
         public int Pages { get; set; }
         public string Publisher { get; set; }
         public DateTime PublishedAt { get; set; }
+        public int ReviewCount_{ get; set; }
+        public double Rating { get; set; }
+        public IEnumerable<ReviewDto> Reviews { get; set; }
         public string Cover { get; set; }
         public Guid UserId { get; set; }
     }
