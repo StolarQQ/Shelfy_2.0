@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
@@ -17,19 +18,21 @@ namespace Shelfy.Infrastructure.Services
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IMapper mapper)
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IMapper mapper, ILogger<BookService> logger)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _logger = logger;
         }
-     
+
         public async Task<BookDto> GetAsync(Guid id)
         {
             var book = await _bookRepository.GetOrFailAsync(id);
-            
-            var authors = await GetAuthors(book.Authors);
+
+            var authors = await GetAuthors(book.AuthorsIds);
             var bookDto = SetUpBook(book, authors);
 
             return bookDto;
@@ -39,7 +42,7 @@ namespace Shelfy.Infrastructure.Services
         {
             var book = await _bookRepository.GetOrFailAsync(isbn);
 
-            var authors = await GetAuthors(book.Authors);
+            var authors = await GetAuthors(book.AuthorsIds);
             var bookDto = SetUpBook(book, authors);
 
             return bookDto;
@@ -48,6 +51,7 @@ namespace Shelfy.Infrastructure.Services
         // TODO This method will be replace by pagination one
         public async Task<IEnumerable<BookDto>> BrowseAsync()
         {
+            _logger.LogInformation("Fetching Data from Book repository");
             var books = await _bookRepository.BrowseAsync();
 
             return _mapper.Map<IEnumerable<BookDto>>(books);
@@ -63,7 +67,7 @@ namespace Shelfy.Infrastructure.Services
                 throw new Exception($"Book with ISBN {isbn} already exist");
             }
 
-            var validCover = cover.DefaultBookCoverValidation(); 
+            var validCover = cover.DefaultBookCoverValidation();
             book = new Book(title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
 
             foreach (var id in authorsId)
@@ -78,21 +82,27 @@ namespace Shelfy.Infrastructure.Services
             }
 
             await _bookRepository.AddAsync(book);
+            _logger.LogInformation($"Book '{book.Title}' with id '{book.BookId} was created at '{book.CreatedAt}'");
         }
 
         public async Task UpdateAsync(Guid id, JsonPatchDocument<UpdateBook> patchBook)
         {
             var bookToUpdate = await _bookRepository.GetOrFailAsync(id);
-          
+
             var book = _mapper.Map<UpdateBook>(bookToUpdate);
             patchBook.ApplyTo(book);
-            
+
             // Mapping changes to bookToUpdate
             bookToUpdate = _mapper.Map(book, bookToUpdate);
-            
+
             if (bookToUpdate.IsValid())
             {
                 await _bookRepository.UpdateAsync(bookToUpdate);
+                _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id} was updated at {DateTime.UtcNow}'");
+            }
+            else
+            {
+                _logger.LogWarning($"Error occured while updating book '{bookToUpdate.Title}' with id '{id}' model is not valid");
             }
         }
 
@@ -101,6 +111,7 @@ namespace Shelfy.Infrastructure.Services
             var book = await _bookRepository.GetOrFailAsync(id);
 
             await _bookRepository.RemoveAsync(book.BookId);
+            _logger.LogInformation($"Book '{book.Title}' with id '{id}' was deleted at {DateTime.UtcNow}'");
         }
 
         /// <summary>
@@ -136,4 +147,5 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
     }
+
 }
