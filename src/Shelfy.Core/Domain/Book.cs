@@ -87,7 +87,7 @@ namespace Shelfy.Core.Domain
             
             if (description.Length > 500)
             {
-                throw new ArgumentException("Description cannot contain more than 300 characters");
+                throw new ArgumentException("Description cannot contain more than 500 characters");
             }
 
             Description = description;
@@ -174,21 +174,16 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void DeleteReview(Guid reviewId)
+        public void DeleteReview(Guid userId)
         {
-            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == reviewId);
+            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == userId);
             if (reviewExist == null)
             {
-                throw new Exception($"Review with id '{reviewId}' not exist in book {Title}");
+                throw new Exception($"Review by user with id '{userId}' not exist for book {Title}");
             }
 
             _reviews.Remove(reviewExist);
             UpdatedAt = DateTime.UtcNow;
         }
-
-       
-
-
-        // TODO UpdateReview ?
     }
 }
