@@ -51,6 +51,7 @@ namespace Shelfy.API
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEncrypterService, EncrypterService>();
+            services.AddScoped<IReviewService, ReviewService>();
 
             services.AddSingleton<IJwtHandler, JwtHandler>();
             services.AddSingleton(AutoMapperConfig.Initialize());

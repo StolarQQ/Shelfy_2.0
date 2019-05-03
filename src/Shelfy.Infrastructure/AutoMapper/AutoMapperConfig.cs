@@ -3,6 +3,7 @@ using Shelfy.Core.Domain;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
+using Shelfy.Infrastructure.DTO.Review;
 using Shelfy.Infrastructure.DTO.User;
 
 namespace Shelfy.Infrastructure.AutoMapper
@@ -19,6 +20,7 @@ namespace Shelfy.Infrastructure.AutoMapper
                     cfg.CreateMap<Author, AuthorFullNameDto>();
                     cfg.CreateMap<UpdateBook, Book>();
                     cfg.CreateMap<User, UserDto>();
+                    cfg.CreateMap<Review, ReviewDto>();
                 })
                 .CreateMapper();
     }
