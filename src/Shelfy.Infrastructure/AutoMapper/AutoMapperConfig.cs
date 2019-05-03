@@ -12,7 +12,7 @@ namespace Shelfy.Infrastructure.AutoMapper
         public static IMapper Initialize()
             => new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<Book, BookDto>().ForSourceMember(x => x.Authors, opt => opt.DoNotValidate())
+                    cfg.CreateMap<Book, BookDto>().ForSourceMember(x => x.AuthorsIds, opt => opt.DoNotValidate())
                         .ForMember(x => x.Authors, opt => opt.Ignore());
                     cfg.CreateMap<Author, AuthorDto>();
                     cfg.CreateMap<Author, AuthorSearchDto>();

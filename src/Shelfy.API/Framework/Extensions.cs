@@ -20,6 +20,5 @@ namespace Shelfy.API.Framework
 
             return builder;
         }
-
     }
 }
