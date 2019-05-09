@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\src\Shelfy.Infrastructure\Shelfy.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
 </Project>
