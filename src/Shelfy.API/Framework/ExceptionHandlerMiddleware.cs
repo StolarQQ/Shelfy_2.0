@@ -9,7 +9,6 @@ namespace Shelfy.API.Framework
 {
     public class ExceptionHandlerMiddleware
     {
-
         private readonly RequestDelegate _next;
 
         public ExceptionHandlerMiddleware(RequestDelegate next)
@@ -49,7 +48,6 @@ namespace Shelfy.API.Framework
                     statusCode = HttpStatusCode.InternalServerError;
                     break;
             }
-
 
             var response = new {code = errorCode, message = exception.Message};
             var payload = JsonConvert.SerializeObject(response);

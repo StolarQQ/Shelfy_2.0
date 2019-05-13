@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -23,9 +24,16 @@ namespace Shelfy.Infrastructure.Services
             _mapper = mapper;
         }
         
-        public Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
+        public async Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
         {
-            throw new NotImplementedException();
+            var book = await _bookRepository.GetOrFailAsync(bookId);
+            var reviews = new List<Review>();
+
+            foreach (var review in book.Reviews)
+                if (reviewId == review.ReviewId)
+                    reviews.Add(review);
+            
+            return _mapper.Map<ReviewDto>(reviews);
         }
 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForBookAsync(Guid bookId)
@@ -33,6 +41,24 @@ namespace Shelfy.Infrastructure.Services
             var book = await _bookRepository.GetOrFailAsync(bookId);
 
             return _mapper.Map<IEnumerable<ReviewDto>>(book.Reviews);
+        }
+
+        public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
+        {
+            var books = await _bookRepository.BrowseAsync();
+            var reviews = new List<Review>();
+
+            foreach (var book in books)
+            {
+                var allReviews = book.Reviews;
+
+                foreach (var rev in allReviews)
+                    if (rev.UserId == userId)
+                        reviews.Add(rev);
+            }
+
+            return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
+
         }
 
         public async Task AddAsync(int rating, string comment, Guid userId, Guid bookId)
@@ -43,6 +69,11 @@ namespace Shelfy.Infrastructure.Services
 
             _logger.LogInformation($"Review with id '{review.ReviewId}'" +
                                    $" was created for book '{book.Title}' by user with id '{userId}'");
+        }
+
+        public async Task UpdateAsync(Guid reviewId, int rating, string comment)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task DeleteAsync(Guid bookId, Guid userId)

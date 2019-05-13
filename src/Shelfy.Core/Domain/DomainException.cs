@@ -10,7 +10,6 @@ namespace Shelfy.Core.Domain
 
         public DomainException(string code) : base(code)
         {
-
         }
 
         public DomainException(string message, params object[] args) : base(string.Empty, message, args)
@@ -29,7 +28,6 @@ namespace Shelfy.Core.Domain
         public DomainException(Exception innerException, string code, string message, params object[] args)
             : base(code, string.Format(message, args), innerException)
         {
-
         }
     }
 }

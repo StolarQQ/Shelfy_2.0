@@ -54,8 +54,7 @@ namespace Shelfy.Core.Domain
 
             if (comment.Length < 5)
             {
-                throw new ArgumentException("Comment must contain at least 15 characters");
-
+                throw new ArgumentException("Comment must contain at least 5 characters");
             }
 
             if (comment.Length > 500)
@@ -66,8 +65,7 @@ namespace Shelfy.Core.Domain
             Comment = comment;
             UpdatedAt = DateTime.UtcNow;
         }
-
-
+        
         public static Review Create(Guid reviewId, int rating, string comment, Guid userId, Guid bookId)
             => new Review(reviewId, rating, comment, userId, bookId);
     }
