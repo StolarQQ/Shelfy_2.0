@@ -20,7 +20,8 @@ namespace Shelfy.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly ILogger<BookService> _logger;
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IMapper mapper, ILogger<BookService> logger)
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository,
+            IMapper mapper, ILogger<BookService> logger)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;

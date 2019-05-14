@@ -40,7 +40,7 @@ namespace Shelfy.Infrastructure.Services
 
             return _mapper.Map<IEnumerable<AuthorSearchDto>>(authors);
         }
-        // TODO Replace pagination
+     
         public async Task<IEnumerable<AuthorDto>> BrowseAsync()
         {
             var authors = await _authorRepository.BrowseAsync();
@@ -76,10 +76,7 @@ namespace Shelfy.Infrastructure.Services
 
             authorToUpdate = _mapper.Map(author, authorToUpdate);
 
-            if (authorToUpdate.IsValid())
-            {
-                await _authorRepository.UpdateAsync(authorToUpdate);
-            }
+            if (authorToUpdate.IsValid()) await _authorRepository.UpdateAsync(authorToUpdate);
         }
 
         public async Task DeleteAsync(Guid id)

@@ -27,13 +27,14 @@ namespace Shelfy.Infrastructure.Services
         public async Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
-            var reviews = new List<Review>();
 
-            foreach (var review in book.Reviews)
-                if (reviewId == review.ReviewId)
-                    reviews.Add(review);
-            
-            return _mapper.Map<ReviewDto>(reviews);
+            var review = book.Reviews.FirstOrDefault(x => x.ReviewId == reviewId);
+            if (review == null)
+            {
+                throw new Exception($"Review with id {reviewId} not exist for book {book.Title}");
+            }
+                    
+            return _mapper.Map<ReviewDto>(review);
         }
 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForBookAsync(Guid bookId)
@@ -43,6 +44,7 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<IEnumerable<ReviewDto>>(book.Reviews);
         }
 
+        // TODO DUPLICATE DATA IN USER !! 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
             var books = await _bookRepository.BrowseAsync();
@@ -52,13 +54,12 @@ namespace Shelfy.Infrastructure.Services
             {
                 var allReviews = book.Reviews;
 
-                foreach (var rev in allReviews)
-                    if (rev.UserId == userId)
-                        reviews.Add(rev);
+                foreach (var review in allReviews)
+                    if (review.UserId == userId)
+                        reviews.Add(review);
             }
 
             return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
-
         }
 
         public async Task AddAsync(int rating, string comment, Guid userId, Guid bookId)
