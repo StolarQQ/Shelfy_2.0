@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shelfy.Infrastructure.Commands;
-using Shelfy.Infrastructure.DTO;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
+using Shelfy.Infrastructure.Helper;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -12,7 +11,7 @@ namespace Shelfy.Infrastructure.Services
     {
         Task<UserDto> GetByIdAsync(Guid id);
         Task<UserDto> GetByUserNameAsync(string username);
-        Task<IEnumerable<UserDto>> GetAllAsync();
+        Task<PagedResult<UserDto>> BrowseAsync(int pageNumber = 1, int pageSize = 5);
         Task RegisterAsync(Guid userid, string email, string username,
              string password);
         Task<TokenDto> LoginAsync(string email, string password);

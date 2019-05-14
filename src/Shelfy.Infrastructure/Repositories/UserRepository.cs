@@ -32,7 +32,7 @@ namespace Shelfy.Infrastructure.Repositories
             return await Users.AsQueryable().FirstOrDefaultAsync(x => x.Username == username);
         }
 
-        public async Task<IEnumerable<User>> BrowseAsync()
+        public async Task<IEnumerable<User>> BrowseAsync(int pageNumber, int pageSize)
         {
             return await Users.AsQueryable().ToListAsync();
         }

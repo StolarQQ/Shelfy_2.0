@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
@@ -8,6 +7,7 @@ using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Helper;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -43,11 +43,13 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<PagedResult<UserDto>> BrowseAsync(int pageNumber = 1, int pageSize = 5)
         {
-            var users = await _userRepository.BrowseAsync();
+            var users = await _userRepository.BrowseAsync(pageNumber, pageSize);
 
-            return _mapper.Map<IEnumerable<UserDto>>(users);
+            var paginatedResult = users.Paginate(pageNumber, pageSize);
+
+            return _mapper.Map<PagedResult<UserDto>>(paginatedResult);
         }
 
         public async Task RegisterAsync(Guid userid, string email, string username,

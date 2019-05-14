@@ -45,10 +45,11 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "HasUserRole")]
-        public async Task<IActionResult> Get()
+        //[Authorize(Policy = "HasUserRole")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Get(int pageNumber = 1, int pageSize = 5)
         {
-            var user = await _userService.GetAllAsync();
+            var user = await _userService.BrowseAsync(pageNumber, pageSize);
            
             return Ok(user);
         }
