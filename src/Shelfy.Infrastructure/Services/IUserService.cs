@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shelfy.Core.Types;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Helper;

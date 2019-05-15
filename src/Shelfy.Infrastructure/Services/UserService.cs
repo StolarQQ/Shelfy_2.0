@@ -4,10 +4,10 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
+using Shelfy.Core.Types;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Extensions;
-using Shelfy.Infrastructure.Helper;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -43,13 +43,11 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<PagedResult<UserDto>> BrowseAsync(int pageNumber = 1, int pageSize = 5)
+        public async Task<PagedResult<UserDto>> BrowseAsync(int pageNumber, int pageSize)
         {
             var users = await _userRepository.BrowseAsync(pageNumber, pageSize);
 
-            var paginatedResult = users.Paginate(pageNumber, pageSize);
-
-            return _mapper.Map<PagedResult<UserDto>>(paginatedResult);
+            return _mapper.Map<PagedResult<UserDto>>(users);
         }
 
         public async Task RegisterAsync(Guid userid, string email, string username,

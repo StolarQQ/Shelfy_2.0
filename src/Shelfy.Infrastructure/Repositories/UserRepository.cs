@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
+using Shelfy.Core.Types;
+using Shelfy.Infrastructure.Helper;
+using Shelfy.Infrastructure.Mongodb;
 
 namespace Shelfy.Infrastructure.Repositories
 {
@@ -32,9 +34,9 @@ namespace Shelfy.Infrastructure.Repositories
             return await Users.AsQueryable().FirstOrDefaultAsync(x => x.Username == username);
         }
 
-        public async Task<IEnumerable<User>> BrowseAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<User>> BrowseAsync(int currentPage, int pageSize)
         {
-            return await Users.AsQueryable().ToListAsync();
+            return await Users.AsQueryable().PaginateAsync(currentPage, pageSize);
         }
 
         public async Task AddAsync(User user)

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Types;
 
 namespace Shelfy.Core.Repositories
 {
@@ -10,7 +12,7 @@ namespace Shelfy.Core.Repositories
         Task<User> GetByIdAsync(Guid id);
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByUsernameAsync(string username);
-        Task<IEnumerable<User>> BrowseAsync();
+        Task<PagedResult<User>> BrowseAsync(int currentPage, int pageSize);
         Task AddAsync(User user);
         Task UpdateAsync(User user);
         Task RemoveAsync(Guid id);
