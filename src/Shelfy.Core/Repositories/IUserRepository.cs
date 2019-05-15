@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
-using Shelfy.Core.Types;
+using Shelfy.Core.Helper;
 
 namespace Shelfy.Core.Repositories
 {

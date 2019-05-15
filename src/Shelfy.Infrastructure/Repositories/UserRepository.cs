@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
-using Shelfy.Core.Types;
-using Shelfy.Infrastructure.Helper;
 using Shelfy.Infrastructure.Mongodb;
 
 namespace Shelfy.Infrastructure.Repositories

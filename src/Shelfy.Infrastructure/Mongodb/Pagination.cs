@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using Shelfy.Core.Types;
+using Shelfy.Core.Helper;
 
 namespace Shelfy.Infrastructure.Mongodb
 {
