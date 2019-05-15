@@ -7,6 +7,7 @@ namespace Shelfy.Core.Domain
     public class Author
     {
         private static readonly Regex ImageUrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
+        private static readonly Regex UrlRegex = new Regex(@"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$");
 
         [BsonId]
         public Guid AuthorId { get; protected set; }
@@ -30,7 +31,7 @@ namespace Shelfy.Core.Domain
         // For mongo driver
         protected Author()
         {
-            
+
         }
 
         // TODO : UserId
@@ -40,7 +41,7 @@ namespace Shelfy.Core.Domain
             AuthorId = authorId;
             SetFirstName(firstName);
             SetLastName(lastName);
-            SetFullName(firstName,lastName);
+            SetFullName(firstName, lastName);
             SetDescription(description);
             SetImageUrl(imageUrl);
             SetDateOfBirth(dateOfBirth);
@@ -58,6 +59,17 @@ namespace Shelfy.Core.Domain
             if (string.IsNullOrWhiteSpace(firstName))
             {
                 throw new ArgumentException($"Author with {AuthorId} cannot have an empty FirstName");
+            }
+
+            if (firstName.Length < 2)
+            {
+                throw new ArgumentException("FirstName must contain at least 2 characters");
+
+            }
+
+            if (firstName.Length > 20)
+            {
+                throw new ArgumentException($"FirstName cannot contain more than 20 characters");
             }
 
             FirstName = firstName;
@@ -114,10 +126,10 @@ namespace Shelfy.Core.Domain
             DateOfDeath = dateOfDeath;
             UpdatedAt = DateTime.UtcNow;
         }
-        
+
         public void SetAuthorWebsite(string authorWebsite)
         {
-            if (Uri.IsWellFormedUriString(authorWebsite, UriKind.RelativeOrAbsolute) == false)
+            if (UrlRegex.IsMatch(authorWebsite) == false)
             {
                 throw new ArgumentException($"URL {authorWebsite} doesn't meet required criteria");
             }
