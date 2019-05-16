@@ -58,7 +58,7 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw new ArgumentException($"Author with {AuthorId} cannot have an empty FirstName");
+                throw new ArgumentException($"Author with '{AuthorId}' cannot have an empty FirstName");
             }
 
             if (firstName.Length < 2)
@@ -69,7 +69,7 @@ namespace Shelfy.Core.Domain
 
             if (firstName.Length > 20)
             {
-                throw new ArgumentException($"FirstName cannot contain more than 20 characters");
+                throw new ArgumentException("FirstName cannot contain more than 20 characters");
             }
 
             FirstName = firstName;
@@ -80,7 +80,7 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(lastName))
             {
-                throw new ArgumentException($"Author with {AuthorId} cannot have an empty LastName");
+                throw new ArgumentException($"Author with '{AuthorId}' cannot have an empty LastName");
             }
 
             LastName = lastName;
@@ -108,7 +108,7 @@ namespace Shelfy.Core.Domain
 
             if (description.Length > 500)
             {
-                throw new ArgumentException("Description cannot contain more than 300 characters");
+                throw new ArgumentException("Description cannot contain more than 500 characters");
             }
 
             Description = description;
@@ -117,13 +117,29 @@ namespace Shelfy.Core.Domain
 
         public void SetDateOfBirth(DateTime? dateOfBirth)
         {
+            if (dateOfBirth > DateTime.UtcNow)
+            {
+                throw new ArgumentException($"DateOfBirth '{dateOfBirth}' cannot be greater than '{DateTime.UtcNow}'");
+            }
+
             DateOfBirth = dateOfBirth;
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetDateOfDeath(DateTime? dateOfDeath)
         {
+            if (dateOfDeath != null & dateOfDeath < DateOfBirth)
+            {
+                throw new ArgumentException($"DateOfDeath '{dateOfDeath}' cannot be earlier than DateOfBirth '{DateOfBirth}'");
+            }
+
             DateOfDeath = dateOfDeath;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetBirthPlace(string birthPlace)
+        {
+            BirthPlace = birthPlace;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -140,18 +156,12 @@ namespace Shelfy.Core.Domain
 
         public void SetAuthorSource(string authorSource)
         {
-            if (Uri.IsWellFormedUriString(authorSource, UriKind.RelativeOrAbsolute) == false)
+            if (UrlRegex.IsMatch(authorSource) == false)
             {
                 throw new ArgumentException($"URL {authorSource} doesn't meet required criteria");
             }
 
             AuthorSource = authorSource;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void SetBirthPlace(string birthPlace)
-        {
-            BirthPlace = birthPlace;
             UpdatedAt = DateTime.UtcNow;
         }
 
