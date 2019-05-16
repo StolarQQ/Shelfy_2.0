@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using FluentAssertions;
 using Shelfy.Core.Domain;
 using Xunit;
@@ -8,7 +9,7 @@ namespace Shelfy.Tests.Domain
     public class AuthorDomainTests
     {
         private readonly Author _author;
-
+     
         public AuthorDomainTests()
         {
             var authorId = Guid.NewGuid();
@@ -42,15 +43,15 @@ namespace Shelfy.Tests.Domain
             _author.SetFirstName(expectedFirstName);
 
             //Assert
-            _author.FirstName.Should().BeEquivalentTo(expectedFirstName);
             expectedFirstName.Length.Should().Be(2);
+            _author.FirstName.Should().BeEquivalentTo(expectedFirstName);
         }
 
         [Fact]
         public void setFirstName_should_assign_firstName_to_author_when_firstName_length_is_20()
         {
             // Arrange
-            string expectedFirstName = "ABCDEFGHIJKLMNOPRSTU";
+            string expectedFirstName = Helper.GenerateRandomString(20);
 
             // Act
             _author.SetFirstName(expectedFirstName);
@@ -65,7 +66,7 @@ namespace Shelfy.Tests.Domain
         {
             // Arrange
             string expectedFirstName = null;
-            var expectedExMsg = $"Author with {_author.AuthorId} cannot have an empty FirstName";
+            var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty FirstName";
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
@@ -77,7 +78,7 @@ namespace Shelfy.Tests.Domain
         {
             // Arrange
             var expectedFirstName = "";
-            var expectedExMsg = $"Author with {_author.AuthorId} cannot have an empty FirstName";
+            var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty FirstName";
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
@@ -85,7 +86,7 @@ namespace Shelfy.Tests.Domain
         }
 
         [Fact]
-        public void setFirstName_should_thrown_exception_when_firstName_length_is_smaller_than_2()
+        public void setFirstName_should_thrown_exception_when_firstName_length_is_less_than_2()
         {
             // Arrange
             string expectedFirstName = "T";
@@ -100,7 +101,7 @@ namespace Shelfy.Tests.Domain
         public void setFirstName_should_thrown_exception_when_firstName_length_is_greater_than_20()
         {
             // Arrange
-            string expectedFirstName = "ABCDEFGHIJKLMNOPRSTUWXYZ";
+            string expectedFirstName = Helper.GenerateRandomString(26);
             var expectedExMsg = "FirstName cannot contain more than 20 characters";
 
             // Act & Assert
@@ -127,7 +128,7 @@ namespace Shelfy.Tests.Domain
         {
             // Arrange
             string expectedLastName = null;
-            var expectedExMsg = $"Author with {_author.AuthorId} cannot have an empty LastName";
+            var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty LastName";
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => _author.SetLastName(expectedLastName));
@@ -139,14 +140,193 @@ namespace Shelfy.Tests.Domain
         {
             // Arrange
             var expectedLastName = "";
-            var expectedExMsg = $"Author with {_author.AuthorId} cannot have an empty LastName";
+            var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty LastName";
 
             // Act & Assert
             var exception = Assert.Throws<ArgumentException>(() => _author.SetLastName(expectedLastName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
-        // TODO FIX REGEX
+        [Fact]
+        public void setDescription_should_assign_description_to_author_for_correct_input()
+        {
+            // Arrange
+            var expectedDescription = "C# in Depth, Fourth Edition is your key to unlocking the powerful" +
+                                      " new features added to the language in C# 5, 6, and 7. Following the" +
+                                      " expert guidance of C# legend Jon Skeet, you'll master asynchronous functions," +
+                                      " expression-bodied members, interpolated strings, tuples, and much more.";
+
+            // Act
+            _author.SetDescription(expectedDescription);
+
+            // Assert
+            _author.Description.Should().BeEquivalentTo(expectedDescription);
+        }
+        
+        [Fact]
+        public void setDescription_should_assign_description_to_author_when_description_length_is_15()
+        {
+            // Arrange
+            var expectedDescription = Helper.GenerateRandomString(15);
+
+            // Act
+            _author.SetDescription(expectedDescription);
+
+            // Assert
+            expectedDescription.Length.Should().Be(15);
+            _author.Description.Should().BeEquivalentTo(expectedDescription);
+        }
+        
+        [Fact]
+        public void setDescription_should_assign_description_to_author_when_description_length_is_500()
+        {
+            // Arrange
+            var expectedDescription = Helper.GenerateRandomString(500);
+
+            // Act
+            _author.SetDescription(expectedDescription);
+
+            // Assert
+            expectedDescription.Length.Should().Be(500);
+            _author.Description.Should().BeEquivalentTo(expectedDescription);
+        }
+        
+        [Fact]
+        public void setDescription_should_thrown_exception_when_description_is_null()
+        {
+            // Arrange
+            string expectedDescription = null;
+            var expectedExMsg = "Description cannot be empty";
+
+            // Act
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
+            
+            // Assert
+            ex.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setDescription_should_thrown_exception_when_description_is_whitespace()
+        {
+            // Arrange
+            string expectedDescription = "";
+            var expectedExMsg = "Description cannot be empty";
+
+            // Act
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
+
+            // Assert
+            ex.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setDescription_should_thrown_exception_when_description_length_is_less_than_15()
+        {
+            // Arrange
+            string expectedDescription = Helper.GenerateRandomString(10);
+            var expectedExMsg = "Description must contain at least 15 characters";
+
+            // Act
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
+
+            // Assert
+            expectedDescription.Length.Should().BeLessThan(15);
+            ex.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setDescription_should_thrown_exception_when_description_length_is_greater_than_500()
+        {
+            // Arrange
+            string expectedDescription = Helper.GenerateRandomString(2500);
+            var expectedExMsg = "Description cannot contain more than 500 characters";
+
+            // Act
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
+
+            // Assert
+            expectedDescription.Length.Should().BeGreaterThan(500);
+            ex.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+        
+        [Fact]
+        public void setDateBirth_should_assign_dateOfBirth_for_correct_DateTime()
+        {
+            // Arrange
+            var expectedDateOfBirth = new DateTime(1950, 02, 04);
+
+            // Act
+            _author.SetDateOfBirth(expectedDateOfBirth);
+
+            // Assert
+            _author.DateOfBirth.Should().Be(expectedDateOfBirth);
+        }
+
+        [Fact]
+        public void setDateBirth_should_assign_dateOfBirth_for_null()
+        {
+            // Arrange
+            DateTime? expectedDateOfBirth = null;
+
+            // Act
+            _author.SetDateOfBirth(expectedDateOfBirth);
+
+            // Assert
+            _author.DateOfBirth.Should().Be(expectedDateOfBirth);
+        }
+        
+        [Fact]
+        public void setDateBirth_should_thrown_exception_when_dateOfBirth_is_greater_than_DateTime_now()
+        {
+            // Arrange
+            var incorrectdDateOfBirth = new DateTime(2222,12,12);
+            var exMsg = $"DateOfBirth '{incorrectdDateOfBirth}' cannot be greater than '{DateTime.UtcNow}'";
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDateOfBirth(incorrectdDateOfBirth));
+            ex.Message.Should().BeEquivalentTo(exMsg);
+        }
+        
+        [Fact]
+        public void setDateOfDeath_should_assign_dateOfDeath_for_correct_DateTime()
+        {
+            // Arrange
+            var expectedDateOfDeath = new DateTime(2000, 02, 04);
+
+            // Act
+            _author.SetDateOfDeath(expectedDateOfDeath);
+
+            // Assert
+            _author.DateOfDeath.Should().Be(expectedDateOfDeath);
+        }
+
+        [Fact]
+        public void setDateOfDeath_should_assign_dateOfDeath_for_null()
+        {
+            // Arrange
+            DateTime? expectedDateOfDeath = null;
+
+            // Act
+            _author.SetDateOfDeath(expectedDateOfDeath);
+
+            // Assert
+            _author.DateOfDeath.Should().Be(expectedDateOfDeath);
+        }
+        
+        [Fact]
+        public void setDateDeath_should_thrown_exception_when_dateOfDeath_is_earlier_than_dateOfBirth()
+        {
+            // Arrange
+            var dateOfBirth = new DateTime(1950, 12, 12);
+            var incorrectdDateOfDeath = new DateTime(1850, 12, 12);
+            var exMsg = $"DateOfDeath '{incorrectdDateOfDeath}' cannot be earlier than DateOfBirth '{dateOfBirth}'";
+
+            // Act & Assert
+            _author.SetDateOfBirth(dateOfBirth);
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDateOfDeath(incorrectdDateOfDeath));
+            ex.Message.Should().BeEquivalentTo(exMsg);
+        }
+        
         [Fact]
         public void setAuthorWebsite_should_assign_correct_website_url_to_author()
         {
