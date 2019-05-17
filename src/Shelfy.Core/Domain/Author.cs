@@ -58,18 +58,18 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                throw new ArgumentException($"Author with '{AuthorId}' cannot have an empty FirstName");
+                throw new DomainException(ErrorCodes.InvalidFirstName, $"Author with '{AuthorId}' cannot have an empty FirstName.");
             }
 
             if (firstName.Length < 2)
             {
-                throw new ArgumentException("FirstName must contain at least 2 characters");
+                throw new DomainException(ErrorCodes.InvalidFirstName, "FirstName must contain at least 2 characters.");
 
             }
 
             if (firstName.Length > 20)
-            {
-                throw new ArgumentException("FirstName cannot contain more than 20 characters");
+            { 
+                throw new DomainException(ErrorCodes.InvalidFirstName, "FirstName cannot contain more than 20 characters.");
             }
 
             FirstName = firstName;
@@ -80,7 +80,7 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(lastName))
             {
-                throw new ArgumentException($"Author with '{AuthorId}' cannot have an empty LastName");
+                throw new DomainException(ErrorCodes.InvalidLastName, $"Author with '{AuthorId}' cannot have an empty LastName.");
             }
 
             LastName = lastName;
@@ -97,18 +97,18 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException("Description cannot be empty");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description cannot be empty.");
             }
 
             if (description.Length < 15)
             {
-                throw new ArgumentException("Description must contain at least 15 characters");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description must contain at least 15 characters.");
 
             }
 
             if (description.Length > 500)
             {
-                throw new ArgumentException("Description cannot contain more than 500 characters");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description cannot contain more than 500 characters.");
             }
 
             Description = description;
@@ -119,7 +119,7 @@ namespace Shelfy.Core.Domain
         {
             if (dateOfBirth > DateTime.UtcNow)
             {
-                throw new ArgumentException($"DateOfBirth '{dateOfBirth}' cannot be greater than '{DateTime.UtcNow}'");
+                throw new DomainException(ErrorCodes.InvalidDateOfBirth, $"DateOfBirth '{dateOfBirth}' cannot be greater than '{DateTime.UtcNow}'.");
             }
 
             DateOfBirth = dateOfBirth;
@@ -130,7 +130,7 @@ namespace Shelfy.Core.Domain
         {
             if (dateOfDeath != null & dateOfDeath < DateOfBirth)
             {
-                throw new ArgumentException($"DateOfDeath '{dateOfDeath}' cannot be earlier than DateOfBirth '{DateOfBirth}'");
+                throw new DomainException(ErrorCodes.InvalidDateOfDeath, $"DateOfDeath '{dateOfDeath}' cannot be earlier than DateOfBirth '{DateOfBirth}'.");
             }
 
             DateOfDeath = dateOfDeath;
@@ -147,7 +147,7 @@ namespace Shelfy.Core.Domain
         {
             if (UrlRegex.IsMatch(authorWebsite) == false)
             {
-                throw new ArgumentException($"URL {authorWebsite} doesn't meet required criteria");
+                throw new DomainException(ErrorCodes.InvalidAuthorWebsite, $"URL {authorWebsite} doesn't meet required criteria.");
             }
 
             AuthorWebsite = authorWebsite;
@@ -158,7 +158,7 @@ namespace Shelfy.Core.Domain
         {
             if (UrlRegex.IsMatch(authorSource) == false)
             {
-                throw new ArgumentException($"URL {authorSource} doesn't meet required criteria");
+                throw new DomainException(ErrorCodes.InvalidAuthorSource, $"URL {authorSource} doesn't meet required criteria.");
             }
 
             AuthorSource = authorSource;
@@ -169,7 +169,7 @@ namespace Shelfy.Core.Domain
         {
             if (ImageUrlRegex.IsMatch(imageUrl) == false)
             {
-                throw new ArgumentException($"URL {imageUrl} doesn't meet required criteria");
+                throw new DomainException(ErrorCodes.InvalidImageUrl, $"URL {imageUrl} doesn't meet required criteria.");
             }
 
             ImageUrl = imageUrl;

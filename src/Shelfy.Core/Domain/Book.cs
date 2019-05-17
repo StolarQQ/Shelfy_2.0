@@ -65,7 +65,7 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(title))
             {
-                throw new ArgumentException($"Book with {BookId} cannot have an empty title");
+                throw new DomainException(ErrorCodes.InvalidTitle, $"Book with {BookId} cannot have an empty title");
             }
 
             Title = title;
@@ -76,18 +76,18 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentException("Description cannot be empty");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description cannot be empty");
             }
 
             if (description.Length < 15)
             {
-                throw new ArgumentException("Description must contain at least 15 characters");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description must contain at least 15 characters");
 
             }
             
             if (description.Length > 500)
             {
-                throw new ArgumentException("Description cannot contain more than 500 characters");
+                throw new DomainException(ErrorCodes.InvalidDescription, "Description cannot contain more than 500 characters");
             }
 
             Description = description;
@@ -98,7 +98,7 @@ namespace Shelfy.Core.Domain
         {
             if (isbn.Length != 13)
             {
-                throw new ArgumentException("ISBN number must contain exactly 13 characters");
+                throw new DomainException(ErrorCodes.InvalidIsbn, "ISBN number must contain exactly 13 characters");
             }
 
             ISBN = isbn;
@@ -109,7 +109,7 @@ namespace Shelfy.Core.Domain
         {
             if (pages <= 0)
             {
-                throw new ArgumentException("Number of pages cannot be zero or negative");
+                throw new DomainException(ErrorCodes.InvalidPages, "Number of pages cannot be zero or negative");
             }
 
             Pages = pages;
@@ -120,7 +120,7 @@ namespace Shelfy.Core.Domain
         {
             if (CoverRegex.IsMatch(cover) == false)
             {
-                throw new ArgumentException($"Cover URL {cover} doesn't meet required criteria");
+                throw new DomainException(ErrorCodes.InvalidCover, $"Cover URL {cover} doesn't meet required criteria");
             }
 
             Cover = cover;
@@ -131,7 +131,7 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(publisher))
             {
-                throw new ArgumentException("Publisher cannot be empty");
+                throw new DomainException(ErrorCodes.InvalidPublisher, "Publisher cannot be empty");
             }
 
             Publisher = publisher;
@@ -143,7 +143,7 @@ namespace Shelfy.Core.Domain
             var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
             if (authorExist != Guid.Empty)
             {
-                throw new ArgumentException($"Author with id: '{authorId}' already added for Book: '{Title}'. ");
+                throw new DomainException(ErrorCodes.AuthorAlreadyAdded, $"Author with id: '{authorId}' already added for Book: '{Title}'. ");
             }
 
             _authorsIds.Add(authorId);
@@ -155,7 +155,7 @@ namespace Shelfy.Core.Domain
             var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
             if (authorExist == null)
             {
-                throw new ArgumentException($"Author with id: '{authorId}' was not found for Book: '{Title}'. ");
+                throw new DomainException(ErrorCodes.AuthorNotFound, $"Author with id: '{authorId}' was not found for Book: '{Title}'. ");
             }
 
             _authorsIds.Remove(authorId);
@@ -167,7 +167,7 @@ namespace Shelfy.Core.Domain
             var reviewExist = Reviews.SingleOrDefault(x => x.UserId == review.UserId);
             if (reviewExist != null)
             {
-                throw new Exception($"User with id '{review.UserId}' already added review for book {Title}");
+                throw new DomainException(ErrorCodes.ReviewAlreadyAdded, $"User with id '{review.UserId}' already added review for book {Title}");
             }
 
             _reviews.Add(review);
@@ -179,7 +179,7 @@ namespace Shelfy.Core.Domain
             var reviewExist = Reviews.SingleOrDefault(x => x.UserId == userId);
             if (reviewExist == null)
             {
-                throw new Exception($"Review by user with id '{userId}' not exist for book {Title}");
+                throw new DomainException(ErrorCodes.ReviewNotFound, $"Review by user with id '{userId}' not exist for book {Title}");
             }
 
             _reviews.Remove(reviewExist);

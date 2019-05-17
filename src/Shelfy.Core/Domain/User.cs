@@ -10,6 +10,9 @@ namespace Shelfy.Core.Domain
         private static readonly Regex EmailRegex = new Regex("^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
         private const string DefaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
+        //// Reviews created by User for specific book
+        //private ISet<Review> _reviews = new HashSet<Review>();
+
         [BsonId]
         public Guid UserId { get; protected set; }
         public string Email { get; protected set; }
@@ -22,10 +25,10 @@ namespace Shelfy.Core.Domain
         public State State { get; protected set; }
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
-
+        
         protected User()
         {
-
+            
         }
 
         public User(Guid userid, string email, string username, string password, string salt, Role role, string avatar)
@@ -46,7 +49,7 @@ namespace Shelfy.Core.Domain
         {
             if (EmailRegex.IsMatch(email) == false)
             {
-                throw new ArgumentException($"Email is invalid {email}.");
+                throw new DomainException(ErrorCodes.InvalidEmail, $"Email is invalid {email}.");
             }
 
             Email = email.ToLowerInvariant();
@@ -57,17 +60,17 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(username))
             {
-                throw new ArgumentException("Username can not be empty.");
+                throw new DomainException(ErrorCodes.InvalidUsername, "Username can not be empty.");
             }
 
             if (username.Length < 2)
             {
-                throw new ArgumentException("Username must contain at least 2 characters.");
+                throw new DomainException(ErrorCodes.InvalidUsername, "Username must contain at least 2 characters.");
             }
 
             if (username.Length > 20)
             {
-                throw new ArgumentException("Username cannot contain more than 20 characters.");
+                throw new DomainException(ErrorCodes.InvalidUsername, "Username cannot contain more than 20 characters.");
             }
 
             Username = username.ToLowerInvariant();
@@ -78,17 +81,17 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Password cannot be empty.");
+                throw new DomainException(ErrorCodes.InvalidPassword, "Password cannot be empty.");
             }
 
             if (password.Length < 5)
             {
-                throw new ArgumentException("Password must contain at least 5 characters.");
+                throw new DomainException(ErrorCodes.InvalidPassword, "Password must contain at least 5 characters.");
             }
 
             if (password.Length > 75)
             {
-                throw new ArgumentException("Password can not contain more than 75 characters.");
+                throw new DomainException(ErrorCodes.InvalidPassword, "Password can not contain more than 75 characters.");
             }
 
             Password = password;
@@ -104,7 +107,7 @@ namespace Shelfy.Core.Domain
 
             if (!isValid)
             {
-                throw new ArgumentException("Invalid role.");
+                throw new ArgumentException(ErrorCodes.InvalidRole, "Invalid role.");
             }
 
             Role = role;
@@ -120,7 +123,7 @@ namespace Shelfy.Core.Domain
 
             if (!isValid)
             {
-                throw new ArgumentException("Invalid account state.");
+                throw new ArgumentException(ErrorCodes.InvalidState, "Invalid account state.");
             }
 
             State = state;
@@ -131,7 +134,7 @@ namespace Shelfy.Core.Domain
         {
             if (UrlRegex.IsMatch(avatar) == false)
             {
-                throw new ArgumentException($"URL {avatar} doesn't meet required criteria");
+                throw new DomainException(ErrorCodes.InvalidAvatar, $"URL {avatar} doesn't meet required criteria");
             }
 
             if (Avatar == avatar)
@@ -147,46 +150,45 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        ///// <summary>
-        ///// After email confirmation, account it's activated.
-        ///// </summary>
-        //public void Activated()
-        //{
-        //    if (State == States.Active)
-        //    {
-        //        throw new Exception($"User with id: '{UserId}' is already activated.");
-        //    }
-        //    State = States.Active;
-        //    UpdatedAt = DateTime.UtcNow;
-        //}
+        /// <summary>
+        /// After email confirmation, account it's activated.
+        /// </summary>
+        public void Activated()
+        {
+            if (State == State.Active)
+            {
+                throw new DomainException(ErrorCodes.AccountAlreadyActivated, $"User with id: '{UserId}' is already activated.");
+            }
+            State = State.Active;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
-        ///// <summary>
-        ///// Account should be locked after breaking community guidelines
-        ///// </summary>
-        //public void Lock()
-        //{
-        //    if (State == States.Locked)
-        //    {
-        //        throw new Exception($"User with id: '{UserId}' is already locked.");
-        //    }
-        //    State = States.Locked;
-        //    UpdatedAt = DateTime.UtcNow;
-        //}
+        /// <summary>
+        /// Account should be locked after breaking community guidelines
+        /// </summary>
+        public void Lock()
+        {
+            if (State == State.Locked)
+            {
+                throw new DomainException(ErrorCodes.AccountAlreadyLocked, $"User with id: '{UserId}' is already locked.");
+            }
+            State = State.Locked;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        //public void Unlock()
-        //{
-        //    if (State != States.Locked)
-        //    {
-        //        throw new Exception($"User with id: '{UserId}' is already unlocked.");
-        //    }
-        //    State = States.Active;
-        //    UpdatedAt = DateTime.UtcNow;
-        //}
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Unlock()
+        {
+            if (State != State.Locked)
+            {
+                throw new DomainException(ErrorCodes.AccountAlreadyUnlocked, $"User with id: '{UserId}' is already unlocked.");
+            }
+            State = State.Active;
+            UpdatedAt = DateTime.UtcNow;
+        }
 
-        // Regex extensions class, 
-        // Shelf, WantToRead, currently-reading, read, list of Reviews.
+        // TODO Shelfs, Favorite books
     }
 }
