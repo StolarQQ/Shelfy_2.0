@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Helper;
@@ -18,15 +19,17 @@ namespace Shelfy.Infrastructure.Services
         private readonly IJwtHandler _jwtHandler;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
+        private readonly IMemoryCache _cache;
 
         public UserService(IUserRepository userRepository, IEncrypterService encrypterService,
-            IJwtHandler jwtHandler, IMapper mapper, ILogger<UserService> logger)
+            IJwtHandler jwtHandler, IMapper mapper, ILogger<UserService> logger, IMemoryCache cache)
         {
             _userRepository = userRepository;
             _encrypterService = encrypterService;
             _jwtHandler = jwtHandler;
             _mapper = mapper;
             _logger = logger;
+            _cache = cache;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -78,7 +81,7 @@ namespace Shelfy.Infrastructure.Services
             await _userRepository.AddAsync(user);
         }
 
-        public async Task<TokenDto> LoginAsync(string email, string password)
+        public async Task LoginAsync(string email, string password)
         {
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
@@ -94,14 +97,15 @@ namespace Shelfy.Infrastructure.Services
 
             var jwt = _jwtHandler.CreateToken(user.UserId, user.Role);
 
-            _logger.LogInformation($"User '{user.Username}' logged in.");
-
-            return new TokenDto
+            var jwtDto = new TokenDto
             {
                 Token = jwt.Token,
                 Role = user.Role,
                 Expires = jwt.Expires
             };
+            
+            _cache.Set(user.Email, jwtDto, TimeSpan.FromMinutes(5));
+            _logger.LogInformation($"User '{user.Username}' logged in.");
         }
 
         public async Task DeleteAsync(Guid id)
@@ -122,7 +126,7 @@ namespace Shelfy.Infrastructure.Services
 
             if (user.Password != hash)
             {
-                throw new Exception("Your old password is incorrect, try again.");
+                throw new Exception("Your current password is incorrect, try again.");
             }
 
             newPassword.PasswordValidation();

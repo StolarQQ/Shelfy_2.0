@@ -1,16 +1,13 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Serilog;
-using Shelfy.API.Framework;
+using Shelfy.API.Framework.Extensions;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.AutoMapper;
@@ -62,28 +59,8 @@ namespace Shelfy.API
             });
 
             // JWT configuration
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(cfg =>
-                {
-                    //cfg.RequireHttpsMetadata = false;
-                    //cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        // validate recipient of the token, 
-                        ValidateAudience = false,
-                        //  verify that the key used to sign the incoming token is part of a list of trusted keys 
-                        ValidateIssuerSigningKey = true,
-                        // creator of Token
-                        ValidIssuer = Configuration["Jwt:issuer"],
-                        ValidateLifetime = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:key"]))
-                    };
-                });
+            services.RegisterJwt(Configuration);
+            services.AddMemoryCache();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);

@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.API.Controllers
@@ -12,10 +14,12 @@ namespace Shelfy.API.Controllers
     public class UserController : ApiControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMemoryCache _cache;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMemoryCache cache)
         {
             _userService = userService;
+            _cache = cache;
         }
 
         [HttpGet("{id}", Name = "GetUserById")]
@@ -69,7 +73,10 @@ namespace Shelfy.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(Login command)
         {
-            return Ok(await _userService.LoginAsync(command.Email, command.Password));
+            await _userService.LoginAsync(command.Email, command.Password);
+            var jwt = _cache.Get<TokenDto>(command.Email);
+
+            return Ok(jwt);
         }
 
         [HttpDelete("{id}")]
@@ -86,6 +93,5 @@ namespace Shelfy.API.Controllers
 
             return NoContent();
         }
-
     }
 }
