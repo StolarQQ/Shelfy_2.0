@@ -11,7 +11,6 @@ using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.Services;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Shelfy.Tests.Services
 {
@@ -212,7 +211,6 @@ namespace Shelfy.Tests.Services
                 await authorService.UpdateAsync(notExistAuthorId, partialUpdate));
             
             // Assert
-            
             authorRepositoryMock.Verify(x => x.RemoveAsync(author.AuthorId), Times.Never);
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
 
