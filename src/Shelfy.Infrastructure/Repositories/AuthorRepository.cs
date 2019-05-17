@@ -48,6 +48,6 @@ namespace Shelfy.Infrastructure.Repositories
             await Authors.DeleteOneAsync(x => x.AuthorId == id);
         }
 
-        private IMongoCollection<Author> Authors => _database.GetCollection<Author>("AuthorsIds");
+        private IMongoCollection<Author> Authors => _database.GetCollection<Author>("Authors");
     }
 }

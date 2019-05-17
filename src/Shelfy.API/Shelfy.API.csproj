@@ -21,4 +21,10 @@
     <ProjectReference Include="..\Shelfy.Infrastructure\Shelfy.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
