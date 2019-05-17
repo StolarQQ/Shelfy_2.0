@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using MongoDB.Bson.Serialization.Attributes;
+using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Core.Domain
 {
