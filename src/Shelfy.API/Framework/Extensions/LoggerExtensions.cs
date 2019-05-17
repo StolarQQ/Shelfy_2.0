@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Serilog;
 
-namespace Shelfy.API.Framework
+namespace Shelfy.API.Framework.Extensions
 {
-    public static class Extensions
+    public static class LoggerExtensions
     {
-        public static IApplicationBuilder UseMyExceptionHandler(this IApplicationBuilder builder)
-            => builder.UseMiddleware<ExceptionHandlerMiddleware>();
-
         public static IApplicationBuilder RegisterSerilog(this IApplicationBuilder builder)
         {
             Log.Logger = new LoggerConfiguration()
