@@ -1,4 +1,4 @@
-﻿namespace Shelfy.Core.Domain
+﻿namespace Shelfy.Core.Exceptions
 {
     public static class ErrorCodes
     {
@@ -38,6 +38,5 @@
         public static string AccountAlreadyActivated => "account_already_activated";
         public static string AccountAlreadyUnlocked => "account_already_locked";
         public static string AccountAlreadyLocked => "account_already_locked";
-        public static string InvalidCredentials => "invalid_credentials";
     }
 }
