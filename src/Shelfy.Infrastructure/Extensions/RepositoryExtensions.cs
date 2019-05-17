@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
+using Shelfy.Infrastructure.Exceptions;
 
 namespace Shelfy.Infrastructure.Extensions
 {
@@ -13,7 +14,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (book == null)
             {
-                throw new ArgumentException($"Book with id '{id}' was not found.");
+                throw new ServiceException(ErrorCodes.BookNotFound, $"Book with id '{id}' was not found.");
             }
 
             return book;
@@ -25,7 +26,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (book == null)
             {
-                throw new ArgumentException($"Book with isbn '{isbn}' was not found.");
+                throw new ServiceException(ErrorCodes.BookNotFound, $"Book with isbn '{isbn}' was not found.");
             }
 
             return book;
@@ -37,7 +38,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (author == null)
             {
-                throw new ArgumentException($"Author with id '{id}' was not found.");
+                throw new ServiceException(ErrorCodes.AuthorNotFound, $"Author with id '{id}' was not found.");
             }
 
             return author;
@@ -49,7 +50,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (user == null)
             {
-                throw new ArgumentException($"User with id '{id}' was not found.");
+                throw new ServiceException(ErrorCodes.UserNotFound, $"User with id '{id}' was not found.");
             }
 
             return user;
@@ -61,7 +62,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (user == null)
             {
-                throw new ArgumentException($"User with email '{username}' was not found.");
+                throw new ServiceException(ErrorCodes.UserNotFound, $"User with email '{username}' was not found.");
             }
 
             return user;

@@ -8,6 +8,7 @@ using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -59,13 +60,13 @@ namespace Shelfy.Infrastructure.Services
             var user = await _userRepository.GetByEmailAsync(email.ToLowerInvariant());
             if (user != null)
             {
-                throw new Exception($"User with email '{email}' already exist.");
+                throw new ServiceException(ErrorCodes.EmailInUse, $"User with email '{email}' already exist.");
             }
 
             user = await _userRepository.GetByUsernameAsync(username.ToLowerInvariant());
             if (user != null)
             {
-                throw new Exception($"User with username '{username}' already exist.");
+                throw new ServiceException(ErrorCodes.EmailInUse, $"User with username '{username}' already exist.");
             }
 
             password.PasswordValidation();
@@ -86,13 +87,13 @@ namespace Shelfy.Infrastructure.Services
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
-                throw new Exception("Invalid credentials, try again.");
+                throw new ServiceException(ErrorCodes.InvalidCredentials, "Invalid credentials, try again.");
             }
 
             var hash = _encrypterService.GetHash(password, user.Salt);
             if (user.Password != hash)
             {
-                throw new Exception("Invalid credentials, try again.");
+                throw new ServiceException(ErrorCodes.InvalidCredentials, "Invalid credentials, try again.");
             }
 
             var jwt = _jwtHandler.CreateToken(user.UserId, user.Role);
@@ -126,13 +127,13 @@ namespace Shelfy.Infrastructure.Services
 
             if (user.Password != hash)
             {
-                throw new Exception("Your current password is incorrect, try again.");
+                throw new ServiceException(ErrorCodes.InvalidPassword, "Your current password is incorrect, try again.");
             }
 
             newPassword.PasswordValidation();
             user.SetPassword(newPassword);
 
-            _logger.LogInformation($"User '{user.Username}' changed password");
+            _logger.LogInformation($"User '{user.Username}' changed password.");
         }
 
         public async Task SetAvatar(Guid id, string avatar)
@@ -141,7 +142,7 @@ namespace Shelfy.Infrastructure.Services
             
             user.SetAvatar(avatar);
 
-            _logger.LogInformation($"User '{user.Username}' set up new avatar");
+            _logger.LogInformation($"User '{user.Username}' set up new avatar.");
         }
     }
 }

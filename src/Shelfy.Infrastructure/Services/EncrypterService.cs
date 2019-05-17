@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services

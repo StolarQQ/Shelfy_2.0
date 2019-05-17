@@ -9,6 +9,7 @@ using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -65,7 +66,7 @@ namespace Shelfy.Infrastructure.Services
             var book = await _bookRepository.GetByIsbnAsync(isbn);
             if (book != null)
             {
-                throw new Exception($"Book with ISBN {isbn} already exist");
+                throw new ServiceException(ErrorCodes.BookAlreadyExist, $"Book with ISBN {isbn} already exist");
             }
 
             var validCover = cover.DefaultBookCoverValidation();
@@ -76,7 +77,7 @@ namespace Shelfy.Infrastructure.Services
                 var author = await _authorRepository.GetByIdAsync(id);
                 if (author == null)
                 {
-                    throw new Exception($"Author with id '{id} not exist");
+                    throw new ServiceException(ErrorCodes.AuthorNotFound, $"Author with id '{id} not exist");
                 }
 
                 book.AddAuthor(id);

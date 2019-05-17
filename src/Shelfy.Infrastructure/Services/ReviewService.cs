@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.Review;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -31,7 +32,7 @@ namespace Shelfy.Infrastructure.Services
             var review = book.Reviews.FirstOrDefault(x => x.ReviewId == reviewId);
             if (review == null)
             {
-                throw new Exception($"Review with id {reviewId} not exist for book {book.Title}");
+                throw new ServiceException(ErrorCodes.ReviewNotFound, $"Review with id {reviewId} not exist for book {book.Title}");
             }
                     
             return _mapper.Map<ReviewDto>(review);

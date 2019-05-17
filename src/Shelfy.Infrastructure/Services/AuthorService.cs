@@ -7,6 +7,7 @@ using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -60,7 +61,7 @@ namespace Shelfy.Infrastructure.Services
             var authorExist = await _authorRepository.GetByIdAsync(author.AuthorId);
             if (authorExist != null)
             {
-                throw new Exception($"Author with id '{author.AuthorId}' already exist");
+                throw new ServiceException(ErrorCodes.AuthorAlreadyExist, $"Author with id '{author.AuthorId}' already exist.");
             }
 
             await _authorRepository.AddAsync(author);
