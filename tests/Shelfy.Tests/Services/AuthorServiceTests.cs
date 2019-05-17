@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using Newtonsoft.Json;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Services;
 using Xunit;
 
@@ -74,11 +76,11 @@ namespace Shelfy.Tests.Services
 
 
             // Act
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () => await authorService.GetByIdAsync(notExistingAuthorId));
+            var exception = await Assert.ThrowsAsync<ServiceException>(async () => await authorService.GetByIdAsync(notExistingAuthorId));
 
             // Assert
             authorRepositoryMock.Verify(x => x.GetByIdAsync(notExistingAuthorId), Times.Once);
-            exception.Should().BeOfType<ArgumentException>();
+            exception.Should().BeOfType<ServiceException>();
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
         }
 
@@ -129,14 +131,14 @@ namespace Shelfy.Tests.Services
             var userId = Guid.NewGuid();
             var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
             var incorrectImageUrl = "wwww.stolarstate.pl/avatar/author/default.pl";
-            var expectedExMessage = $"URL {incorrectImageUrl} doesn't meet required criteria";
+            var expectedExMessage = $"URL {incorrectImageUrl} doesn't meet required criteria.";
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () => await authorService.RegisterAsync
+            var exception = await Assert.ThrowsAsync<DomainException>(async () => await authorService.RegisterAsync
             (authorId, "Jon", "Skeet", "C# in Depth Author", incorrectImageUrl, new DateTime(1984, 01, 01),
                 null, "Texas", authorWebsite, authorWebsite, userId));
 
-            exception.Should().BeOfType<ArgumentException>();
+            exception.Should().BeOfType<DomainException>();
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
         }
 
@@ -207,7 +209,7 @@ namespace Shelfy.Tests.Services
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
             // Act
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+            var exception = await Assert.ThrowsAsync<ServiceException>(async () =>
                 await authorService.UpdateAsync(notExistAuthorId, partialUpdate));
             
             // Assert
@@ -259,7 +261,7 @@ namespace Shelfy.Tests.Services
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
 
             // Act
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+            var exception = await Assert.ThrowsAsync<ServiceException>(async () =>
                 await authorService.DeleteAsync(notExistAuthorId));
 
             // Arrange
