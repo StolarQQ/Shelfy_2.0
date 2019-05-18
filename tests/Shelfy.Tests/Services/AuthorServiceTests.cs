@@ -18,86 +18,85 @@ namespace Shelfy.Tests.Services
 {
     public class AuthorServiceTests
     {
-        [Fact]
-        public async Task getByIdAsync_should_invoke_getByIdAsync_on_authorRepository()
+        private readonly Author _author;
+
+        public AuthorServiceTests()
         {
-            // Arrange
             var authorId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
             var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
+            _author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
                 new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
+        }
+
+        [Fact]
+        public async Task getById_async_should_invoke_getById_on_author_repository()
+        {
+            // Arrange
             var authorDto = new AuthorDto
             {
-                AuthorId = author.AuthorId,
-                FirstName = author.FirstName,
-                LastName = author.LastName,
-                Description = author.Description,
-                AuthorSource = author.AuthorSource,
-                AuthorWebsite = author.AuthorWebsite,
-                BirthPlace = author.BirthPlace,
-                DateOfBirth = author.DateOfBirth,
-                ImageUrl = author.ImageUrl,
-                DateOfDeath = author.DateOfDeath,
-                UserId = author.UserId
+                AuthorId = _author.AuthorId,
+                FirstName = _author.FirstName,
+                LastName = _author.LastName,
+                Description = _author.Description,
+                AuthorSource = _author.AuthorSource,
+                AuthorWebsite = _author.AuthorWebsite,
+                BirthPlace = _author.BirthPlace,
+                DateOfBirth = _author.DateOfBirth,
+                ImageUrl = _author.ImageUrl,
+                DateOfDeath = _author.DateOfDeath,
+                UserId = _author.UserId
             };
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(x => x.Map<AuthorDto>(author)).Returns(authorDto);
+            mapperMock.Setup(x => x.Map<AuthorDto>(_author)).Returns(authorDto);
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
-            authorRepositoryMock.Setup(x => x.GetByIdAsync(author.AuthorId)).ReturnsAsync(author);
+            authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
             // Act
-            var existingAuthorDto = await authorService.GetByIdAsync(author.AuthorId);
+            var existingAuthorDto = await authorService.GetByIdAsync(_author.AuthorId);
 
             // Assert
-            authorRepositoryMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
+            authorRepositoryMock.Verify(x => x.GetByIdAsync(_author.AuthorId), Times.Once);
             existingAuthorDto.Should().NotBeNull();
-            existingAuthorDto.FirstName.Should().BeEquivalentTo(author.FirstName);
+            existingAuthorDto.FirstName.Should().BeEquivalentTo(_author.FirstName);
         }
 
         [Fact]
         public async Task getByIdAsync_should_thrown_exception_for_not_existing_authorId()
         {
             // Arrange
-            var authorId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
-            var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
+            var notExistingAuthorId = Guid.NewGuid();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            authorRepositoryMock.Setup(x => x.GetByIdAsync(author.AuthorId)).ReturnsAsync(author);
-            var notExistingAuthorId = Guid.NewGuid();
+            authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
             var expectedExMessage = $"Author with id '{notExistingAuthorId}' was not found.";
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
-
-            // Act
+            // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () => await authorService.GetByIdAsync(notExistingAuthorId));
-
-            // Assert
             authorRepositoryMock.Verify(x => x.GetByIdAsync(notExistingAuthorId), Times.Once);
-            exception.Should().BeOfType<ServiceException>();
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
         }
 
         [Fact]
-        public async Task registerAsync_should_invoke_add_async_once_on_authorRepository()
+        public async Task registerAsync_should_invoke_add_async_once_on_author_repository()
         {
-            var authorRepositoryMock = new Mock<IAuthorRepository>();
-            var mapperMock = new Mock<IMapper>();
+            // Arrange
             var authorId = Guid.NewGuid();
             var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
             var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
             var userId = Guid.NewGuid();
+            var authorRepositoryMock = new Mock<IAuthorRepository>();
+            var mapperMock = new Mock<IMapper>();
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
+            // Act
             await authorService.RegisterAsync(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
                 new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
 
+            // Assert
             authorRepositoryMock.Verify(x => x.GetByIdAsync(authorId), Times.Once);
             authorRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Author>()), Times.Once);
         }
@@ -105,19 +104,22 @@ namespace Shelfy.Tests.Services
         [Fact]
         public async Task registerAsync_should_never_invoke_addAsync_with_id_existing_in_database()
         {
-            var authorRepositoryMock = new Mock<IAuthorRepository>();
-            var mapperMock = new Mock<IMapper>();
+            // Arrange
             var authorId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
             var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
             var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var userId = Guid.NewGuid();
             var existingAuthor = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
                 new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
+            var authorRepositoryMock = new Mock<IAuthorRepository>();
+            var mapperMock = new Mock<IMapper>();
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
+            // Act
             await authorService.RegisterAsync(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
                 new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
 
+            // Arrange
             authorRepositoryMock.Setup(x => x.GetByIdAsync(authorId)).ReturnsAsync(existingAuthor);
             authorRepositoryMock.Verify(x => x.AddAsync(existingAuthor), Times.Never);
         }
@@ -125,20 +127,20 @@ namespace Shelfy.Tests.Services
         [Fact]
         public async Task registerAsync_should_thrown_exception_with_incorrect_avatar_url()
         {
-            var authorRepositoryMock = new Mock<IAuthorRepository>();
-            var mapperMock = new Mock<IMapper>();
+            // Arrange
             var authorId = Guid.NewGuid();
             var userId = Guid.NewGuid();
             var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
             var incorrectImageUrl = "wwww.stolarstate.pl/avatar/author/default.pl";
             var expectedExMessage = $"URL {incorrectImageUrl} doesn't meet required criteria.";
+            var authorRepositoryMock = new Mock<IAuthorRepository>();
+            var mapperMock = new Mock<IMapper>();
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
+            // Act & Assert
             var exception = await Assert.ThrowsAsync<DomainException>(async () => await authorService.RegisterAsync
             (authorId, "Jon", "Skeet", "C# in Depth Author", incorrectImageUrl, new DateTime(1984, 01, 01),
                 null, "Texas", authorWebsite, authorWebsite, userId));
-
-            exception.Should().BeOfType<DomainException>();
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
         }
 
@@ -146,41 +148,30 @@ namespace Shelfy.Tests.Services
         public async Task updateAsync_should_should_invoke_updateAsync_on_author_repository_with_correct_data()
         {
             // Arrange
-            var authorId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
-            var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
             var updateAuthor = new UpdateAuthor
             {
-                FirstName = author.FirstName,
-                LastName = author.LastName,
-                Description = author.Description,
-                ImageUrl = author.ImageUrl,
-                DateOfBirth = author.DateOfBirth,
-                DateOfDeath = author.DateOfDeath,
-                BirthPlace = author.BirthPlace,
-                AuthorWebsite = author.AuthorWebsite,
-                AuthorSource = author.AuthorSource
+                FirstName = _author.FirstName,
+                LastName = _author.LastName,
+                Description = _author.Description,
+                ImageUrl = _author.ImageUrl,
+                DateOfBirth = _author.DateOfBirth,
+                DateOfDeath = _author.DateOfDeath,
+                BirthPlace = _author.BirthPlace,
+                AuthorWebsite = _author.AuthorWebsite,
+                AuthorSource = _author.AuthorSource
             };
-
-            var authorAfterUpdate = new Author(authorId, "Marcelo", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
-
             var mapperMock = new Mock<IMapper>();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
-
-            authorRepositoryMock.Setup(x => x.GetByIdAsync(author.AuthorId)).ReturnsAsync(author);
-            mapperMock.Setup(x => x.Map<UpdateAuthor>(author)).Returns(updateAuthor);
-            mapperMock.Setup(x => x.Map(It.IsAny<UpdateAuthor>(), It.IsAny<Author>())).Returns(authorAfterUpdate);
+            authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
+            mapperMock.Setup(x => x.Map<UpdateAuthor>(_author)).Returns(updateAuthor);
+            mapperMock.Setup(x => x.Map(It.IsAny<UpdateAuthor>(), It.IsAny<Author>())).Returns(_author);
 
             var jsonDoc = "[{\"op\":\"replace\",\"path\":\"/FirstName\",\"value\":\"Marcelo\"}]";
             var partialUpdate = JsonConvert.DeserializeObject<JsonPatchDocument<UpdateAuthor>>(jsonDoc);
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
             // Act
-            await authorService.UpdateAsync(authorId, partialUpdate);
+            await authorService.UpdateAsync(_author.AuthorId, partialUpdate);
 
             // Assert
             authorRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Author>()), Times.Once());
@@ -190,57 +181,40 @@ namespace Shelfy.Tests.Services
         public async Task updateAsync_should_should_never_invoke_updateAsync_on_author_repository_with_not_exist_author_id()
         {
             // Arrange
-            var authorId = Guid.NewGuid();
+
             var notExistAuthorId = Guid.NewGuid();
-                var userId = Guid.NewGuid();
-            var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
-            var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
-            
             var mapperMock = new Mock<IMapper>();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
+            authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
-            authorRepositoryMock.Setup(x => x.GetByIdAsync(author.AuthorId)).ReturnsAsync(author);
-   
             var serialized = "[{\"op\":\"replace\",\"path\":\"/FirstName\",\"value\":\"Test\"}]";
             var partialUpdate = JsonConvert.DeserializeObject<JsonPatchDocument<UpdateAuthor>>(serialized);
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
-            // Act
+            // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () =>
                 await authorService.UpdateAsync(notExistAuthorId, partialUpdate));
-            
-            // Assert
-            authorRepositoryMock.Verify(x => x.RemoveAsync(author.AuthorId), Times.Never);
+            authorRepositoryMock.Verify(x => x.RemoveAsync(_author.AuthorId), Times.Never);
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
 
-            //Func<Task> act = async () => await authorService.UpdateAsync(notExistAuthorId, partialUpdate);
-            //await act.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
         public async Task deleteAsync_should_invoke_removeAsync_on_authorRepository_for_exist_author()
         {
             // Arrange
-            var authorId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
-            var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
-            authorRepositoryMock.Setup(x => x.GetByIdAsync(author.AuthorId)).ReturnsAsync(author);
+            authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
             // Act
-            await authorService.DeleteAsync(author.AuthorId);
+            await authorService.DeleteAsync(_author.AuthorId);
 
             // Assert
-            authorRepositoryMock.Verify(x => x.GetByIdAsync(author.AuthorId), Times.Once);
-            authorRepositoryMock.Verify(x => x.RemoveAsync(author.AuthorId), Times.Once);
+            authorRepositoryMock.Verify(x => x.GetByIdAsync(_author.AuthorId), Times.Once);
+            authorRepositoryMock.Verify(x => x.RemoveAsync(_author.AuthorId), Times.Once);
         }
 
         // TODO FIX
@@ -248,24 +222,16 @@ namespace Shelfy.Tests.Services
         public async Task deleteAsync_should_never_invoke_removeAsync_on_authorRepository_for_not_exist_author()
         {
             // Arrange
-            var authorId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
-            var authorWebsite = "https://stackoverflow.com/users/22656/jon-skeet";
-            var author = new Author(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
-                new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
+            var notExistAuthorId = Guid.NewGuid();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
-            var notExistAuthorId = Guid.NewGuid();
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
 
-            // Act
+            // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () =>
                 await authorService.DeleteAsync(notExistAuthorId));
-
-            // Arrange
-            authorRepositoryMock.Verify(x => x.RemoveAsync(author.AuthorId), Times.Never);
+            authorRepositoryMock.Verify(x => x.RemoveAsync(_author.AuthorId), Times.Never);
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
         }
     }

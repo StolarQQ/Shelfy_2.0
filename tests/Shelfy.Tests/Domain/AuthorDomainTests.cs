@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Xunit;
 
 namespace Shelfy.Tests.Domain
