@@ -18,6 +18,7 @@ namespace Shelfy.Infrastructure.AutoMapper
                     cfg.CreateMap<Author, AuthorDto>();
                     cfg.CreateMap<Author, AuthorSearchDto>();
                     cfg.CreateMap<Author, AuthorFullNameDto>();
+                    cfg.CreateMap<UpdateAuthor, Author>();
                     cfg.CreateMap<UpdateBook, Book>();
                     cfg.CreateMap<User, UserDto>();
                     cfg.CreateMap<Review, ReviewDto>();
