@@ -66,7 +66,7 @@ namespace Shelfy.Infrastructure.Services
             user = await _userRepository.GetByUsernameAsync(username.ToLowerInvariant());
             if (user != null)
             {
-                throw new ServiceException(ErrorCodes.EmailInUse, $"User with username '{username}' already exist.");
+                throw new ServiceException(ErrorCodes.UsernameInUse, $"User with username '{username}' already exist.");
             }
 
             password.PasswordValidation();

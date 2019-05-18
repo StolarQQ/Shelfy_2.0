@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
@@ -29,24 +30,23 @@ namespace Shelfy.Infrastructure.Services
 
             return _mapper.Map<AuthorDto>(author);
         }
-        // TODO Replace pagination
+        
         public async Task<IEnumerable<AuthorSearchDto>> BrowseByPhraseAsync(string phrase)
         {
             if (string.IsNullOrWhiteSpace(phrase) || phrase.Length < 3)
             {
-                throw new Exception("Phrase must contains at least 3 characters");
+                throw new ServiceException(ErrorCodes.InvalidPhrase, "Phrase must contains at least 3 characters");
             }
-
             var authors = await _authorRepository.BrowseByPhraseAsync(phrase);
 
             return _mapper.Map<IEnumerable<AuthorSearchDto>>(authors);
         }
      
-        public async Task<IEnumerable<AuthorDto>> BrowseAsync()
+        public async Task<PagedResult<AuthorDto>> BrowseAsync(int currentPage, int pageSize)
         {
-            var authors = await _authorRepository.BrowseAsync();
+            var authors = await _authorRepository.BrowseAsync(currentPage, pageSize);
 
-            return _mapper.Map<IEnumerable<AuthorDto>>(authors);
+            return _mapper.Map<PagedResult<AuthorDto>>(authors);
         }
 
         public async Task RegisterAsync(Guid authorId, string firstName, string lastName,

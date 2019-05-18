@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Helper;
 
 namespace Shelfy.Core.Repositories
 {
@@ -9,7 +10,7 @@ namespace Shelfy.Core.Repositories
     {
         Task<Author> GetByIdAsync(Guid id);
         Task<IEnumerable<Author>> BrowseByPhraseAsync(string phrase);
-        Task<IEnumerable<Author>> BrowseAsync();
+        Task<PagedResult<Author>> BrowseAsync(int currentPage, int pageSize);
         Task AddAsync(Author author);
         Task UpdateAsync(Author author);
         Task RemoveAsync(Guid id);
