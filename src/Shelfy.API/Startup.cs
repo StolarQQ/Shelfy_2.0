@@ -94,6 +94,7 @@ namespace Shelfy.API
             // Register conventions for mongodb
             MongoConfiguration.Initialize();
 
+            app.UseMyExceptionHandler();
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
