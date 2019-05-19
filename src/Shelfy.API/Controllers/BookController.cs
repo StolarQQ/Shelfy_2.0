@@ -45,14 +45,14 @@ namespace Shelfy.API.Controllers
             return Ok(book);
         }
 
-        //[HttpGet(Name = "BrowseAsync")]
-        //public async Task<IActionResult> Browse()
+        //[HttpGet(Name = "GetAllAsync")]
+        //public async Task<IActionResult> Get(int currentPage, int pageSize)
         //{
-        //    var book = await _bookService.BrowseAsync();
-         
+        //    var book = await _bookService.BrowseAsync(currentPage, pageSize);
+
         //    return Ok(book);
         //}
-        
+
         [HttpPost]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateBook book)

@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
@@ -50,13 +51,19 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        // TODO This method will be replace by pagination one
-        public async Task<IEnumerable<BookDto>> BrowseAsync()
+        public async Task<IEnumerable<BookDto>> GetAll()
         {
-            _logger.LogInformation("Fetching Data from Book repository");
-            var books = await _bookRepository.BrowseAsync();
+            var books = await _bookRepository.GetAll();
 
             return _mapper.Map<IEnumerable<BookDto>>(books);
+        }
+
+        public async Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize)
+        {
+            _logger.LogInformation("Fetching Data from Book repository");
+            var books = await _bookRepository.BrowseAsync(currentPage, pageSize);
+
+            return _mapper.Map<PagedResult<BookDto>>(books);
         }
 
         public async Task AddAsync(string title, string originalTitle,

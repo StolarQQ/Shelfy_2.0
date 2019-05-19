@@ -48,7 +48,7 @@ namespace Shelfy.Infrastructure.Services
         // TODO DUPLICATE DATA IN USER !! 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
-            var books = await _bookRepository.BrowseAsync();
+            var books = await _bookRepository.GetAll();
             var reviews = new List<Review>();
 
             foreach (var book in books)
