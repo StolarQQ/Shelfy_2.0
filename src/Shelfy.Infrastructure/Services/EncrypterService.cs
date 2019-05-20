@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -33,12 +32,12 @@ namespace Shelfy.Infrastructure.Services
         {
             if (password.IsEmpty())
             {
-                throw new ArgumentException("Can not generate hash for an empty password.", nameof(password));
+                throw new ArgumentException("Password cannot be empty.", nameof(password));
             }
 
             if (salt.IsEmpty())
             {
-                throw new ArgumentException("Can not generate hash for an empty salt.", nameof(salt));
+                throw new Exception("Can not generate hash for an empty salt.");
             }
             
             using (var rfc2898 = new Rfc2898DeriveBytes(password, GetBytes(salt), DeriveBytesIterationsCount))
