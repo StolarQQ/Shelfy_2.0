@@ -16,5 +16,7 @@ namespace Shelfy.Infrastructure.Services
         Task DeleteAsync(Guid id);
         Task ChangePassword(Guid id, string oldPassword, string newPassword);
         Task SetAvatar(Guid id, string avatar);
+        Task DeleteAvatar(Guid id);
+
     }
 }

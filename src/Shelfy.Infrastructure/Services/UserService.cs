@@ -131,7 +131,11 @@ namespace Shelfy.Infrastructure.Services
             }
 
             newPassword.PasswordValidation();
-            user.SetPassword(newPassword);
+            
+            var newHash = _encrypterService.GetHash(newPassword, user.Salt);
+            user.SetPassword(newHash);
+
+            await _userRepository.UpdateAsync(user);
 
             _logger.LogInformation($"User '{user.Username}' changed password.");
         }
@@ -142,7 +146,20 @@ namespace Shelfy.Infrastructure.Services
             
             user.SetAvatar(avatar);
 
+            await _userRepository.UpdateAsync(user);
+
             _logger.LogInformation($"User '{user.Username}' set up new avatar.");
+        }
+
+        public async Task DeleteAvatar(Guid id)
+        {
+            var user = await _userRepository.GetOrFailAsync(id);
+
+            user.DeleteAvatar();
+
+            await _userRepository.UpdateAsync(user);
+
+            _logger.LogInformation($"User '{user.Username}' deleted avatar.");
         }
     }
 }

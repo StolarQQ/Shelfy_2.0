@@ -31,7 +31,7 @@ namespace Shelfy.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<BookDto> GetAsync(Guid id)
+        public async Task<BookDetailsDto> GetAsync(Guid id)
         {
             var book = await _bookRepository.GetOrFailAsync(id);
 
@@ -41,7 +41,7 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        public async Task<BookDto> GetAsync(string isbn)
+        public async Task<BookDetailsDto> GetAsync(string isbn)
         {
             var book = await _bookRepository.GetOrFailAsync(isbn);
 
@@ -51,19 +51,23 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        public async Task<IEnumerable<BookDto>> GetAll()
-        {
-            var books = await _bookRepository.GetAll();
-
-            return _mapper.Map<IEnumerable<BookDto>>(books);
-        }
-
         public async Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize)
         {
             _logger.LogInformation("Fetching Data from Book repository");
             var books = await _bookRepository.BrowseAsync(currentPage, pageSize);
 
-            return _mapper.Map<PagedResult<BookDto>>(books);
+            var allBooks = new List<BookDto>();
+
+            foreach (var book in books.Source)
+            {
+                var authors = await GetAuthors(book.AuthorsIds);
+                allBooks.Add(SetUpBooks(book, authors));
+            }
+
+            var mappedResult = _mapper.Map<PagedResult<BookDto>>(books);
+            mappedResult.Source = allBooks;
+
+            return mappedResult;
         }
 
         public async Task AddAsync(string title, string originalTitle,
@@ -111,7 +115,8 @@ namespace Shelfy.Infrastructure.Services
             }
             else
             {
-                _logger.LogWarning($"Error occured while updating book '{bookToUpdate.Title}' with id '{id}' model is not valid");
+                _logger.LogWarning(
+                    $"Error occured while updating book '{bookToUpdate.Title}' with id '{id}' model is not valid");
             }
         }
 
@@ -147,14 +152,22 @@ namespace Shelfy.Infrastructure.Services
         /// <param name="book"></param>
         /// <param name="authors"></param>
         /// <returns></returns>
-        private BookDto SetUpBook(Book book, IEnumerable<Author> authors)
+        private BookDetailsDto SetUpBook(Book book, IEnumerable<Author> authors)
         {
-            var bookDto = _mapper.Map<BookDto>(book);
+            var bookDto = _mapper.Map<BookDetailsDto>(book);
             var authorsDto = _mapper.Map<IEnumerable<AuthorFullNameDto>>(authors);
             bookDto.Authors = authorsDto;
 
             return bookDto;
         }
-    }
 
+        private BookDto SetUpBooks(Book book, IEnumerable<Author> authors)
+        {
+            var bookDto = _mapper.Map<BookDto>(book);
+            var authorsDto = _mapper.Map<IEnumerable<AuthorNameDto>>(authors);
+            bookDto.Authors = authorsDto;
+
+            return bookDto;
+        }
+    }
 }
