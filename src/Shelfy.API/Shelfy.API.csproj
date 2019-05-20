@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shelfy.Infrastructure\Shelfy.Infrastructure.csproj" />
+    <ProjectReference Include="..\Shelfy.Infrastructure\Shelfy.Infrastructure.csproj" />	
   </ItemGroup>
 
   <ItemGroup>
