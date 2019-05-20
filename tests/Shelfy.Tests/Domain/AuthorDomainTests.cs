@@ -69,19 +69,19 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty FirstName.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetFirstName(expectedFirstName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
         [Fact]
-        public void setFirstName_should_thrown_argException_when_firstName_is_whitespace()
+        public void setFirstName_should_thrown_domainException_when_firstName_is_whitespace()
         {
             // Arrange
             var expectedFirstName = "";
             var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty FirstName.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetFirstName(expectedFirstName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -93,7 +93,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "FirstName must contain at least 2 characters.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetFirstName(expectedFirstName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -105,7 +105,19 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "FirstName cannot contain more than 20 characters.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetFirstName(expectedFirstName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
+            exception.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setFirstName_should_thrown_argException_when_firstName_contains_special_character()
+        {
+            // Arrange
+            var expectedFirstName = "test!$#";
+            var expectedExMsg = "Firstname cannot contains special characters.";
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetFirstName(expectedFirstName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -131,7 +143,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty LastName.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetLastName(expectedLastName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetLastName(expectedLastName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -143,8 +155,36 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = $"Author with '{_author.AuthorId}' cannot have an empty LastName.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetLastName(expectedLastName));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetLastName(expectedLastName));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setLastName_should_thrown_argException_when_lastName_contains_special_character()
+        {
+            // Arrange
+            var expectedLastName = "test!$#";
+            var expectedExMsg = "Lastname cannot contains special characters.";
+
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetLastName(expectedLastName));
+            exception.Message.Should().BeEquivalentTo(expectedExMsg);
+        }
+
+        [Fact]
+        public void setFullname_should_return_correct_data_for_valid_input()
+        {
+            // Arrange
+            var expectedFullName = "Andrew Kowalski";
+            var firstName = "Andrew";
+            var lastName = "Kowalski";
+
+            // Act
+          
+            _author.SetFullName(firstName, lastName);
+
+            // Arrange
+            _author.FullName.Should().BeEquivalentTo(expectedFullName);
         }
 
         [Fact]
@@ -199,7 +239,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "Description cannot be empty.";
 
             // Act
-            var ex = Assert.Throws<DomainException>(() => _author.SetDescription(expectedDescription));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
             
             // Assert
             ex.Message.Should().BeEquivalentTo(expectedExMsg);
@@ -213,7 +253,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "Description cannot be empty.";
 
             // Act
-            var ex = Assert.Throws<DomainException>(() => _author.SetDescription(expectedDescription));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
 
             // Assert
             ex.Message.Should().BeEquivalentTo(expectedExMsg);
@@ -227,7 +267,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "Description must contain at least 15 characters.";
 
             // Act
-            var ex = Assert.Throws<DomainException>(() => _author.SetDescription(expectedDescription));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
 
             // Assert
             expectedDescription.Length.Should().BeLessThan(15);
@@ -242,7 +282,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = "Description cannot contain more than 500 characters.";
 
             // Act
-            var ex = Assert.Throws<DomainException>(() => _author.SetDescription(expectedDescription));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDescription(expectedDescription));
 
             // Assert
             expectedDescription.Length.Should().BeGreaterThan(500);
@@ -283,7 +323,7 @@ namespace Shelfy.Tests.Domain
             var exMsg = $"DateOfBirth '{incorrectdDateOfBirth}' cannot be greater than '{DateTime.UtcNow}'.";
 
             // Act & Assert
-            var ex = Assert.Throws<DomainException>(() => _author.SetDateOfBirth(incorrectdDateOfBirth));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDateOfBirth(incorrectdDateOfBirth));
             ex.Message.Should().BeEquivalentTo(exMsg);
         }
         
@@ -323,7 +363,7 @@ namespace Shelfy.Tests.Domain
 
             // Act & Assert
             _author.SetDateOfBirth(dateOfBirth);
-            var ex = Assert.Throws<DomainException>(() => _author.SetDateOfDeath(incorrectdDateOfDeath));
+            var ex = Assert.Throws<ArgumentException>(() => _author.SetDateOfDeath(incorrectdDateOfDeath));
             ex.Message.Should().BeEquivalentTo(exMsg);
         }
         
@@ -348,7 +388,7 @@ namespace Shelfy.Tests.Domain
             var expectedExMsg = $"URL {expectedWebsiteUrl} doesn't meet required criteria.";
 
             // Act & Assert
-            var exception = Assert.Throws<DomainException>(() => _author.SetAuthorWebsite(expectedWebsiteUrl));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetAuthorWebsite(expectedWebsiteUrl));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -372,7 +412,7 @@ namespace Shelfy.Tests.Domain
             var expectedAuthorSource = "badurl.wikipedia.org/wiki/C_Sharp_in_Depth";
             var expectedExMsg = $"URL {expectedAuthorSource} doesn't meet required criteria.";
 
-            var exception = Assert.Throws<DomainException>(() => _author.SetAuthorSource(expectedAuthorSource));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetAuthorSource(expectedAuthorSource));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
 
@@ -390,13 +430,13 @@ namespace Shelfy.Tests.Domain
         }
 
         [Fact]
-        public void setImageUrl_should_thrown_exception_when_image_url_doesnt_meet_required_criteria()
+        public void setImageUrl_should_thrown_argException_when_image_url_doesnt_meet_required_criteria()
         {
             // Arrange
             var expectedAuthorImage = "https://www.avatar.com/avatar.badextension";
             var expectedExMsg = $"URL {expectedAuthorImage} doesn't meet required criteria.";
 
-            var exception = Assert.Throws<DomainException>(() => _author.SetImageUrl(expectedAuthorImage));
+            var exception = Assert.Throws<ArgumentException>(() => _author.SetImageUrl(expectedAuthorImage));
             exception.Message.Should().BeEquivalentTo(expectedExMsg);
         }
     }

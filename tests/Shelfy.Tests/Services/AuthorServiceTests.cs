@@ -138,7 +138,7 @@ namespace Shelfy.Tests.Services
             var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<DomainException>(async () => await authorService.RegisterAsync
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () => await authorService.RegisterAsync
             (authorId, "Jon", "Skeet", "C# in Depth Author", incorrectImageUrl, new DateTime(1984, 01, 01),
                 null, "Texas", authorWebsite, authorWebsite, userId));
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
