@@ -76,6 +76,7 @@ namespace Shelfy.Infrastructure.Services
             updateAuthor.ApplyTo(author);
 
             authorToUpdate = _mapper.Map(author, authorToUpdate);
+            authorToUpdate.SetFullName(authorToUpdate.FirstName, authorToUpdate.LastName);
 
             if (authorToUpdate.IsValid()) await _authorRepository.UpdateAsync(authorToUpdate);
         }

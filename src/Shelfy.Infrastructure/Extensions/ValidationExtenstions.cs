@@ -11,7 +11,7 @@ namespace Shelfy.Infrastructure.Extensions
         public static bool IsValid(this Book book)
         {
             book.SetTitle(book.Title);
-            book.SetDescription(book.Title);
+            book.SetDescription(book.Description);
             book.SetIsbn(book.ISBN);
             book.SetPages(book.Pages);
             book.SetPublisher(book.Publisher);
@@ -25,13 +25,24 @@ namespace Shelfy.Infrastructure.Extensions
         public static bool IsValid(this Author author)
         {
             author.SetFirstName(author.FirstName);
-            author.SetLastName(author.FirstName);
+            author.SetLastName(author.LastName);
             author.SetDescription(author.Description);
             author.SetDateOfBirth(author.DateOfBirth);
             author.SetDateOfDeath(author.DateOfDeath);
             author.SetBirthPlace(author.BirthPlace);
             author.SetAuthorWebsite(author.AuthorWebsite);
             author.SetAuthorSource(author.AuthorSource);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Validate review before update
+        /// </summary>
+        public static bool IsValid(this Review review)
+        {
+            review.SetRating(review.Rating);
+            review.SetComment(review.Comment);
 
             return true;
         }
@@ -46,17 +57,17 @@ namespace Shelfy.Infrastructure.Extensions
         {
             if (password.IsEmpty())
             {
-                throw new Exception("Password cannot be empty.");
+                throw new ArgumentException("Password cannot be empty.");
             }
 
             if (password.Length < min)
             {
-                throw new Exception($"Password must contain at least {min} characters.");
+                throw new ArgumentException($"Password must contain at least {min} characters.");
             }
 
             if (password.Length > max)
             {
-                throw new Exception($"Password cannot contain more than {max} characters.");
+                throw new ArgumentException($"Password cannot contain more than {max} characters.");
             }
         }
     }
