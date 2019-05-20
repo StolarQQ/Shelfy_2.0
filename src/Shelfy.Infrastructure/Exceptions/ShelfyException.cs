@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Shelfy.Core.Exceptions
+namespace Shelfy.Infrastructure.Exceptions
 {
     public class ShelfyException : Exception
     {
