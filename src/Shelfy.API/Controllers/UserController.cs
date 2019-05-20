@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Shelfy.Infrastructure.Commands;
-using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.API.Controllers
@@ -14,12 +12,12 @@ namespace Shelfy.API.Controllers
     public class UserController : ApiControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IMemoryCache _cache;
-
-        public UserController(IUserService userService, IMemoryCache cache)
+        private readonly IReviewService _reviewService;
+       
+        public UserController(IUserService userService, IReviewService reviewService)
         {
             _userService = userService;
-            _cache = cache;
+            _reviewService = reviewService;
         }
 
         [HttpGet("{id}", Name = "GetUserById")]
@@ -48,10 +46,19 @@ namespace Shelfy.API.Controllers
             return Ok(user);
         }
 
+        [HttpGet("review", Name = "GetReviewsForUser")]
+        [Authorize(Policy = "HasUserRole")]
+        public async Task<IActionResult> Get()
+        {
+            var userReviews = await _reviewService.GetReviewsForUserAsync(UserId);
+
+            return Ok(userReviews);
+        }
+
         [HttpGet]
-        //[Authorize(Policy = "HasUserRole")]
+        [Authorize(Policy = "HasUserRole")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get(int pageNumber, int pageSize)
+        public async Task<IActionResult> GetAll(int pageNumber, int pageSize)
         {
             var user = await _userService.BrowseAsync(pageNumber, pageSize);
            
@@ -66,17 +73,7 @@ namespace Shelfy.API.Controllers
             await _userService.RegisterAsync(userId, command.Email,
                 command.Username, command.Password);
 
-            return CreatedAtRoute("GetUserById", new {Id = userId}, command);
-        }
-
-        [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(Login command)
-        {
-            await _userService.LoginAsync(command.Email, command.Password);
-            var jwt = _cache.Get<TokenDto>(command.Email);
-
-            return Ok(jwt);
+            return CreatedAtRoute("GetUserById", new {Id = userId}, null);
         }
 
         [HttpDelete("{id}")]
