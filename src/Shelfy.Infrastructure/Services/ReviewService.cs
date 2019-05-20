@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
+using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Review;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
@@ -24,7 +26,7 @@ namespace Shelfy.Infrastructure.Services
             _logger = logger;
             _mapper = mapper;
         }
-        
+
         public async Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
@@ -34,7 +36,7 @@ namespace Shelfy.Infrastructure.Services
             {
                 throw new ServiceException(ErrorCodes.ReviewNotFound, $"Review with id {reviewId} not exist for book {book.Title}");
             }
-                    
+
             return _mapper.Map<ReviewDto>(review);
         }
 
@@ -44,21 +46,15 @@ namespace Shelfy.Infrastructure.Services
 
             return _mapper.Map<IEnumerable<ReviewDto>>(book.Reviews);
         }
-
-        // TODO DUPLICATE DATA IN USER !! 
+        
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
-            var books = await _bookRepository.GetAll();
+            var booksReviews = await _bookRepository.GetBooksReviews();
             var reviews = new List<Review>();
 
-            foreach (var book in books)
-            {
-                var allReviews = book.Reviews;
-
-                foreach (var review in allReviews)
-                    if (review.UserId == userId)
-                        reviews.Add(review);
-            }
+            foreach (var review in booksReviews)
+                if (review.UserId == userId)
+                    reviews.Add(review);
 
             return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
         }
@@ -69,19 +65,46 @@ namespace Shelfy.Infrastructure.Services
             var review = Review.Create(Guid.NewGuid(), rating, comment, userId, bookId);
             book.AddReview(review);
 
+            await _bookRepository.UpdateAsync(book);
+
             _logger.LogInformation($"Review with id '{review.ReviewId}'" +
                                    $" was created for book '{book.Title}' by user with id '{userId}'");
         }
 
-        public async Task UpdateAsync(Guid reviewId, int rating, string comment)
+        public async Task UpdateAsync(Guid bookId, Guid userId, Guid reviewId, JsonPatchDocument<UpdateReview> updateReview)
         {
-            throw new NotImplementedException();
+            var book = await _bookRepository.GetOrFailAsync(bookId);
+            var reviewToUpdate = book.Reviews.SingleOrDefault(x => x.ReviewId == reviewId);
+            if (reviewToUpdate == null)
+            {
+                throw new ServiceException(ErrorCodes.ReviewNotFound,
+                    $"Review with id '{reviewId}' was not found for book '{book.Title}'.");
+            }
+
+            if (reviewToUpdate.UserId != userId)
+            {
+                throw new ServiceException(ErrorCodes.UserNotFound,
+                    $"User with id '{userId}' don't have permission to update review with id '{reviewId}'.");
+            }
+
+            var review = _mapper.Map<UpdateReview>(reviewToUpdate);
+            updateReview.ApplyTo(review);
+
+            reviewToUpdate = _mapper.Map(review, reviewToUpdate);
+            reviewToUpdate.IsValid();
+
+            if (reviewToUpdate.IsValid())
+            {
+                await _bookRepository.UpdateAsync(book);
+            }
         }
 
         public async Task DeleteAsync(Guid bookId, Guid userId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
             book.DeleteReview(userId);
+
+            await _bookRepository.UpdateAsync(book);
 
             _logger.LogInformation($"Review by user {userId} was deleted for book {book.Title}");
         }

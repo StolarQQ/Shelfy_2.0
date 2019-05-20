@@ -25,8 +25,8 @@ namespace Shelfy.Infrastructure.Repositories
         public async Task<Book> GetByIsbnAsync(string isbn)
             => await Books.AsQueryable().FirstOrDefaultAsync(x => x.ISBN == isbn);
 
-        public async Task<IEnumerable<Book>> GetAll()
-            => await Books.AsQueryable().ToListAsync();
+        public async Task<IEnumerable<Review>> GetBooksReviews()
+            => await Books.AsQueryable().SelectMany(x => x.Reviews).ToListAsync();
 
         public async Task<PagedResult<Book>> BrowseAsync(int currentPage, int pageSize)
             => await Books.AsQueryable().PaginateAsync(currentPage, pageSize);
