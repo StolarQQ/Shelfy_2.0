@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using MongoDB.Bson.Serialization.Attributes;
-using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Core.Domain
 {
@@ -9,6 +8,7 @@ namespace Shelfy.Core.Domain
     {
         private static readonly Regex UrlRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
         private static readonly Regex EmailRegex = new Regex("^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$");
+        private static readonly Regex TextRegex = new Regex(@"[^A-Za-z0-9]");
         private const string DefaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
         //// Reviews created by User for specific book
@@ -24,6 +24,7 @@ namespace Shelfy.Core.Domain
         public string Avatar { get; protected set; }
         public Role Role { get; protected set; }
         public State State { get; protected set; }
+        public string ProfileUrl => $"https://www.mysite.com/user/{UserId}";
         public DateTime CreatedAt { get; protected set; }
         public DateTime UpdatedAt { get; protected set; }
         
@@ -50,7 +51,7 @@ namespace Shelfy.Core.Domain
         {
             if (EmailRegex.IsMatch(email) == false)
             {
-                throw new DomainException(ErrorCodes.InvalidEmail, $"Email is invalid {email}.");
+                throw new ArgumentException($"Email {email} is invalid.");
             }
 
             Email = email.ToLowerInvariant();
@@ -59,19 +60,24 @@ namespace Shelfy.Core.Domain
 
         public void SetUsername(string username)
         {
+            if (TextRegex.IsMatch(username))
+            {
+                throw new ArgumentException("Username cannot contains special characters.");
+            }
+
             if (string.IsNullOrWhiteSpace(username))
             {
-                throw new DomainException(ErrorCodes.InvalidUsername, "Username can not be empty.");
+                throw new ArgumentException("Username can not be empty.");
             }
 
             if (username.Length < 2)
             {
-                throw new DomainException(ErrorCodes.InvalidUsername, "Username must contain at least 2 characters.");
+                throw new ArgumentException("Username must contain at least 2 characters.");
             }
 
             if (username.Length > 20)
             {
-                throw new DomainException(ErrorCodes.InvalidUsername, "Username cannot contain more than 20 characters.");
+                throw new ArgumentException("Username cannot contain more than 20 characters.");
             }
 
             Username = username.ToLowerInvariant();
@@ -82,17 +88,17 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(password))
             {
-                throw new DomainException(ErrorCodes.InvalidPassword, "Password cannot be empty.");
+                throw new ArgumentException("Password cannot be empty.");
             }
 
             if (password.Length < 5)
             {
-                throw new DomainException(ErrorCodes.InvalidPassword, "Password must contain at least 5 characters.");
+                throw new ArgumentException("Password must contain at least 5 characters.");
             }
 
             if (password.Length > 75)
             {
-                throw new DomainException(ErrorCodes.InvalidPassword, "Password can not contain more than 75 characters.");
+                throw new ArgumentException("Password can not contain more than 75 characters.");
             }
 
             Password = password;
@@ -108,7 +114,7 @@ namespace Shelfy.Core.Domain
 
             if (!isValid)
             {
-                throw new ArgumentException(ErrorCodes.InvalidRole, "Invalid role.");
+                throw new ArgumentException("Invalid role.");
             }
 
             Role = role;
@@ -124,7 +130,7 @@ namespace Shelfy.Core.Domain
 
             if (!isValid)
             {
-                throw new ArgumentException(ErrorCodes.InvalidState, "Invalid account state.");
+                throw new ArgumentException("Invalid account state.");
             }
 
             State = state;
@@ -135,7 +141,7 @@ namespace Shelfy.Core.Domain
         {
             if (UrlRegex.IsMatch(avatar) == false)
             {
-                throw new DomainException(ErrorCodes.InvalidAvatar, $"URL {avatar} doesn't meet required criteria");
+                throw new ArgumentException($"URL {avatar} doesn't meet required criteria");
             }
 
             if (Avatar == avatar)
@@ -158,7 +164,7 @@ namespace Shelfy.Core.Domain
         {
             if (State == State.Active)
             {
-                throw new DomainException(ErrorCodes.AccountAlreadyActivated, $"User with id: '{UserId}' is already activated.");
+                throw new ArgumentException($"User with id: '{UserId}' is already activated.");
             }
             State = State.Active;
             UpdatedAt = DateTime.UtcNow;
@@ -171,7 +177,7 @@ namespace Shelfy.Core.Domain
         {
             if (State == State.Locked)
             {
-                throw new DomainException(ErrorCodes.AccountAlreadyLocked, $"User with id: '{UserId}' is already locked.");
+                throw new ArgumentException($"User with id: '{UserId}' is already locked.");
             }
             State = State.Locked;
             UpdatedAt = DateTime.UtcNow;
@@ -184,7 +190,7 @@ namespace Shelfy.Core.Domain
         {
             if (State != State.Locked)
             {
-                throw new DomainException(ErrorCodes.AccountAlreadyUnlocked, $"User with id: '{UserId}' is already unlocked.");
+                throw new ArgumentException($"User with id: '{UserId}' is already unlocked.");
             }
             State = State.Active;
             UpdatedAt = DateTime.UtcNow;

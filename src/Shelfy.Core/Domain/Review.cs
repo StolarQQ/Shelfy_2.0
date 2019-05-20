@@ -1,6 +1,5 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
-using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Core.Domain
 {
@@ -35,11 +34,11 @@ namespace Shelfy.Core.Domain
         {
             if (rating < 1)
             {
-                throw new DomainException(ErrorCodes.InvalidRating, "Rating cannot be lower than 1.");
+                throw new ArgumentException("Rating cannot be lower than 1.");
             }
             if (rating > 6)
             {
-                throw new DomainException(ErrorCodes.InvalidRating, "Rating cannot be greater than 6.");
+                throw new ArgumentException("Rating cannot be greater than 6.");
             }
 
             Rating = rating;
@@ -50,17 +49,17 @@ namespace Shelfy.Core.Domain
         {
             if (string.IsNullOrWhiteSpace(comment))
             {
-                throw new DomainException(ErrorCodes.InvalidComment, "Comment cannot be empty.");
+                throw new ArgumentException("Comment cannot be empty.");
             }
 
             if (comment.Length < 5)
             {
-                throw new DomainException(ErrorCodes.InvalidComment, "Comment must contain at least 5 characters.");
+                throw new ArgumentException("Comment must contain at least 5 characters.");
             }
 
             if (comment.Length > 500)
             {
-                throw new DomainException(ErrorCodes.InvalidComment, "Comment cannot contain more than 500 characters.");
+                throw new ArgumentException("Comment cannot contain more than 500 characters.");
             }
 
             Comment = comment;
