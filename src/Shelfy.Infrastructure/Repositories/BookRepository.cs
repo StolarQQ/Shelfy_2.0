@@ -28,8 +28,8 @@ namespace Shelfy.Infrastructure.Repositories
         public async Task<IEnumerable<Review>> GetBooksReviews()
             => await Books.AsQueryable().SelectMany(x => x.Reviews).ToListAsync();
 
-        public async Task<PagedResult<Book>> BrowseAsync(int currentPage, int pageSize)
-            => await Books.AsQueryable().PaginateAsync(currentPage, pageSize);
+        public async Task<PagedResult<Book>> BrowseAsync(int currentPage, int pageSize, string query)
+            => await Books.AsQueryable().SearchQuery(query).PaginateAsync(currentPage, pageSize);
 
         public async Task AddAsync(Book book)
             => await Books.InsertOneAsync(book);
