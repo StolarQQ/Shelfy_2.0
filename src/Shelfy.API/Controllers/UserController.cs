@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shelfy.API.Framework.Extensions;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.Services;
 
@@ -13,7 +14,7 @@ namespace Shelfy.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IReviewService _reviewService;
-       
+    
         public UserController(IUserService userService, IReviewService reviewService)
         {
             _userService = userService;
@@ -51,18 +52,22 @@ namespace Shelfy.API.Controllers
         public async Task<IActionResult> Get()
         {
             var userReviews = await _reviewService.GetReviewsForUserAsync(UserId);
-
+            
             return Ok(userReviews);
         }
 
-        [HttpGet]
+        [HttpGet(Name = "Pagination")]
         [Authorize(Policy = "HasUserRole")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetAll(int pageNumber, int pageSize)
+        public async Task<IActionResult> GetAll(int currentPage, int pageSize)
         {
-            var user = await _userService.BrowseAsync(pageNumber, pageSize);
-           
-            return Ok(user);
+            var paginatedUsers = await _userService.BrowseAsync(currentPage, pageSize);
+
+            // Added meta data to pagination header
+            Response.AddPaginationHeader(paginatedUsers.CurrentPage, paginatedUsers.PageSize,
+                paginatedUsers.TotalCount, paginatedUsers.TotalPages);
+            
+            return Ok(paginatedUsers.Source);
         }
 
         [HttpPost]
