@@ -1,5 +1,4 @@
 ﻿using System;
-using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Infrastructure.Exceptions
 {
@@ -28,7 +27,7 @@ namespace Shelfy.Infrastructure.Exceptions
         }
 
         public ServiceException(Exception innerException, string code, string message, params object[] args)
-            : base(code, string.Format(message, args), innerException)
+            : base(innerException, code, string.Format(message, args))
         {
         }
     }

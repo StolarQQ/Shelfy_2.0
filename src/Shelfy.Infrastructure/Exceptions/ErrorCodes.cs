@@ -14,6 +14,6 @@
         public static string BookNotFound => "book_not_found";
         public static string AuthorAlreadyExist => "author_already_exist";
         public static string BookAlreadyExist => "book_already_exist";
-        public static string InvalidPhrase => "invalid_phrase";
+        public static string InvalidInput => "invalid_input";
     }
 }

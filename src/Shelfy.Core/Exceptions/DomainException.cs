@@ -1,4 +1,5 @@
 ﻿using System;
+using Shelfy.Infrastructure.Exceptions;
 
 namespace Shelfy.Core.Exceptions
 {
@@ -26,7 +27,7 @@ namespace Shelfy.Core.Exceptions
         }
 
         public DomainException(Exception innerException, string code, string message, params object[] args)
-            : base(code, string.Format(message, args), innerException)
+            : base(innerException, code, string.Format(message, args))
         {
         }
     }
