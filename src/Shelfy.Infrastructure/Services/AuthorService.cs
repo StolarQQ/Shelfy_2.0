@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -35,7 +37,7 @@ namespace Shelfy.Infrastructure.Services
         {
             if (string.IsNullOrWhiteSpace(phrase) || phrase.Length < 3)
             {
-                throw new ServiceException(ErrorCodes.InvalidPhrase, "Phrase must contains at least 3 characters");
+                throw new ServiceException(ErrorCodes.InvalidInput, "Phrase must contains at least 3 characters");
             }
             var authors = await _authorRepository.BrowseByPhraseAsync(phrase);
 
@@ -53,15 +55,24 @@ namespace Shelfy.Infrastructure.Services
             string description, string imageUrl, DateTime? dateOfBirth, DateTime? dateOfDeath,
             string birthPlace, string authorWebsite, string authorSource, Guid userId)
         {
-            var authorImage = imageUrl.DefaultAuthorImageValidation();
 
-            var author = new Author(authorId, firstName, lastName, description, authorImage,
-                dateOfBirth, dateOfDeath, birthPlace, authorWebsite, authorSource, userId);
-
-            var authorExist = await _authorRepository.GetByIdAsync(author.AuthorId);
-            if (authorExist != null)
+            var author = await _authorRepository.GetByIdAsync(authorId);
+            if (author != null)
             {
-                throw new ServiceException(ErrorCodes.AuthorAlreadyExist, $"Author with id '{author.AuthorId}' already exist.");
+                throw new ServiceException(ErrorCodes.AuthorAlreadyExist, $"Author with id '{authorId}' already exist.");
+            }
+
+            try
+            {
+                var authorImage = imageUrl.DefaultAuthorImageValidation();
+
+                author = new Author(authorId, firstName, lastName, description, authorImage,
+                    dateOfBirth, dateOfDeath, birthPlace, authorWebsite, authorSource, userId);
+            }
+
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
             }
 
             await _authorRepository.AddAsync(author);
@@ -78,7 +89,17 @@ namespace Shelfy.Infrastructure.Services
             authorToUpdate = _mapper.Map(author, authorToUpdate);
             authorToUpdate.SetFullName(authorToUpdate.FirstName, authorToUpdate.LastName);
 
-            if (authorToUpdate.IsValid()) await _authorRepository.UpdateAsync(authorToUpdate);
+            try
+            {
+                authorToUpdate.IsValid();
+            }
+
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
+            
+            await _authorRepository.UpdateAsync(authorToUpdate);
         }
 
         public async Task DeleteAsync(Guid id)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
@@ -32,7 +33,7 @@ namespace Shelfy.Infrastructure.Services
         {
             if (password.IsEmpty())
             {
-                throw new ArgumentException("Password cannot be empty.", nameof(password));
+                throw new ServiceException(ErrorCodes.InvalidPassword, "Password cannot be empty.");
             }
 
             if (salt.IsEmpty())

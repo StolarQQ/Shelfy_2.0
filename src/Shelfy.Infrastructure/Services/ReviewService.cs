@@ -6,11 +6,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.DTO.Review;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -46,7 +48,7 @@ namespace Shelfy.Infrastructure.Services
 
             return _mapper.Map<IEnumerable<ReviewDto>>(book.Reviews);
         }
-        
+
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
             var booksReviews = await _bookRepository.GetBooksReviews();
@@ -62,13 +64,22 @@ namespace Shelfy.Infrastructure.Services
         public async Task AddAsync(int rating, string comment, Guid userId, Guid bookId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
-            var review = Review.Create(Guid.NewGuid(), rating, comment, userId, bookId);
-            book.AddReview(review);
+
+            try
+            {
+                var review = Review.Create(Guid.NewGuid(), rating, comment, userId, bookId);
+                book.AddReview(review);
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             await _bookRepository.UpdateAsync(book);
 
-            _logger.LogInformation($"Review with id '{review.ReviewId}'" +
-                                   $" was created for book '{book.Title}' by user with id '{userId}'");
+            _logger.LogInformation($"Review was created  was created for book '{book.Title}'" +
+                                   $" by user with id '{userId}'");
+
         }
 
         public async Task UpdateAsync(Guid bookId, Guid userId, Guid reviewId, JsonPatchDocument<UpdateReview> updateReview)
@@ -91,18 +102,32 @@ namespace Shelfy.Infrastructure.Services
             updateReview.ApplyTo(review);
 
             reviewToUpdate = _mapper.Map(review, reviewToUpdate);
-            reviewToUpdate.IsValid();
 
-            if (reviewToUpdate.IsValid())
+            try
             {
-                await _bookRepository.UpdateAsync(book);
+                reviewToUpdate.IsValid();
             }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
+
+            await _bookRepository.UpdateAsync(book);
+
         }
 
         public async Task DeleteAsync(Guid bookId, Guid userId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
-            book.DeleteReview(userId);
+
+            try
+            {
+                book.DeleteReview(userId);
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             await _bookRepository.UpdateAsync(book);
 

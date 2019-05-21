@@ -4,12 +4,14 @@ using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -70,12 +72,19 @@ namespace Shelfy.Infrastructure.Services
             }
 
             password.PasswordValidation();
+            var defaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
             var salt = _encrypterService.GetSalt();
             var hash = _encrypterService.GetHash(password, salt);
-            var defaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
-            user = new User(userid, email, username, hash, salt, Role.User, defaultAvatar);
+            try
+            {
+                user = new User(userid, email, username, hash, salt, Role.User, defaultAvatar);
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             _logger.LogWarning($"User with email '{user.Email}' as role '{user.Role}' was created at '{user.CreatedAt}'");
 
@@ -104,7 +113,7 @@ namespace Shelfy.Infrastructure.Services
                 Role = user.Role,
                 Expires = jwt.Expires
             };
-            
+
             _cache.Set(user.Email, jwtDto, TimeSpan.FromMinutes(5));
             _logger.LogInformation($"User '{user.Username}' logged in.");
         }
@@ -112,7 +121,7 @@ namespace Shelfy.Infrastructure.Services
         public async Task DeleteAsync(Guid id)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-            
+
             await _userRepository.RemoveAsync(user.UserId);
 
             _logger.LogInformation($"User with id '{user.UserId}' was deleted at '{DateTime.UtcNow}'");
@@ -131,7 +140,7 @@ namespace Shelfy.Infrastructure.Services
             }
 
             newPassword.PasswordValidation();
-            
+
             var newHash = _encrypterService.GetHash(newPassword, user.Salt);
             user.SetPassword(newHash);
 
@@ -143,8 +152,16 @@ namespace Shelfy.Infrastructure.Services
         public async Task SetAvatar(Guid id, string avatar)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-            
-            user.SetAvatar(avatar);
+
+            try
+            {
+                user.SetAvatar(avatar);
+
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             await _userRepository.UpdateAsync(user);
 
@@ -154,7 +171,7 @@ namespace Shelfy.Infrastructure.Services
         public async Task DeleteAvatar(Guid id)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-
+            
             user.DeleteAvatar();
 
             await _userRepository.UpdateAsync(user);

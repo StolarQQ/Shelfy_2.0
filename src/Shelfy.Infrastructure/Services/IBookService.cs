@@ -12,7 +12,7 @@ namespace Shelfy.Infrastructure.Services
     {
         Task<BookDetailsDto> GetAsync(Guid id);
         Task<BookDetailsDto> GetAsync(string title);
-        Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize);
+        Task<PagedResult<BookDto>> BrowseAsync(int currentPage = 1, int pageSize = 5);
         Task AddAsync(string title, string originalTitle,string description,
             string isbn, string cover, int pages, string publisher,
             DateTime publishedAt, IEnumerable<Guid> authorsId, Guid userId);

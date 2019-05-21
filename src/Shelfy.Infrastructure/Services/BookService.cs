@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
+using Shelfy.Core.Exceptions;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands;
@@ -12,6 +13,7 @@ using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -61,7 +63,7 @@ namespace Shelfy.Infrastructure.Services
             foreach (var book in books.Source)
             {
                 var authors = await GetAuthors(book.AuthorsIds);
-                allBooks.Add(SetUpBooks(book, authors));
+                allBooks.Add(SetupBookForBrowse(book, authors));
             }
 
             var mappedResult = _mapper.Map<PagedResult<BookDto>>(books);
@@ -80,8 +82,15 @@ namespace Shelfy.Infrastructure.Services
                 throw new ServiceException(ErrorCodes.BookAlreadyExist, $"Book with ISBN {isbn} already exist");
             }
 
-            var validCover = cover.DefaultBookCoverValidation();
-            book = new Book(title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
+            try
+            {
+                var validCover = cover.DefaultBookCoverValidation();
+                book = new Book(title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             foreach (var id in authorsId)
             {
@@ -108,16 +117,18 @@ namespace Shelfy.Infrastructure.Services
             // Mapping changes to bookToUpdate
             bookToUpdate = _mapper.Map(book, bookToUpdate);
 
-            if (bookToUpdate.IsValid())
+            try
             {
-                await _bookRepository.UpdateAsync(bookToUpdate);
-                _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id} was updated at {DateTime.UtcNow}'");
+                bookToUpdate.IsValid();
             }
-            else
+            catch (DomainException ex)
             {
-                _logger.LogWarning(
-                    $"Error occured while updating book '{bookToUpdate.Title}' with id '{id}' model is not valid");
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
             }
+
+            await _bookRepository.UpdateAsync(bookToUpdate);
+            _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id} was updated at {DateTime.UtcNow}'");
+
         }
 
         public async Task DeleteAsync(Guid id)
@@ -161,7 +172,13 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        private BookDto SetUpBooks(Book book, IEnumerable<Author> authors)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="book"></param>
+        /// <param name="authors"></param>
+        /// <returns></returns>
+        private BookDto SetupBookForBrowse(Book book, IEnumerable<Author> authors)
         {
             var bookDto = _mapper.Map<BookDto>(book);
             var authorsDto = _mapper.Map<IEnumerable<AuthorNameDto>>(authors);
