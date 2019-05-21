@@ -10,7 +10,7 @@ namespace Shelfy.Core.Repositories
     {
         Task<Author> GetByIdAsync(Guid id);
         Task<IEnumerable<Author>> BrowseByPhraseAsync(string phrase);
-        Task<PagedResult<Author>> BrowseAsync(int currentPage, int pageSize);
+        Task<PagedResult<Author>> BrowseAsync(int currentPage = 1, int pageSize = 5);
         Task AddAsync(Author author);
         Task UpdateAsync(Author author);
         Task RemoveAsync(Guid id);

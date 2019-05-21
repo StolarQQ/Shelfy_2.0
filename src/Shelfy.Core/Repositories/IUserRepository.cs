@@ -10,7 +10,7 @@ namespace Shelfy.Core.Repositories
         Task<User> GetByIdAsync(Guid id);
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByUsernameAsync(string username);
-        Task<PagedResult<User>> BrowseAsync(int currentPage, int pageSize);
+        Task<PagedResult<User>> BrowseAsync(int currentPage = 1, int pageSize = 5);
         Task AddAsync(User user);
         Task UpdateAsync(User user);
         Task RemoveAsync(Guid id);

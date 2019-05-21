@@ -11,7 +11,7 @@ namespace Shelfy.Core.Helper
     {
         public IEnumerable<T> Source { get; set; }
         public int CurrentPage { get; } = 1;
-        public int PageSize { get; } = 10;
+        public int PageSize { get; } = 5;
         public int TotalPages { get; }
         public int TotalCount { get; }
 
