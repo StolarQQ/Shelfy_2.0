@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Shelfy.API.Framework.Extensions;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.Services;
 
@@ -31,25 +32,18 @@ namespace Shelfy.API.Controllers
 
             return Ok(author);
         }
-
-        [HttpGet(Name = "BrowseByPhraseAsync")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Get(string phrase)
+        
+        [HttpGet(Name = "BrowseAsync")]
+        public async Task<IActionResult> Get(int currentPage, int pageSize)
         {
-            var authors = await _authorService.BrowseByPhraseAsync(phrase);
-            
-            return Ok(authors);
+            var paginatedAuthors = await _authorService.BrowseAsync(currentPage, pageSize);
+
+            Response.AddPaginationHeader(paginatedAuthors.CurrentPage, paginatedAuthors.PageSize,
+                paginatedAuthors.TotalCount, paginatedAuthors.TotalPages);
+
+            return Ok(paginatedAuthors.Source);
         }
-
-        //[HttpGet(Name = "BrowseAsync")]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var authors = await _authorService.BrowseAsync();
-
-        //    return Ok(authors);
-        //}
-
-
+        
         [HttpPost]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateAuthor author)
@@ -62,7 +56,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        [Authorize(Policy = "HasModeratorRole")]
+        [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Patch(Guid id,
             [FromBody]JsonPatchDocument<UpdateAuthor> patchBook)
         {

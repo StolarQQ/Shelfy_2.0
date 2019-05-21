@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Shelfy.API.Framework.Extensions;
 using Shelfy.Infrastructure.Commands;
 using Shelfy.Infrastructure.Services;
 
@@ -45,19 +46,23 @@ namespace Shelfy.API.Controllers
             return Ok(book);
         }
 
-        //[HttpGet(Name = "GetAllAsync")]
-        //public async Task<IActionResult> Get(int currentPage, int pageSize)
-        //{
-        //    var book = await _bookService.BrowseAsync(currentPage, pageSize);
+        [HttpGet(Name = "GetAllAsync")]
+        public async Task<IActionResult> Get(int currentPage, int pageSize, string query)
+        {
+            var paginatedBook = await _bookService.BrowseAsync(currentPage, pageSize, query);
 
-        //    return Ok(book);
-        //}
+            Response.AddPaginationHeader(paginatedBook.CurrentPage, paginatedBook.PageSize,
+                paginatedBook.TotalCount, paginatedBook.TotalPages, query);
+
+            return Ok(paginatedBook.Source);
+        }
 
         [HttpPost]
-        [Authorize(Policy = "HasUserRole")]
+        //[Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateBook book)
         {
-            await _bookService.AddAsync(book.Title, book.OriginalTitle,
+            var bookId = Guid.NewGuid();
+            await _bookService.AddAsync(bookId, book.Title, book.OriginalTitle,
                 book.Description, book.ISBN, book.Cover, book.Pages, book.Publisher, book.PublishedAt, book.AuthorsId, UserId);
 
             return CreatedAtRoute("GetBookByIsbn", new { Isbn = book.ISBN}, book);
