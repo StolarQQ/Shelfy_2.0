@@ -1,5 +1,6 @@
 ﻿using System;
 using Shelfy.Core.Domain;
+using Shelfy.Infrastructure.Exceptions;
 
 namespace Shelfy.Infrastructure.Extensions
 {
@@ -57,17 +58,17 @@ namespace Shelfy.Infrastructure.Extensions
         {
             if (password.IsEmpty())
             {
-                throw new ArgumentException("Password cannot be empty.");
+                throw new ServiceException(ErrorCodes.InvalidPassword, "Password cannot be empty.");
             }
 
             if (password.Length < min)
             {
-                throw new ArgumentException($"Password must contain at least {min} characters.");
+                throw new ServiceException(ErrorCodes.InvalidPassword, $"Password must contain at least {min} characters.");
             }
 
             if (password.Length > max)
             {
-                throw new ArgumentException($"Password cannot contain more than {max} characters.");
+                throw new ServiceException(ErrorCodes.InvalidPassword, $"Password cannot contain more than {max} characters.");
             }
         }
     }

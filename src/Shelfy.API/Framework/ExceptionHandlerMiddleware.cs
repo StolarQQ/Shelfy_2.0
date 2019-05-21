@@ -27,7 +27,7 @@ namespace Shelfy.API.Framework
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                _logger.LogError(ex, ex.Message, ex.InnerException);
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -39,10 +39,6 @@ namespace Shelfy.API.Framework
             var response = new { code = (int)statusCode, message = exception.Message };
             switch (exception)
             {
-                case Exception e when exceptionType == typeof(ArgumentException):
-                    statusCode = HttpStatusCode.BadRequest;
-                    break;
-
                 case Exception e when exceptionType == typeof(ServiceException):
                     statusCode = HttpStatusCode.BadRequest;
                     break;
