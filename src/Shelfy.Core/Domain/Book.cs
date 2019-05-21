@@ -34,7 +34,8 @@ namespace Shelfy.Core.Domain
         public Guid UserId { get; protected set; }
 
         public int ReviewCount => _reviews.Count;
-        public double Rating => ReviewCount == 0 ? 0 : Math.Round(_reviews.Average(x => x.Rating), 2);
+        public double Rating =>
+            ReviewCount == 0 ? 0 : Math.Round(_reviews.Average(x => x.Rating), 2);
 
         public IEnumerable<Guid> AuthorsIds => _authorsIds;
         public IEnumerable<Review> Reviews => _reviews;
@@ -45,11 +46,11 @@ namespace Shelfy.Core.Domain
 
         }
 
-        public Book(string title, string originalTitle,
+        public Book(Guid bookId, string title, string originalTitle,
             string description, string isbn, string cover,
             int pages, string publisher, DateTime publishedAt, Guid userId)
         {
-            BookId = Guid.NewGuid();
+            BookId = bookId;
             SetTitle(title);
             OriginalTitle = originalTitle;
             SetDescription(description);

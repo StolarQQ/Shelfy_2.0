@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Shelfy.Core.Domain;
 using Shelfy.Core.Helper;
 using Shelfy.Infrastructure.DTO.User;
 
@@ -11,7 +12,7 @@ namespace Shelfy.Infrastructure.Services
         Task<UserDto> GetByUserNameAsync(string username);
         Task<PagedResult<UserDto>> BrowseAsync(int pageNumber = 1, int pageSize = 5);
         Task RegisterAsync(Guid userid, string email, string username,
-             string password);
+             string password, Role role = Role.User);
         Task LoginAsync(string email, string password);
         Task DeleteAsync(Guid id);
         Task ChangePassword(Guid id, string oldPassword, string newPassword);

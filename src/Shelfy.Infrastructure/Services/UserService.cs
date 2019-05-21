@@ -57,7 +57,7 @@ namespace Shelfy.Infrastructure.Services
         }
 
         public async Task RegisterAsync(Guid userid, string email, string username,
-            string password)
+            string password, Role role = Role.User)
         {
             var user = await _userRepository.GetByEmailAsync(email.ToLowerInvariant());
             if (user != null)
@@ -79,7 +79,7 @@ namespace Shelfy.Infrastructure.Services
 
             try
             {
-                user = new User(userid, email, username, hash, salt, Role.User, defaultAvatar);
+                user = new User(userid, email, username, hash, salt, role, defaultAvatar);
             }
             catch (DomainException ex)
             {
