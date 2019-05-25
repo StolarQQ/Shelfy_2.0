@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Shelfy.Infrastructure.Commands
+namespace Shelfy.Infrastructure.Commands.Book
 {
     public class CreateBook
     {

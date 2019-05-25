@@ -1,4 +1,4 @@
-﻿namespace Shelfy.Infrastructure.Commands
+﻿namespace Shelfy.Infrastructure.Commands.User
 {
     public class CreateUser
     {

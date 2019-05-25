@@ -1,4 +1,4 @@
-﻿namespace Shelfy.Infrastructure.Commands
+﻿namespace Shelfy.Infrastructure.Commands.Account
 {
     public class SetAvatar
     {

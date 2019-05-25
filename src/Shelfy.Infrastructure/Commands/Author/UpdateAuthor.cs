@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Shelfy.Infrastructure.Commands
+namespace Shelfy.Infrastructure.Commands.Author
 {
-    public class CreateAuthor
+    public class UpdateAuthor
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
