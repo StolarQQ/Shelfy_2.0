@@ -8,7 +8,7 @@ using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Book;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
 using Shelfy.Infrastructure.Exceptions;
@@ -53,10 +53,10 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        public async Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize)
+        public async Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize, string query)
         {
             _logger.LogInformation("Fetching Data from Book repository");
-            var books = await _bookRepository.BrowseAsync(currentPage, pageSize);
+            var books = await _bookRepository.BrowseAsync(currentPage, pageSize, query);
 
             var allBooks = new List<BookDto>();
 
@@ -72,7 +72,7 @@ namespace Shelfy.Infrastructure.Services
             return mappedResult;
         }
 
-        public async Task AddAsync(string title, string originalTitle,
+        public async Task AddAsync(Guid bookId, string title, string originalTitle,
             string description, string isbn, string cover, int pages, string publisher,
             DateTime publishedAt, IEnumerable<Guid> authorsId, Guid userId)
         {
@@ -84,8 +84,8 @@ namespace Shelfy.Infrastructure.Services
 
             try
             {
-                var validCover = cover.DefaultBookCoverValidation();
-                book = new Book(title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
+                var validCover = cover.DefaultBookCoverNotEmpty();
+                book = new Book(bookId, title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
             }
             catch (DomainException ex)
             {
@@ -173,7 +173,7 @@ namespace Shelfy.Infrastructure.Services
         }
 
         /// <summary>
-        /// 
+        /// Set up books for browsing
         /// </summary>
         /// <param name="book"></param>
         /// <param name="authors"></param>
