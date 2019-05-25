@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Review;
 using Shelfy.Infrastructure.DTO.Review;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;

@@ -7,7 +7,7 @@ using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
@@ -64,7 +64,7 @@ namespace Shelfy.Infrastructure.Services
 
             try
             {
-                var authorImage = imageUrl.DefaultAuthorImageValidation();
+                var authorImage = imageUrl.DefaultAuthorImageNotEmpty();
 
                 author = new Author(authorId, firstName, lastName, description, authorImage,
                     dateOfBirth, dateOfDeath, birthPlace, authorWebsite, authorSource, userId);

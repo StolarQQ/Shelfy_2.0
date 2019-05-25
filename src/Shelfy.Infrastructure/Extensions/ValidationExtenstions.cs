@@ -1,5 +1,4 @@
-﻿using System;
-using Shelfy.Core.Domain;
+﻿using Shelfy.Core.Domain;
 using Shelfy.Infrastructure.Exceptions;
 
 namespace Shelfy.Infrastructure.Extensions

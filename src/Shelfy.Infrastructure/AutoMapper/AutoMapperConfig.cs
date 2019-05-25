@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Shelfy.Core.Domain;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Author;
+using Shelfy.Infrastructure.Commands.Book;
+using Shelfy.Infrastructure.Commands.Review;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
 using Shelfy.Infrastructure.DTO.Review;

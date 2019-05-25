@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shelfy.API.Framework.Extensions;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Book;
 using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.API.Controllers

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Account;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.Services;
 

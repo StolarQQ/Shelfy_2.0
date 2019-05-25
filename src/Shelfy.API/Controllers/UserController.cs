@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shelfy.API.Framework.Extensions;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.User;
 using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.API.Controllers

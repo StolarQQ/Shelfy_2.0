@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Helper;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 
 namespace Shelfy.Infrastructure.Services
