@@ -180,7 +180,6 @@ namespace Shelfy.Tests.Domain
             var lastName = "Kowalski";
 
             // Act
-          
             _author.SetFullName(firstName, lastName);
 
             // Arrange
