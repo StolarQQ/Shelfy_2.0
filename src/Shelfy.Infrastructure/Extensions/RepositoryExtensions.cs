@@ -62,7 +62,7 @@ namespace Shelfy.Infrastructure.Extensions
 
             if (user == null)
             {
-                throw new ServiceException(ErrorCodes.UserNotFound, $"User with email '{username}' was not found.");
+                throw new ServiceException(ErrorCodes.UserNotFound, $"User with username '{username}' was not found.");
             }
 
             return user;

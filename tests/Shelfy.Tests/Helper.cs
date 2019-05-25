@@ -14,7 +14,7 @@ namespace Shelfy.Tests
         {
             var rnd = new Random();
             var sb = new StringBuilder();
-            var randomString = "ACDASDXASLDJASDJASDLJSADBVOHGD*()(&*ASD*&ASDASHDASIHDO";
+            var randomString = "ACDASDXASLDJASDJASDLJSADBVOHGDASDASDASHDASIHDO";
 
             for (var i = 0; i < stringLength; i++)
                 sb.Append(randomString[rnd.Next(0, randomString.Length)]);

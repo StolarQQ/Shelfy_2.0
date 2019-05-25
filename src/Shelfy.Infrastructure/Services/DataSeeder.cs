@@ -107,7 +107,7 @@ namespace Shelfy.Infrastructure.Services
         private DateTime GenerateDate()
         {
             var faker = new Faker();
-            var date = faker.Date.Past(50, refDate: DateTime.Now);
+            var date = faker.Date.Past(50, DateTime.Now);
 
             return date;
         }
@@ -128,7 +128,7 @@ namespace Shelfy.Infrastructure.Services
             return fakeTitle;
         }
 
-        private static string GenerateRandomIsbn(int stringLength)
+        private string GenerateRandomIsbn(int stringLength)
         {
             var rnd = new Random();
             var sb = new StringBuilder();

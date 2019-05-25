@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Services;
@@ -182,7 +182,6 @@ namespace Shelfy.Tests.Services
         public async Task updateAsync_should_should_never_invoke_updateAsync_on_author_repository_with_not_exist_author_id()
         {
             // Arrange
-
             var notExistAuthorId = Guid.NewGuid();
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
             var mapperMock = new Mock<IMapper>();
@@ -198,7 +197,6 @@ namespace Shelfy.Tests.Services
                 await authorService.UpdateAsync(notExistAuthorId, partialUpdate));
             authorRepositoryMock.Verify(x => x.RemoveAsync(_author.AuthorId), Times.Never);
             exception.Message.Should().BeEquivalentTo(expectedExMessage);
-
         }
 
         [Fact]

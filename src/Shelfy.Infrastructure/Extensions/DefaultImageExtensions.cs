@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="cover"></param>
         /// <returns></returns>
-        public static string DefaultBookCoverValidation(this string cover)
+        public static string DefaultBookCoverNotEmpty(this string cover)
         {
             var defaultCover = "https://www.stolarstate.pl/avatar/book/default.png";
 
@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="authorImage"></param>
         /// <returns></returns>
-        public static string DefaultAuthorImageValidation(this string authorImage)
+        public static string DefaultAuthorImageNotEmpty(this string authorImage)
         {
             var defaultAuthorImage = "https://www.stolarstate.pl/avatar/author/default.png";
 

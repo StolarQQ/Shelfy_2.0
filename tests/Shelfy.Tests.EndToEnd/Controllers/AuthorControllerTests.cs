@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shelfy.API;
 using Shelfy.Core.Helper;
-using Shelfy.Infrastructure.Commands;
+using Shelfy.Infrastructure.Commands.Account;
+using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Tests.EndToEnd.Helpers;
@@ -108,8 +109,6 @@ namespace Shelfy.Tests.EndToEnd.Controllers
         [Fact]
         public async Task post_without_authorization_should_return_unauthorized()
         {
-            var existAuthorId = "d3e3e83d-68ec-48e8-b8ce-450e22c2dda6";
-
             var commandCreateAuthor = new CreateAuthor
             {
                 FirstName = "Jeffrey",
@@ -162,7 +161,7 @@ namespace Shelfy.Tests.EndToEnd.Controllers
                 Email = "test123@gmaail.com",
                 Password = "test123"
             };
-            var existAuthorId = "6a8eb6b8-b67f-4ac7-b0a9-d6c12699abad";
+            var existAuthorId = "96c64029-7471-45ed-86b9-a69c0a9ab68e";
             var loginCredentials = GetPayload(login);
             var loginResponse = await Client.PostAsync("user/login", loginCredentials);
             var loginContent = await loginResponse.Content.ReadAsStringAsync();
