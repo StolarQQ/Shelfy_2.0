@@ -13,7 +13,7 @@ namespace Shelfy.Infrastructure.Services
         Task<IEnumerable<ReviewDto>> GetReviewsForBookAsync(Guid bookId);
         Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId);
         Task AddAsync(int rating, string comment, Guid userId, Guid bookId);
-        Task UpdateAsync(Guid bookId, Guid userId, Guid reviewId, JsonPatchDocument<UpdateReview> updateReview);
+        Task UpdateAsync(Guid bookId, Guid userId, JsonPatchDocument<UpdateReview> updateReview);
         Task DeleteAsync(Guid bookId, Guid userId);
     }
 }

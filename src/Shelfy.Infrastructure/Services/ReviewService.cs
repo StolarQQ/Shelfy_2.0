@@ -51,14 +51,16 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
-            var booksReviews = await _bookRepository.GetBooksReviews();
-            var reviews = new List<Review>();
+            var books = await _bookRepository.GetAllBooks();
 
-            foreach (var review in booksReviews)
+            var reviews = books.SelectMany(x => x.Reviews);
+            var userReviews = new List<Review>();
+            
+            foreach (var review in reviews)
                 if (review.UserId == userId)
-                    reviews.Add(review);
+                    userReviews.Add(review);
 
-            return _mapper.Map<IEnumerable<ReviewDto>>(reviews);
+            return _mapper.Map<IEnumerable<ReviewDto>>(userReviews);
         }
 
         public async Task AddAsync(int rating, string comment, Guid userId, Guid bookId)
@@ -82,20 +84,14 @@ namespace Shelfy.Infrastructure.Services
 
         }
 
-        public async Task UpdateAsync(Guid bookId, Guid userId, Guid reviewId, JsonPatchDocument<UpdateReview> updateReview)
+        public async Task UpdateAsync(Guid bookId, Guid userId, JsonPatchDocument<UpdateReview> updateReview)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
-            var reviewToUpdate = book.Reviews.SingleOrDefault(x => x.ReviewId == reviewId);
+            var reviewToUpdate = book.Reviews.SingleOrDefault(x => x.UserId == userId);
             if (reviewToUpdate == null)
             {
                 throw new ServiceException(ErrorCodes.ReviewNotFound,
-                    $"Review with id '{reviewId}' was not found for book '{book.Title}'.");
-            }
-
-            if (reviewToUpdate.UserId != userId)
-            {
-                throw new ServiceException(ErrorCodes.UserNotFound,
-                    $"User with id '{userId}' don't have permission to update review with id '{reviewId}'.");
+                    $"User with id '{userId}' was not created review for book '{book.Title}'.");
             }
 
             var review = _mapper.Map<UpdateReview>(reviewToUpdate);

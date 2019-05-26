@@ -4,10 +4,10 @@ namespace Shelfy.Infrastructure.DTO.Review
 {
     public class ReviewDto
     {
-        public Guid ReviewId { get; private set; }
-        public int Rating { get; private set; }
-        public string Comment { get; private set; }
-        public Guid UserId { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
+        public Guid ReviewId { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

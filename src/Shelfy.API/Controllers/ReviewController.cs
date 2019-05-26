@@ -36,18 +36,18 @@ namespace Shelfy.API.Controllers
             return Created("", command);
         }
 
-        [HttpPatch("{reviewId}")]
+        [HttpPatch]
         [Authorize(Policy = "HasUserRole")]
-        public async Task<IActionResult> Post(Guid reviewId, Guid bookId, [FromBody]JsonPatchDocument<UpdateReview> review)
+        public async Task<IActionResult> Patch(Guid bookId, [FromBody]JsonPatchDocument<UpdateReview> review)
         {
-            await _reviewService.UpdateAsync(bookId, UserId, reviewId, review);
+            await _reviewService.UpdateAsync(bookId, UserId, review);
 
             return NoContent();
         }
 
-        [HttpDelete("{userId}")]
+        [HttpDelete]
         [Authorize(Policy = "HasUserRole")]
-        public async Task<IActionResult> Post([FromBody] Guid bookId)
+        public async Task<IActionResult> Delete(Guid bookId)
         {
             await _reviewService.DeleteAsync(bookId, UserId);
 
