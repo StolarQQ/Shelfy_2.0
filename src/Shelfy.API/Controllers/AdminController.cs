@@ -16,7 +16,7 @@ namespace Shelfy.API.Controllers
             _dataSeeder = dataSeeder;
         }
         
-        [HttpGet("{seed}")]
+        [HttpGet("seed")]
         [Authorize(Policy = "HasAdminRole")]
         public async Task<IActionResult> Get()
         {

@@ -58,7 +58,7 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Policy = "HasUserRole")]
+        [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]CreateBook book)
         {
             var bookId = Guid.NewGuid();
