@@ -12,24 +12,21 @@ namespace Shelfy.Core.Domain
         private static readonly Regex TextRegex = new Regex(@"[^A-Za-z0-9]");
         private const string DefaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
-        //// Reviews created by User for specific book
-        //private ISet<Review> _reviews = new HashSet<Review>();
-
         [BsonId]
-        public Guid UserId { get; protected set; }
-        public string Email { get; protected set; }
-        public string Username { get; protected set; }
-        public string Password { get; protected set; }
-        public string Salt { get; protected set; }
+        public Guid UserId { get; private set; }
+        public string Email { get; private set; }
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+        public string Salt { get; private set; }
         // Path to user avatar
-        public string Avatar { get; protected set; }
-        public Role Role { get; protected set; }
-        public State State { get; protected set; }
+        public string Avatar { get; private set; }
+        public Role Role { get; private set; }
+        public State State { get; private set; }
         public string ProfileUrl => $"https://www.mysite.com/user/{UserId}";
-        public DateTime CreatedAt { get; protected set; }
-        public DateTime UpdatedAt { get; protected set; }
-        
-        protected User()
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
+
+        private User()
         {
             
         }
@@ -196,7 +193,5 @@ namespace Shelfy.Core.Domain
             State = State.Active;
             UpdatedAt = DateTime.UtcNow;
         }
-
-        // TODO Shelfs, Favorite books
     }
 }

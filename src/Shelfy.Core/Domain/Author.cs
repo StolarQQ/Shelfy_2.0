@@ -12,27 +12,27 @@ namespace Shelfy.Core.Domain
         private static readonly Regex TextRegex = new Regex(@"[^A-Za-z0-9]");
 
         [BsonId]
-        public Guid AuthorId { get; protected set; }
-        public string FirstName { get; protected set; }
-        public string LastName { get; protected set; }
-        public string FullName { get; protected set; }
-        public string Description { get; protected set; }
+        public Guid AuthorId { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string FullName { get; private set; }
+        public string Description { get; private set; }
         // Path to Author photo
-        public string ImageUrl { get; protected set; }
-        public DateTime? DateOfBirth { get; protected set; }
-        public DateTime? DateOfDeath { get; protected set; }
-        public string BirthPlace { get; protected set; }
-        public string AuthorWebsite { get; protected set; }
-        public DateTime CreatedAt { get; protected set; }
-        public DateTime UpdatedAt { get; protected set; }
+        public string ImageUrl { get; private set; }
+        public DateTime? DateOfBirth { get; private set; }
+        public DateTime? DateOfDeath { get; private set; }
+        public string BirthPlace { get; private set; }
+        public string AuthorWebsite { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         // Evidence that showing the authenticity of author.
-        public string AuthorSource { get; protected set; }
+        public string AuthorSource { get; private set; }
         public string ProfileUrl => $"https://www.mysite.com/author/{AuthorId}";
         // User that send request for add an author.
-        public Guid UserId { get; protected set; }
+        public Guid UserId { get; private set; }
 
         // For mongo driver
-        protected Author()
+        private Author()
         {
 
         }

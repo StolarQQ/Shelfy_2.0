@@ -17,21 +17,21 @@ namespace Shelfy.Core.Domain
         private ISet<Review> _reviews = new HashSet<Review>();
 
         [BsonId]
-        public Guid BookId { get; protected set; }
-        public string Title { get; protected set; }
-        public string OriginalTitle { get; protected set; }
-        public string Description { get; protected set; }
-        public string ISBN { get; protected set; }
-        public int Pages { get; protected set; }
-        public string Publisher { get; protected set; }
-        public DateTime PublishedAt { get; protected set; }
-        public DateTime CreatedAt { get; protected set; }
-        public DateTime UpdatedAt { get; protected set; }
+        public Guid BookId { get; private set; }
+        public string Title { get; private set; }
+        public string OriginalTitle { get; private set; }
+        public string Description { get; private set; }
+        public string ISBN { get; private set; }
+        public int Pages { get; private set; }
+        public string Publisher { get; private set; }
+        public DateTime PublishedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
         // Path to book cover
-        public string Cover { get; protected set; }
+        public string Cover { get; private set; }
         public string BookUrl => $"https://www.mysite.com/book/{BookId}";
         //User that added book
-        public Guid UserId { get; protected set; }
+        public Guid UserId { get; private set; }
 
         public int ReviewCount => _reviews.Count;
         public double Rating =>
@@ -41,7 +41,7 @@ namespace Shelfy.Core.Domain
         public IEnumerable<Review> Reviews => _reviews;
 
         // For mongo driver 
-        protected Book()
+        private Book()
         {
 
         }
