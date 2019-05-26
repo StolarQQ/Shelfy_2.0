@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{21A6CD0C-AD6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{012D905E-DDC9-4614-8931-4116A897EB1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shelfy.API", "src\Shelfy.API\Shelfy.API.csproj", "{FA51D1C5-FFD0-48A3-9F9F-C17EA0939318}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shelfy.API", "src\Shelfy.API\Shelfy.API.csproj", "{FA51D1C5-FFD0-48A3-9F9F-C17EA0939318}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shelfy.Core", "src\Shelfy.Core\Shelfy.Core.csproj", "{49B21897-8004-4B75-9E3C-CE9A66C83466}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shelfy.Core", "src\Shelfy.Core\Shelfy.Core.csproj", "{49B21897-8004-4B75-9E3C-CE9A66C83466}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shelfy.Tests", "tests\Shelfy.Tests\Shelfy.Tests.csproj", "{6237993E-AD97-443D-9D26-EE6374F689CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shelfy.Tests", "tests\Shelfy.Tests\Shelfy.Tests.csproj", "{6237993E-AD97-443D-9D26-EE6374F689CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shelfy.Tests.EndToEnd", "tests\Shelfy.Tests.EndToEnd\Shelfy.Tests.EndToEnd.csproj", "{240BF44D-7398-4DC1-9EDC-0371CCB868A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shelfy.Tests.EndToEnd", "tests\Shelfy.Tests.EndToEnd\Shelfy.Tests.EndToEnd.csproj", "{240BF44D-7398-4DC1-9EDC-0371CCB868A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shelfy.Infrastructure", "src\Shelfy.Infrastructure\Shelfy.Infrastructure.csproj", "{04EE50D9-9A96-4790-88A2-05BF291B0D77}"
 EndProject
