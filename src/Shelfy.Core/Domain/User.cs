@@ -151,6 +151,11 @@ namespace Shelfy.Core.Domain
 
         public void DeleteAvatar()
         {
+            if (Avatar == DefaultAvatar)
+            {
+                throw new DomainException(ErrorCodes.InvalidAvatar, "Avatar cannot be deleted, you are using default one");
+            }
+
             Avatar = DefaultAvatar;
             UpdatedAt = DateTime.UtcNow;
         }

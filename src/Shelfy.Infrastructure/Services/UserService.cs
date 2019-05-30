@@ -156,7 +156,6 @@ namespace Shelfy.Infrastructure.Services
             try
             {
                 user.SetAvatar(avatar);
-
             }
             catch (DomainException ex)
             {
@@ -171,8 +170,15 @@ namespace Shelfy.Infrastructure.Services
         public async Task DeleteAvatar(Guid id)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-            
-            user.DeleteAvatar();
+
+            try
+            {
+                user.DeleteAvatar();
+            }
+            catch (DomainException ex)
+            {
+                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
+            }
 
             await _userRepository.UpdateAsync(user);
 
