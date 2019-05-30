@@ -1,9 +1,45 @@
-2019-05-02 20:54:23.536 +02:00 [WRN] User with email 'marek88@gmail.com' as role 'User' was created at '5/2/2019 6:54:23 PM'
-2019-05-14 18:06:49.541 +02:00 [WRN] User with email 'marek828@gmail.com' as role 'User' was created at '5/14/2019 4:06:49 PM'
-2019-05-14 18:06:52.814 +02:00 [WRN] User with email 'mare2k828@gmail.com' as role 'User' was created at '5/14/2019 4:06:52 PM'
-2019-05-14 18:06:55.397 +02:00 [WRN] User with email 'mare22k828@gmail.com' as role 'User' was created at '5/14/2019 4:06:55 PM'
-2019-05-14 18:06:58.430 +02:00 [WRN] User with email 'mare222k828@gmail.com' as role 'User' was created at '5/14/2019 4:06:58 PM'
-2019-05-14 18:07:00.874 +02:00 [WRN] User with email 'mare2212k828@gmail.com' as role 'User' was created at '5/14/2019 4:07:00 PM'
-2019-05-14 18:07:03.087 +02:00 [WRN] User with email 'mare22112k828@gmail.com' as role 'User' was created at '5/14/2019 4:07:03 PM'
-2019-05-14 18:07:05.201 +02:00 [WRN] User with email 'mare212112k828@gmail.com' as role 'User' was created at '5/14/2019 4:07:05 PM'
-2019-05-14 18:07:34.775 +02:00 [ERR] An unhandled exception has occurred while executing the request.
+2019-05-30 12:17:57.289 +02:00 [WRN] User with email 'real3@gmail.com' as role 'User' was created at '5/30/2019 10:17:57 AM'
+2019-05-30 12:37:17.068 +02:00 [ERR] User with email 'rea5l45@gmail.com' already exist.
+Shelfy.Infrastructure.Exceptions.ServiceException: User with email 'rea5l45@gmail.com' already exist.
+   at Shelfy.Infrastructure.Services.UserService.RegisterAsync(Guid userid, String email, String username, String password, Role role) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.Infrastructure\Services\UserService.cs:line 68
+   at Shelfy.API.Controllers.UserController.Post(CreateUser command) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.API\Controllers\UserController.cs:line 53
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Shelfy.API.Framework.ExceptionHandlerMiddleware.Invoke(HttpContext context) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.API\Framework\ExceptionHandlerMiddleware.cs:line 26
+2019-05-30 12:37:29.190 +02:00 [ERR] ISBN number must contain exactly 13 characters.
+Shelfy.Infrastructure.Exceptions.ServiceException: ISBN number must contain exactly 13 characters. ---> Shelfy.Core.Exceptions.DomainException: ISBN number must contain exactly 13 characters.
+   at Shelfy.Core.Domain.Book.SetIsbn(String isbn) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.Core\Domain\Book.cs:line 106
+   at Shelfy.Core.Domain.Book..ctor(Guid bookId, String title, String originalTitle, String description, String isbn, String cover, Int32 pages, String publisher, DateTime publishedAt, Guid userId) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.Core\Domain\Book.cs:line 57
+   at Shelfy.Infrastructure.Services.BookService.AddAsync(Guid bookId, String title, String originalTitle, String description, String isbn, String cover, Int32 pages, String publisher, DateTime publishedAt, IEnumerable`1 authorsId, Guid userId) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.Infrastructure\Services\BookService.cs:line 88
+   --- End of inner exception stack trace ---
+   at Shelfy.Infrastructure.Services.BookService.AddAsync(Guid bookId, String title, String originalTitle, String description, String isbn, String cover, Int32 pages, String publisher, DateTime publishedAt, IEnumerable`1 authorsId, Guid userId) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.Infrastructure\Services\BookService.cs:line 92
+   at Shelfy.API.Controllers.BookController.Post(CreateBook book) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.API\Controllers\BookController.cs:line 52
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Shelfy.API.Framework.ExceptionHandlerMiddleware.Invoke(HttpContext context) in C:\Users\Lyns\source\Private\Shelfy\src\Shelfy.API\Framework\ExceptionHandlerMiddleware.cs:line 26
