@@ -19,21 +19,8 @@ namespace Shelfy.API.Controllers
         {
             _bookService = bookService;
         }
-
-        [HttpGet("{id}", Name = "GetBookById")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var book = await _bookService.GetAsync(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(book);
-        }
-
-        [HttpGet("isbn/{isbn}", Name = "GetBookByIsbn")]
+        
+        [HttpGet("{isbn}", Name = "GetBookByIsbn")]
         [AllowAnonymous]
         public async Task<IActionResult> Get(string isbn)
         {
