@@ -13,28 +13,13 @@ namespace Shelfy.API.Controllers
     public class UserController : ApiControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IReviewService _reviewService;
-    
-        public UserController(IUserService userService, IReviewService reviewService)
+
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _reviewService = reviewService;
         }
 
-        [HttpGet("{id}", Name = "GetUserById")]
-        [Authorize(Policy = "HasUserRole")]
-        public async Task<IActionResult> Get(Guid id)
-        {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound($"User with id '{id}' not found");
-            }
-
-            return Ok(user);
-        }
-
-        [HttpGet("username/{username}")]
+        [HttpGet("{username}", Name = "GetUserByUserName")]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Get(string username)
         {
@@ -47,26 +32,16 @@ namespace Shelfy.API.Controllers
             return Ok(user);
         }
 
-        [HttpGet("review", Name = "GetReviewsForUser")]
-        [Authorize(Policy = "HasUserRole")]
-        public async Task<IActionResult> Get()
-        {
-            var userReviews = await _reviewService.GetReviewsForUserAsync(UserId);
-            
-            return Ok(userReviews);
-        }
-
         [HttpGet(Name = "Pagination")]
         [Authorize(Policy = "HasUserRole")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAll(int currentPage, int pageSize)
+        public async Task<IActionResult> Get(int currentPage, int pageSize)
         {
             var paginatedUsers = await _userService.BrowseAsync(currentPage, pageSize);
 
             // Added meta data to pagination header
             Response.AddPaginationHeader(paginatedUsers.CurrentPage, paginatedUsers.PageSize,
                 paginatedUsers.TotalCount, paginatedUsers.TotalPages);
-            
+
             return Ok(paginatedUsers.Source);
         }
 
@@ -78,7 +53,7 @@ namespace Shelfy.API.Controllers
             await _userService.RegisterAsync(userId, command.Email,
                 command.Username, command.Password);
 
-            return CreatedAtRoute("GetUserById", new {Id = userId}, null);
+            return CreatedAtRoute("GetUserByUserName", new { Username = command.Username }, null);
         }
 
         [HttpDelete("{id}")]
