@@ -13,11 +13,14 @@ namespace Shelfy.API.Controllers
     public class AccountController : ApiControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IReviewService _reviewService;
         private readonly IMemoryCache _cache;
 
-        public AccountController(IUserService userService, IMemoryCache cache)
+        public AccountController(IUserService userService, IReviewService reviewService,
+            IMemoryCache cache)
         {
             _userService = userService;
+            _reviewService = reviewService;
             _cache = cache;
         }
 
@@ -31,7 +34,16 @@ namespace Shelfy.API.Controllers
             return Ok(jwt);
         }
 
-        [HttpPost("password")]
+        [HttpGet("review", Name = "GetReviewsForAccount")]
+        [Authorize(Policy = "HasUserRole")]
+        public async Task<IActionResult> Get()
+        {
+            var userReviews = await _reviewService.GetReviewsForUserAsync(UserId);
+
+            return Ok(userReviews);
+        }
+
+        [HttpPost("change-password")]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]ChangePassword command)
         {
@@ -40,7 +52,7 @@ namespace Shelfy.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("avatar")]
+        [HttpPost("set-avatar")]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post([FromBody]SetAvatar command)
         {
@@ -49,7 +61,7 @@ namespace Shelfy.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("deleteavatar")]
+        [HttpPost("delete-avatar")]
         [Authorize(Policy = "HasUserRole")]
         public async Task<IActionResult> Post()
         {
