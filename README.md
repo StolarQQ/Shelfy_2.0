@@ -18,6 +18,7 @@ Architecture type was implemented based on [Onion Architecture](https://jeffreyp
 #### TODO
 + __Complete tests__ !
 + User chat, current reading, read, want to read shelfs
++ Fix magic strings
 + ~~Autofac IoC Container, assembly scanning~~
 + Publish app to Azure/Digital Ocean
 + Front-end build with Angular or Aurelia
