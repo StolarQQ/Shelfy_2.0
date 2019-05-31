@@ -46,7 +46,7 @@ dotnet run --urls "http://localhost:5001"
 Application will be available under https://localhost:5001
 
 ## Testing HTTP requests
-You can find prepared [Postman Collection](/assets/ShelfyCollection.postman_collection.json) of requests, in assets [folder.](/assets) <br>
+You can find prepared [Postman Collection](/assets/ShelfyCollection.postman_collectionv3.json) of requests, in assets [folder.](/assets) <br>
 In case of tests, u can use database seeding endpoint. <br>
 After that, sign in with login credentials, listed below.
 ```
