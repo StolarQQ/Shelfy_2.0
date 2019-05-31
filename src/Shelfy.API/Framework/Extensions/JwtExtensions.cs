@@ -28,6 +28,8 @@ namespace Shelfy.API.Framework.Extensions
                         ValidateIssuerSigningKey = true,
                         // creator of Token
                         ValidIssuer = configuration["Jwt:issuer"],
+
+                        // For testing purpose jwt never expired.
                         ValidateLifetime = false,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:key"]))
                     };

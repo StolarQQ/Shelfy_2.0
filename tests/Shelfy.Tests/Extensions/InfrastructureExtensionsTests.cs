@@ -267,7 +267,5 @@ namespace Shelfy.Tests.Extensions
             //Assert
             result.Should().BeEquivalentTo(validCover);
         }
-
-
     }
 }
