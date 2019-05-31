@@ -35,6 +35,7 @@ Mongodb connections string is setup for *27017*, default one for mongos instance
 In order to use custom settings, please edit *appsettings.json* file, located in [Shelfy.API](src/Shelfy.API) folder<br>
 
 ## How to start application
+First start monogdb, official tutorials [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/), [Linux](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/), [macOS](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/).
 ```
 git clone https://github.com/StolarQQ/Shelfy.git
 cd src/Shelfy.Api
@@ -63,6 +64,8 @@ POST /acccount/login
 }
 
 ```
+Also u can use swagger under https://localhost:5001/swagger
+
 ### Solution structure
 + Shelfy.Api - Actual HTTP API - Does reference to infrastructure project.
 + Shelfy.Infrastructure - Contains application services, repositories, dtos, mongo convetions, automapper configuration. Does reference to core project. 
