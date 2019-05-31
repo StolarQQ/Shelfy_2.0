@@ -4,7 +4,7 @@
 
 Branch | Build Status
 ------------ | -------------
-Master | [![Build Status](https://travis-ci.org/StolarQQ/Shelfy.svg?branch=master)](https://travis-ci.org/StolarQQ/Shelfy)
+Master | [![Build Status](https://travis-ci.org/StolarQQ/Shelfy_2.0.svg?branch=master)](https://travis-ci.org/StolarQQ/Shelfy_2.0)
 
 ## What is Shelfy ?
 
