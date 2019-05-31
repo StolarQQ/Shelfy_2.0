@@ -66,7 +66,7 @@
 								"username15"
 							]
 						},
-						"description": "GetUserById"
+						"description": "GetUserByUsername"
 					},
 					"response": []
 				},
@@ -692,7 +692,7 @@
 					"response": []
 				},
 				{
-					"name": "https://localhost:5001/Book/isbn/1234567890432",
+					"name": "https://localhost:5001/Book/1234567290432",
 					"request": {
 						"auth": {
 							"type": "bearer",
