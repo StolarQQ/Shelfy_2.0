@@ -38,7 +38,7 @@ In order to use custom settings, please edit *appsettings.json* file, located in
 ## How to start application
 First start monogdb, official tutorials [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/), [Linux](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/), [macOS](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/).
 ```
-git clone https://github.com/StolarQQ/Shelfy.git
+git clone https://github.com/StolarQQ/Shelfy_2.0.git
 cd src/Shelfy.Api
 dotnet restore 
 dotnet run --urls "http://*:5001"
