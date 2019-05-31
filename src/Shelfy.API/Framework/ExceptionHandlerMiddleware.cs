@@ -48,8 +48,7 @@ namespace Shelfy.API.Framework
                     response = new { code = (int)statusCode, message = "Internal Server Error" };
                     break;
             }
-
-            // Only for test purpose
+            
             var payload = JsonConvert.SerializeObject(response);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;

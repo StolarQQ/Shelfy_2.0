@@ -54,7 +54,6 @@ namespace Shelfy.API
             services.AddSingleton<IJwtHandler, JwtHandler>();
             services.AddSingleton(AutoMapperConfig.Initialize());
 
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Shelfy API", Version = "v1" });
