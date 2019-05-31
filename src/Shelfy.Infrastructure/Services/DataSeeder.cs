@@ -48,7 +48,7 @@ namespace Shelfy.Infrastructure.Services
                     $"email{i}@gmail.com", $"username{i}", "secret123");
 
                 var authorId = Guid.NewGuid();
-                await _authorService.RegisterAsync(authorId, GenerateFirstName(), GenerateLastName()
+                await _authorService.RegisterAsync(authorId, GenerateFirstName(), GenerateFirstName()
                     , GenerateDescription(), null, GenerateDate(), null, GenerateCity(), GenerateWebsite(),
                     GenerateWebsite(), userId);
 
@@ -78,14 +78,6 @@ namespace Shelfy.Infrastructure.Services
             var firstName = faker.Name.FirstName();
 
             return firstName;
-        }
-
-        private string GenerateLastName()
-        {
-            var faker = new Faker();
-            var lastName = faker.Name.LastName();
-
-            return lastName;
         }
 
         private string GenerateDescription()
