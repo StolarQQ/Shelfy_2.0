@@ -41,7 +41,7 @@ First start monogdb, official tutorials [Windows](https://docs.mongodb.com/manua
 git clone https://github.com/StolarQQ/Shelfy_2.0.git
 cd src/Shelfy.Api
 dotnet restore 
-dotnet run --urls "http://*:5001"
+dotnet run --urls "http://localhost:5001"
 ```
 Application will be available under https://localhost:5001
 
