@@ -8,7 +8,7 @@ using Shelfy.Infrastructure.DTO.Author;
 
 namespace Shelfy.Infrastructure.Services
 {
-    public interface IAuthorService
+    public interface IAuthorService : IService
     {
         Task<AuthorDto> GetByIdAsync(Guid id);
         Task<IEnumerable<AuthorSearchDto>> BrowseByPhraseAsync(string phrase);

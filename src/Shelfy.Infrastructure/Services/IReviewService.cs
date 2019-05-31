@@ -7,7 +7,7 @@ using Shelfy.Infrastructure.DTO.Review;
 
 namespace Shelfy.Infrastructure.Services
 {
-    public interface IReviewService
+    public interface IReviewService : IService
     {
         Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId);
         Task<IEnumerable<ReviewDto>> GetReviewsForBookAsync(Guid bookId);

@@ -2,7 +2,7 @@
 
 namespace Shelfy.Infrastructure.Services
 {
-    public interface IDataSeeder
+    public interface IDataSeeder : IService
     {
         Task SeedAsync();
     }

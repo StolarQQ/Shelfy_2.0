@@ -8,7 +8,7 @@ using Shelfy.Infrastructure.DTO.Book;
 
 namespace Shelfy.Infrastructure.Services
 {
-    public interface IBookService
+    public interface IBookService : IService
     {
         Task<BookDetailsDto> GetAsync(Guid id);
         Task<BookDetailsDto> GetAsync(string title);

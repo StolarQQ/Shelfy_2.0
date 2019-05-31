@@ -6,7 +6,7 @@ using Shelfy.Infrastructure.DTO.User;
 
 namespace Shelfy.Infrastructure.Services
 {
-    public interface IUserService
+    public interface IUserService : IService
     {
         Task<UserDto> GetByIdAsync(Guid id);
         Task<UserDto> GetByUserNameAsync(string username);
