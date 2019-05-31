@@ -1,33 +1,33 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 using Newtonsoft.Json;
 using Serilog;
 using Shelfy.API.Framework.Extensions;
 using Shelfy.Core.Domain;
-using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.AutoMapper;
+using Shelfy.Infrastructure.IoC;
 using Shelfy.Infrastructure.Mongodb;
-using Shelfy.Infrastructure.Repositories;
-using Shelfy.Infrastructure.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Shelfy.API
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public IContainer ApplicationContainer { get; private set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAuthorization(x =>
             {
@@ -35,24 +35,6 @@ namespace Shelfy.API
                 x.AddPolicy("HasModeratorRole", p => p.RequireRole(Role.Moderator.ToString(), Role.Admin.ToString()));
                 x.AddPolicy("HasAdminRole", p => p.RequireRole(Role.Admin.ToString()));
             });
-
-            services.AddSingleton<IMongoClient, MongoClient>(x =>
-                new MongoClient(Configuration["ConnectionStrings:ShelfyDatabase"]));
-            services.AddTransient<IMongoDatabase>(x =>
-                x.GetRequiredService<IMongoClient>().GetDatabase(Configuration["Mongo:Database"]));
-
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
-            services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IAuthorService, AuthorService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IEncrypterService, EncrypterService>();
-            services.AddScoped<IReviewService, ReviewService>();
-            services.AddScoped<IDataSeeder, DataSeeder>();
-
-            services.AddSingleton<IJwtHandler, JwtHandler>();
-            services.AddSingleton(AutoMapperConfig.Initialize());
 
             services.AddSwaggerGen(c =>
             {
@@ -65,6 +47,13 @@ namespace Shelfy.API
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.RegisterModule(new ContainerModule(Configuration));
+            ApplicationContainer = builder.Build();
+
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
