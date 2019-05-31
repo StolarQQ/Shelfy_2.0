@@ -18,11 +18,11 @@ Architecture type was implemented based on [Onion Architecture](https://jeffreyp
 #### TODO
 + __Complete tests__ !
 + User chat, current reading, read, want to read shelfs
-+ AutoFac IoC Container, assembly scaning
++ Autofac IoC Container, assembly scanning
 + Publish app to Azure/Digital Ocean
 + Front-end build with Angular or Aurelia
 + Recommendation system for Users
-+ CQRS / Rabbit
++ CQRS / RabbitMQ
 
 
 ## Prerequisite
