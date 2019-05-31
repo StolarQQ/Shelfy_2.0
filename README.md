@@ -51,7 +51,7 @@ In case of tests, u can use database seeding endpoint. <br>
 After that, sign in with login credentials, listed below.
 ```
 GET /admin/seed
-POST /acccount/login
+POST /account/login
 
 - User
 {
