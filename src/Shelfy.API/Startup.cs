@@ -36,6 +36,15 @@ namespace Shelfy.API
                 x.AddPolicy("HasAdminRole", p => p.RequireRole(Role.Admin.ToString()));
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", cors =>
+                    cors.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Shelfy API", Version = "v1" });
@@ -71,7 +80,7 @@ namespace Shelfy.API
                 app.UseHsts();
             }
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseCors("CorsPolicy");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
