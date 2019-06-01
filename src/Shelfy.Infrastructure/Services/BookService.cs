@@ -33,7 +33,7 @@ namespace Shelfy.Infrastructure.Services
             _logger = logger;
         }
 
-        public async Task<BookDetailsDto> GetAsync(Guid id)
+        public async Task<BookDetailsDto> GetByIdAsync(Guid id)
         {
             var book = await _bookRepository.GetOrFailAsync(id);
 
@@ -43,7 +43,7 @@ namespace Shelfy.Infrastructure.Services
             return bookDto;
         }
 
-        public async Task<BookDetailsDto> GetAsync(string isbn)
+        public async Task<BookDetailsDto> GetByIsbnAsync(string isbn)
         {
             var book = await _bookRepository.GetOrFailAsync(isbn);
 

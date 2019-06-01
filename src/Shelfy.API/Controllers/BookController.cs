@@ -24,7 +24,7 @@ namespace Shelfy.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Get(string isbn)
         {
-            var book = await _bookService.GetAsync(isbn);
+            var book = await _bookService.GetByIsbnAsync(isbn);
             if (book == null)
             {
                 return NotFound();
