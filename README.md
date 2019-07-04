@@ -8,17 +8,16 @@ Master | [![Build Status](https://travis-ci.org/StolarQQ/Shelfy_2.0.svg?branch=m
 
 ## What is Shelfy ?
 
-The main goal of this project, is to get to know the ASP.NET Core framework, concepts of REST, using good patterns and practices, used on a daily basis in the world of the software development. <br>
-Shelfy is RESTful API, backend for social cataloging apps, designed to help users to catalog books. Application allow collecting books, authors, reviews and can be accessed by any type of application(web, desktop, mobile applications). Application is based on ASP.NET Core 2.2 framework. <br><br>
+The main goal of this project is to get to know the ASP.NET Core framework, concepts of REST, using good patterns and practices, used on a daily basis in the world of software development. <br>
+Shelfy is RESTful API, backend for social cataloging apps, designed to help users to catalog books. The application allows collecting books, authors, reviews and can be accessed by any type of application(web, desktop, mobile apps). Application is based on ASP.NET Core 2.2 framework. <br><br>
 App using MongoDB database.
-Architecture type was implemented based on [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/). <br>In application have been used, __repository__, __IoC__, __Depdency Injection__ patterns. Shelfy implements authorization(__JWT Token__) and authentication, password encryption, simply diagnostic logging(Serilog), domain & service exceptions handle by custom middleware. Unit and integration tests(Not completed). Integration with open-source build server called [Travis-CI](https://travis-ci.org/). <br>
+Architecture type was implemented based on [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/). <br>In application have been used, __repository__, __IoC__, __dependency Injection__ patterns. Shelfy implements authorization(__JWT Token__) and authentication, password encryption, simply diagnostic logging(Serilog), domain & service exceptions handle by custom middleware. Unit and integration tests(Not completed). Integration with open-source build server called [Travis-CI](https://travis-ci.org/). <br>
 
 #### __Application is not finished yet.__
 
 #### TODO
-+ __Complete tests__ !
-+ User chat, current reading, read, want to read shelfs
-+ Fix magic strings
++ __Complete tests__!
++ User chat, current reading, read, want to read shelves+ 
 + ~~Autofac IoC Container, assembly scanning~~
 + Publish app to Azure/Digital Ocean
 + Front-end build with Angular or Aurelia
@@ -32,11 +31,11 @@ In order to run Shelfy, you need to have installed:
 + [MongoDB](https://www.mongodb.com/download-center/community)
 
 ## Configuration
-Mongodb connections string is setup for *27017*, default one for mongos instances.  
+MongoDB connections string is set up for *27017*, default one for mongo instances.  
 In order to use custom settings, please edit *appsettings.json* file, located in [Shelfy.API](src/Shelfy.API) folder<br>
 
 ## How to start application
-First start mongodb, official tutorials [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/), [Linux](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/), [macOS](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/).
+First start mongodb, official tutorials, [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/), [Linux](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/), [macOS](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/).
 ```
 git clone https://github.com/StolarQQ/Shelfy_2.0.git
 cd src/Shelfy.Api
@@ -47,7 +46,7 @@ Application will be available under https://localhost:5001
 
 ## Testing HTTP requests
 You can find prepared [Postman Collection](/assets/ShelfyCollection.postman_collectionv3.json) of requests, in assets [folder.](/assets) <br>
-In case of tests, u can use database seeding endpoint. <br>
+In case of tests, use database seeding endpoint. <br>
 After that, sign in with login credentials, listed below.
 ```
 GET /admin/seed
@@ -65,12 +64,12 @@ POST /account/login
 }
 
 ```
-Also u can use swagger under https://localhost:5001/swagger
+Also you can use swagger under https://localhost:5001/swagger
 
 ### Solution structure
-+ Shelfy.Api - Actual HTTP API - Does reference to infrastructure project.
-+ Shelfy.Infrastructure - Contains application services, repositories, dtos, mongo convetions, automapper configuration. Does reference to core project. 
-+ Shelfy.Core - Core of our application, contains domain models, and repositories interfaces. <br> Does not reference any other project.
++ Shelfy.API - Actual HTTP API - Does reference to infrastructure project.
++ Shelfy.Infrastructure - Contains application services, repositories, DTOs, mongo conventions, automapper configuration. Does reference to core project. 
++ Shelfy.Core - Application core, contains domain models, and repositories interfaces. <br> Does not reference any other project.
 + Shelfy.Tests - Unit tests.
 + Shelfy.EndToEnd - Integration tests.
 
