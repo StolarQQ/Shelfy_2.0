@@ -7,7 +7,6 @@ using Shelfy.Core.Domain;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Mongodb;
-using Shelfy.Infrastructure.Services;
 
 namespace Shelfy.Infrastructure.Repositories
 {

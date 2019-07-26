@@ -27,7 +27,7 @@ namespace Shelfy.Core.Domain
         public DateTime UpdatedAt { get; private set; }
         // Evidence that showing the authenticity of author.
         public string AuthorSource { get; private set; }
-        public string ProfileUrl => $"https://www.mysite.com/author/{AuthorId}";
+        public string ProfileUrl => $"https://localhost:5001/author/{AuthorId}";
         // User that send request for add an author.
         public Guid UserId { get; private set; }
 
@@ -36,8 +36,7 @@ namespace Shelfy.Core.Domain
         {
 
         }
-
-        // TODO : UserId
+        
         public Author(Guid authorId, string firstName, string lastName, string description, string imageUrl,
             DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource, Guid userId)
         {

@@ -22,7 +22,7 @@ namespace Shelfy.Core.Domain
         public string Avatar { get; private set; }
         public Role Role { get; private set; }
         public State State { get; private set; }
-        public string ProfileUrl => $"https://www.mysite.com/user/{UserId}";
+        public string ProfileUrl => $"https://localhost:5001/user/{UserId}";
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 

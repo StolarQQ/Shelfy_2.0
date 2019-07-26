@@ -29,7 +29,7 @@ namespace Shelfy.Core.Domain
         public DateTime UpdatedAt { get; private set; }
         // Path to book cover
         public string Cover { get; private set; }
-        public string BookUrl => $"https://www.mysite.com/book/{BookId}";
+        public string BookUrl => $"https://localhost:5001/book/{ISBN}";
         //User that added book
         public Guid UserId { get; private set; }
 
