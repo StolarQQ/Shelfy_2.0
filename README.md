@@ -16,14 +16,13 @@ Architecture type was implemented based on [Onion Architecture](https://jeffreyp
 #### __Application is not finished yet.__
 
 #### TODO
++ Cache implementation with Redis
 + __Complete tests__!
 + User chat, current reading, read, want to read shelves+ 
 + ~~Autofac IoC Container, assembly scanning~~
-+ Publish app to Azure/Digital Ocean
-+ Front-end build with Angular or Aurelia
-+ Recommendation system for Users
++ Publish app (Digital Ocean)
++ Front-end build with Angular 
 + CQRS / RabbitMQ
-
 
 ## Prerequisite
 In order to run Shelfy, you need to have installed:
