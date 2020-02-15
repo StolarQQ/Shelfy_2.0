@@ -15,11 +15,7 @@ namespace Shelfy.Infrastructure.IoC.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register((c, p) =>
-            {
-                return new MongoClient(_configuration["ConnectionStrings:ShelfyDatabase"]);
-
-            }).SingleInstance();
+            builder.Register((c, p) => new MongoClient(_configuration["ConnectionStrings:ShelfyDatabase"])).SingleInstance();
 
             builder.Register((c, p) =>
             {

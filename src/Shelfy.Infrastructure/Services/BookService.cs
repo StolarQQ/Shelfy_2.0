@@ -127,7 +127,7 @@ namespace Shelfy.Infrastructure.Services
             }
 
             await _bookRepository.UpdateAsync(bookToUpdate);
-            _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id} was updated at {DateTime.UtcNow}'");
+            _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id}' was updated at {DateTime.UtcNow}'");
 
         }
 
