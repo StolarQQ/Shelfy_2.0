@@ -6,6 +6,7 @@ using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
+using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Mongodb;
 
 namespace Shelfy.Infrastructure.Repositories
@@ -28,7 +29,7 @@ namespace Shelfy.Infrastructure.Repositories
         public async Task<IEnumerable<Book>> GetAllBooks()
             => await Books.AsQueryable().ToListAsync();
 
-        public async Task<PagedResult<Book>> BrowseAsync(int currentPage, int pageSize, string query)
+        public async Task<IPagedResult<Book>> BrowseAsync(int currentPage, int pageSize, string query)
             => await Books.AsQueryable().SearchQuery(query).PaginateAsync(currentPage, pageSize);
 
         public async Task AddAsync(Book book)

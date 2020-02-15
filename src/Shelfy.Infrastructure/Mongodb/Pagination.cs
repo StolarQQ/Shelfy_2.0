@@ -4,6 +4,8 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Helper;
+using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 
 namespace Shelfy.Infrastructure.Mongodb
 {

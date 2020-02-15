@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Helper;
 using Shelfy.Infrastructure.Commands.Book;
 using Shelfy.Infrastructure.DTO.Book;
+using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 
 namespace Shelfy.Infrastructure.Services
 {

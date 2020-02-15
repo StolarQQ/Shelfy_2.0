@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Shelfy.API;
-using Shelfy.Core.Helper;
 using Shelfy.Infrastructure.Commands.Account;
 using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Jwt;
+using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 using Shelfy.Tests.EndToEnd.Helpers;
 using Xunit;
 

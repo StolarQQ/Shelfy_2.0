@@ -13,6 +13,7 @@ using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Book;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services

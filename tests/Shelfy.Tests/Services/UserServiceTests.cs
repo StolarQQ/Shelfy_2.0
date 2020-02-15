@@ -11,6 +11,8 @@ using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
+using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 using Shelfy.Infrastructure.Services;
 using Xunit;
 

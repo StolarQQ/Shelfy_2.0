@@ -26,7 +26,7 @@ namespace Shelfy.Infrastructure.Repositories
             => await Authors.AsQueryable().Where(x => x.FullName.ToLowerInvariant()
                 .Contains(phrase.ToLowerInvariant())).Take(10).ToListAsync();
         
-        public async Task<PagedResult<Author>> BrowseAsync(int currentPage, int pageSize)
+        public async Task<IPagedResult<Author>> BrowseAsync(int currentPage, int pageSize)
             => await Authors.AsQueryable().PaginateAsync(currentPage, pageSize);
 
         public async Task AddAsync(Author author)

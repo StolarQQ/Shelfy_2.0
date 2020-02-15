@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Shelfy.Core.Helper;
+using Shelfy.Infrastructure.Pagination;
 
 namespace Shelfy.Infrastructure.Extensions
 {

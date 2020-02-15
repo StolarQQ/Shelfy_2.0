@@ -5,12 +5,12 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
-using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.Jwt;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
+using Shelfy.Infrastructure.Pagination;
 using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services

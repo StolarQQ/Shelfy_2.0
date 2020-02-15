@@ -11,7 +11,7 @@ namespace Shelfy.Core.Repositories
         Task<Book> GetByIdAsync(Guid id);
         Task<Book> GetByIsbnAsync(string isbn);
         Task<IEnumerable<Book>> GetAllBooks();
-        Task<PagedResult<Book>> BrowseAsync(int currentPage = 1,
+        Task<IPagedResult<Book>> BrowseAsync(int currentPage = 1,
             int pageSize = 5, string query = "");
         Task AddAsync(Book book);
         Task UpdateAsync(Book book);
