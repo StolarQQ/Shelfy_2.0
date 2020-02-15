@@ -7,7 +7,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Shelfy.Core.Domain;
-using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;

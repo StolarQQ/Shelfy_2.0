@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Serilog;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
-using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
@@ -20,11 +20,13 @@ namespace Shelfy.Infrastructure.Services
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
+        public AuthorService(IAuthorRepository authorRepository, IMapper mapper, ILogger logger)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<AuthorDto> GetByIdAsync(Guid id)
@@ -38,7 +40,7 @@ namespace Shelfy.Infrastructure.Services
         {
             if (string.IsNullOrWhiteSpace(phrase) || phrase.Length < 3)
             {
-                throw new ServiceException(ErrorCodes.InvalidInput, "Phrase must contains at least 3 characters");
+               throw new ServiceException(ErrorCodes.InvalidInput, "Phrase must contains at least 3 characters");
             }
             var authors = await _authorRepository.BrowseByPhraseAsync(phrase);
 

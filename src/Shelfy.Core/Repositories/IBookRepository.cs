@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shelfy.Core.Domain;
-using Shelfy.Core.Helper;
+using Shelfy.Core.Pagination;
 
 namespace Shelfy.Core.Repositories
 {

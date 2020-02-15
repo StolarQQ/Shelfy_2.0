@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Shelfy.Core.Helper;
+using Shelfy.Core.Pagination;
 
 namespace Shelfy.Infrastructure.Pagination
 {

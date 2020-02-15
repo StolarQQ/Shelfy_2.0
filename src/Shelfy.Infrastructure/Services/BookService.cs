@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
-using Shelfy.Core.Helper;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Commands.Book;
 using Shelfy.Infrastructure.DTO.Author;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
-using Shelfy.Core.Helper;
+using Shelfy.Core.Pagination;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Mongodb;

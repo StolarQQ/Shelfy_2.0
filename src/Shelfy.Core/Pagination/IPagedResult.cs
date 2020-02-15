@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Shelfy.Core.Helper
+namespace Shelfy.Core.Pagination
 {
     public interface IPagedResult<T>
     {

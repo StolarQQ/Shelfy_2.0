@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
-using Shelfy.Core.Helper;
 using Shelfy.Infrastructure.Commands.Book;
 using Shelfy.Infrastructure.DTO.Book;
 using Shelfy.Infrastructure.Extensions;
