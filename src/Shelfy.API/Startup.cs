@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Shelfy.API.Framework.Extensions;
-using Shelfy.Core.Domain;
 using Shelfy.Infrastructure.IoC;
 using Shelfy.Infrastructure.Mongodb;
 using Swashbuckle.AspNetCore.Swagger;
@@ -29,12 +28,7 @@ namespace Shelfy.API
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthorization(x =>
-            {
-                x.AddPolicy("HasUserRole", p => p.RequireRole(Role.User.ToString(), Role.Admin.ToString()));
-                x.AddPolicy("HasModeratorRole", p => p.RequireRole(Role.Moderator.ToString(), Role.Admin.ToString()));
-                x.AddPolicy("HasAdminRole", p => p.RequireRole(Role.Admin.ToString()));
-            });
+            services.AuthorizationExtension();
 
             services.AddCors(options =>
             {
@@ -64,6 +58,8 @@ namespace Shelfy.API
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
+
+    
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
