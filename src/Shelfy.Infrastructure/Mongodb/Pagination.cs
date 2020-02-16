@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
-using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Pagination;
 
 namespace Shelfy.Infrastructure.Mongodb
@@ -27,7 +26,7 @@ namespace Shelfy.Infrastructure.Mongodb
                 return PagedResult<T>.Empty;
 
             var totalResults = await collection.CountAsync();
-            var totalPages = (int)Math.Ceiling((decimal)totalResults / pageSize);
+            var totalPages = (int) Math.Ceiling((decimal) totalResults / pageSize);
 
             if (currentPage > totalPages)
                 currentPage = totalPages;
@@ -50,10 +49,10 @@ namespace Shelfy.Infrastructure.Mongodb
         public static IMongoQueryable<Book> SearchQuery(this IMongoQueryable<Book> collection,
             string query)
         {
-           if (string.IsNullOrWhiteSpace(query)) return collection.OrderBy(x => x.Title);
+            if (string.IsNullOrWhiteSpace(query)) return collection.OrderBy(x => x.Title);
 
-           return collection.Where(x => x.Title.ToLowerInvariant()
-               .Contains(query.ToLowerInvariant()));
+            return collection.Where(x => x.Title.ToLowerInvariant()
+                .Contains(query.ToLowerInvariant()));
         }
     }
 }

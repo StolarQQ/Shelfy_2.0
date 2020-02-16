@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using Serilog;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
 using Shelfy.Core.Repositories;
@@ -20,13 +19,11 @@ namespace Shelfy.Infrastructure.Services
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
 
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper, ILogger logger)
+        public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
-            _logger = logger;
         }
 
         public async Task<AuthorDto> GetByIdAsync(Guid id)

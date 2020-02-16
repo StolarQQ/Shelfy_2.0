@@ -47,6 +47,7 @@ namespace Shelfy.Infrastructure.Services
         {
             var book = await _bookRepository.GetOrFailAsync(isbn);
 
+            //TODO: Refactor
             var authors = await GetAuthors(book.AuthorsIds);
             var bookDto = SetUpBook(book, authors);
 

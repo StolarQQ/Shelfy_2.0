@@ -6,7 +6,6 @@ using MongoDB.Driver.Linq;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Pagination;
 using Shelfy.Core.Repositories;
-using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Mongodb;
 
 namespace Shelfy.Infrastructure.Repositories
@@ -25,7 +24,7 @@ namespace Shelfy.Infrastructure.Repositories
 
         public async Task<Book> GetByIsbnAsync(string isbn)
             => await Books.AsQueryable().FirstOrDefaultAsync(x => x.ISBN == isbn);
-
+        
         public async Task<IEnumerable<Book>> GetAllBooks()
             => await Books.AsQueryable().ToListAsync();
 
