@@ -12,7 +12,6 @@ using Shelfy.Infrastructure.Commands.Account;
 using Shelfy.Infrastructure.Commands.Author;
 using Shelfy.Infrastructure.DTO.Author;
 using Shelfy.Infrastructure.DTO.Jwt;
-using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Pagination;
 using Shelfy.Tests.EndToEnd.Helpers;
 using Xunit;
@@ -29,7 +28,7 @@ namespace Shelfy.Tests.EndToEnd.Controllers
         [Fact]
         public async Task get_should_return_author_for_valid_id()
         {
-            var authorId = "2a975e6b-f64e-4446-a30a-a01886a3c060";
+            var authorId = "65baa7d4-e441-41ef-9a29-2513449a73cd";
             var response = await Client.GetAsync($"author/{authorId}");
             var content = await response.Content.ReadAsStringAsync();
             var author = JsonConvert.DeserializeObject<AuthorDto>(content);
@@ -140,7 +139,7 @@ namespace Shelfy.Tests.EndToEnd.Controllers
             };
             var existAuthorId = "2a975e6b-f64e-4446-a30a-a01886a3c060";
             var loginCredentials = GetPayload(login);
-            var loginResponse = await Client.PostAsync("user/login", loginCredentials);
+            var loginResponse = await Client.PostAsync("account/login", loginCredentials);
             var loginContent = await loginResponse.Content.ReadAsStringAsync();
             var tokenDto = JsonConvert.DeserializeObject<TokenDto>(loginContent);
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenDto.Token);
@@ -162,7 +161,7 @@ namespace Shelfy.Tests.EndToEnd.Controllers
                 Email = "test123@gmaail.com",
                 Password = "test123"
             };
-            var existAuthorId = "96c64029-7471-45ed-86b9-a69c0a9ab68e";
+            var existAuthorId = "65baa7d4-e441-41ef-9a29-2513449a73cd";
             var loginCredentials = GetPayload(login);
             var loginResponse = await Client.PostAsync("user/login", loginCredentials);
             var loginContent = await loginResponse.Content.ReadAsStringAsync();
@@ -178,7 +177,7 @@ namespace Shelfy.Tests.EndToEnd.Controllers
         [Fact]
         public async Task delete_without_login_should_return_unauthorized()
         {
-            var authorId = "9a8107af-f43a-4011-a69c-aa924704c7cb";
+            var authorId = "65baa7d4-e441-41ef-9a29-2513449a73cd";
 
             var response = await Client.DeleteAsync($"author/{authorId}");
 
