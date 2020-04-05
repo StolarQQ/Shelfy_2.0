@@ -58,9 +58,7 @@ namespace Shelfy.API
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
-
-    
-
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             // Serilog configuration

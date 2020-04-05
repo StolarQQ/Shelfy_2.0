@@ -7,7 +7,7 @@ using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Core.Domain
 {
-    public partial class Book
+    public class Book
     {
         private static readonly Regex CoverRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
@@ -145,7 +145,7 @@ namespace Shelfy.Core.Domain
             var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
             if (authorExist != null)
             {
-                throw new DomainException(ErrorCodes.AuthorAlreadyAdded, $"Author with id: '{author}' already added for Book: '{Title}'.");
+                throw new DomainException(ErrorCodes.AuthorAlreadyAdded, $"Author with id: '{author.AuthorId}' already added for Book: '{Title}'.");
             }
 
             _authorsDetials.Add(author);

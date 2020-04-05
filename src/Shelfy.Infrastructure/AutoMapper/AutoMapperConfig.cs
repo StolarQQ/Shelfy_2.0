@@ -16,12 +16,8 @@ namespace Shelfy.Infrastructure.AutoMapper
             => new MapperConfiguration(cfg =>
                 {
                     cfg.CreateMap<Book, BookDto>();
-
                     cfg.CreateMap<Book, BookDetailsDto>();
                     cfg.CreateMap<AuthorShortcut, AuthorShortcutDto>();
-                    //cfg.CreateMap<Book, BookDetailsDto>()
-                    //    .ForSourceMember(x => x.Authors, opt => opt.DoNotValidate());
-
                     cfg.CreateMap<Author, AuthorDto>();
                     cfg.CreateMap<Author, AuthorSearchDto>();
                     cfg.CreateMap<Author, AuthorShortcutDto>();
