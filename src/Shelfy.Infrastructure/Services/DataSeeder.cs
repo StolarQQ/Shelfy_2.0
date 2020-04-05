@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bogus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
+using Shelfy.Infrastructure.Extensions;
 
 namespace Shelfy.Infrastructure.Services
 {
@@ -40,24 +40,28 @@ namespace Shelfy.Infrastructure.Services
             var random = new Random();
 
             _logger.LogInformation("Seeding testing data !");
+            
 
-            for (int i = 0; i < 150; i++)
+            for (var i = 0; i < 10000; i++)
             {
+
                 var userId = Guid.NewGuid();
                 await _userService.RegisterAsync(userId,
                     $"email{i}@gmail.com", $"username{i}", "secret123");
 
+
                 var authorId = Guid.NewGuid();
-                await _authorService.RegisterAsync(authorId, GenerateFirstName(), GenerateFirstName()
-                    , GenerateDescription(), null, GenerateDate(), null, GenerateCity(), GenerateWebsite(),
-                    GenerateWebsite(), userId);
+                await _authorService.RegisterAsync(authorId, DataGenerator.GenerateFirstName(), DataGenerator.GenerateFirstName()
+                    , DataGenerator.GenerateDescription(), null, DataGenerator.GenerateDate(), null, DataGenerator.GenerateCity(), DataGenerator.GenerateWebsite(),
+                    DataGenerator.GenerateWebsite(), userId);
 
                 var bookId = Guid.NewGuid();
                 var authorsId = new List<Guid> { authorId };
-                await _bookService.AddAsync(bookId, GenerateTitles(), null, GenerateDescription(),
-                    GenerateRandomIsbn(13), null, 999, GenerateCity(), DateTime.Now, authorsId, userId);
 
-                await _reviewService.AddAsync(random.Next(1, 6), GenerateDescription(), userId, bookId);
+                await _bookService.AddAsync(bookId, DataGenerator.GenerateTitles(), null, DataGenerator.GenerateDescription(),
+                    DataGenerator.GenerateRandomIsbn(13), null, 999, DataGenerator.GenerateCity(), DateTime.Now, authorsId, userId);
+
+                await _reviewService.AddAsync(random.Next(1, 6), DataGenerator.GenerateDescription(), userId, bookId);
             }
 
             for (int i = 0; i < 3; i++)
@@ -70,66 +74,6 @@ namespace Shelfy.Infrastructure.Services
                 await _userService.RegisterAsync(moderatorId,
                     $"moderator{i}@gmail.com", $"moderator{i}", "secret123", Role.Moderator);
             }
-        }
-
-        private string GenerateFirstName()
-        {
-            var faker = new Faker();
-            var firstName = faker.Name.FirstName();
-
-            return firstName;
-        }
-
-        private string GenerateDescription()
-        {
-            var faker = new Faker();
-            var desc = faker.Lorem.Paragraph();
-
-            return desc;
-        }
-
-        private string GenerateCity()
-        {
-            var faker = new Faker();
-            var city = faker.Address.City();
-
-            return city;
-        }
-
-        private DateTime GenerateDate()
-        {
-            var faker = new Faker();
-            var date = faker.Date.Past(50, DateTime.Now);
-
-            return date;
-        }
-
-        private string GenerateWebsite()
-        {
-            var faker = new Faker();
-            var url = faker.Internet.Url();
-
-            return url;
-        }
-
-        private string GenerateTitles()
-        {
-            var faker = new Faker();
-            var fakeTitle = faker.Commerce.Product();
-
-            return fakeTitle;
-        }
-
-        private string GenerateRandomIsbn(int stringLength)
-        {
-            var rnd = new Random();
-            var sb = new StringBuilder();
-            var randomString = "1234567890";
-
-            for (var i = 0; i < stringLength; i++)
-                sb.Append(randomString[rnd.Next(0, randomString.Length)]);
-
-            return sb.ToString();
         }
     }
 }
