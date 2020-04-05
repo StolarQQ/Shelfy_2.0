@@ -7,12 +7,12 @@ using Shelfy.Core.Exceptions;
 
 namespace Shelfy.Core.Domain
 {
-    public class Book
+    public partial class Book
     {
         private static readonly Regex CoverRegex = new Regex("(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)");
 
         [BsonElement]
-        private ISet<Guid> _authorsIds = new HashSet<Guid>();
+        private ISet<AuthorShortcut> _authorsDetials = new HashSet<AuthorShortcut>(); 
         [BsonElement]
         private ISet<Review> _reviews = new HashSet<Review>();
 
@@ -37,7 +37,7 @@ namespace Shelfy.Core.Domain
         public double Rating =>
             ReviewCount == 0 ? 0 : Math.Round(_reviews.Average(x => x.Rating), 2);
 
-        public IEnumerable<Guid> AuthorsIds => _authorsIds;
+        public IEnumerable<AuthorShortcut> Authors => _authorsDetials;
         public IEnumerable<Review> Reviews => _reviews;
 
         // For mongo driver 
@@ -140,27 +140,27 @@ namespace Shelfy.Core.Domain
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void AddAuthor(Guid authorId)
+        public void AddAuthor(AuthorShortcut author)
         {
-            var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
-            if (authorExist != Guid.Empty)
+            var authorExist = Authors.SingleOrDefault(x => x.AuthorId == author.AuthorId);
+            if (authorExist != null)
             {
-                throw new DomainException(ErrorCodes.AuthorAlreadyAdded, $"Author with id: '{authorId}' already added for Book: '{Title}'.");
+                throw new DomainException(ErrorCodes.AuthorAlreadyAdded, $"Author with id: '{author}' already added for Book: '{Title}'.");
             }
 
-            _authorsIds.Add(authorId);
+            _authorsDetials.Add(author);
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void RemoveAuthor(Guid authorId)
         {
-            var authorExist = AuthorsIds.SingleOrDefault(x => x == authorId);
+            var authorExist = Authors.SingleOrDefault(x => x.AuthorId == authorId);
             if (authorExist == null)
             {
                 throw new DomainException(ErrorCodes.AuthorNotFound, $"Author with id: '{authorId}' was not found for Book: '{Title}'.");
             }
 
-            _authorsIds.Remove(authorId);
+            _authorsDetials.Remove(authorExist);
             UpdatedAt = DateTime.UtcNow;
         }
 

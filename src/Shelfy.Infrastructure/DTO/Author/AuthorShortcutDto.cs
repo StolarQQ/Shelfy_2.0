@@ -2,7 +2,7 @@
 
 namespace Shelfy.Infrastructure.DTO.Author
 {
-    public class AuthorFullNameDto
+    public class AuthorShortcutDto
     {
         public string ProfileUrl { get; set; }
         public Guid AuthorId { get; set; }

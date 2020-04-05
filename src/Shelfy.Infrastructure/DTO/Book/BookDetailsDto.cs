@@ -10,7 +10,7 @@ namespace Shelfy.Infrastructure.DTO.Book
         public Guid BookId { get; set; }
         public string BookUrl { get; set; }
         public string Title { get; set; }
-        public IEnumerable<AuthorFullNameDto> Authors { get; set; }
+        public IEnumerable<AuthorShortcutDto> Authors { get; set; }
         public string Description { get; set; }
         public DateTime PublishedAt { get; set; }
         public IEnumerable<ReviewDto> Reviews { get; set; }

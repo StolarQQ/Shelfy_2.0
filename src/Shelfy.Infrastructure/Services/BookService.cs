@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -37,21 +39,14 @@ namespace Shelfy.Infrastructure.Services
         {
             var book = await _bookRepository.GetOrFailAsync(id);
 
-            var authors = await GetAuthors(book.AuthorsIds);
-            var bookDto = SetUpBook(book, authors);
-
-            return bookDto;
+            return _mapper.Map<BookDetailsDto>(book);
         }
 
         public async Task<BookDetailsDto> GetByIsbnAsync(string isbn)
         {
             var book = await _bookRepository.GetOrFailAsync(isbn);
-
-            //TODO: Refactor
-            var authors = await GetAuthors(book.AuthorsIds);
-            var bookDto = SetUpBook(book, authors);
-
-            return bookDto;
+            
+            return _mapper.Map<BookDetailsDto>(book);
         }
 
         public async Task<PagedResult<BookDto>> BrowseAsync(int currentPage, int pageSize, string query)
@@ -59,18 +54,23 @@ namespace Shelfy.Infrastructure.Services
             _logger.LogInformation("Fetching Data from Book repository");
             var books = await _bookRepository.BrowseAsync(currentPage, pageSize, query);
 
-            var allBooks = new List<BookDto>();
+            return _mapper.Map<PagedResult<BookDto>>(books);
 
-            foreach (var book in books.Source)
-            {
-                var authors = await GetAuthors(book.AuthorsIds);
-                allBooks.Add(SetupBookForBrowse(book, authors));
-            }
+        }
 
-            var mappedResult = _mapper.Map<PagedResult<BookDto>>(books);
-            mappedResult.Source = allBooks;
+        // Testing query performance 
+        public async Task<IEnumerable<BookDto>> GetAllBooks()
+        {
+            var stopwatch = Stopwatch.StartNew();
 
-            return mappedResult;
+            _logger.LogInformation("Fetching Data from Book repository");
+            var books = await _bookRepository.GetAllBooks();
+            var bookDto = _mapper.Map<IEnumerable<BookDto>>(books);
+
+            stopwatch.Stop();
+            _logger.Log(LogLevel.Information, $"GetAllBooks was invoked in '{stopwatch.ElapsedMilliseconds}' ms.");
+
+            return bookDto;
         }
 
         public async Task AddAsync(Guid bookId, string title, string originalTitle,
@@ -80,13 +80,12 @@ namespace Shelfy.Infrastructure.Services
             var book = await _bookRepository.GetByIsbnAsync(isbn);
             if (book != null)
             {
-                throw new ServiceException(ErrorCodes.BookAlreadyExist, $"Book with ISBN {isbn} already exist");
+                throw new ServiceException(ErrorCodes.BookAlreadyExist, $"Book with ISBN '{isbn}' already exist");
             }
 
             try
             {
-                var validCover = cover.DefaultBookCoverNotEmpty();
-                book = new Book(bookId, title, originalTitle, description, isbn, validCover, pages, publisher, publishedAt, userId);
+                book = new Book(bookId, title, originalTitle, description, isbn, cover.SetUpDefaultCoverWhenEmpty(), pages, publisher, publishedAt, userId);
             }
             catch (DomainException ex)
             {
@@ -98,10 +97,12 @@ namespace Shelfy.Infrastructure.Services
                 var author = await _authorRepository.GetByIdAsync(id);
                 if (author == null)
                 {
-                    throw new ServiceException(ErrorCodes.AuthorNotFound, $"Author with id '{id} not exist");
+                    throw new ServiceException(ErrorCodes.AuthorNotFound, $"Author with id '{id}' not exist");
                 }
 
-                book.AddAuthor(id);
+                var mappedAuthor = _mapper.Map<AuthorShortcut>(author);
+
+                book.AddAuthor(mappedAuthor);
             }
 
             await _bookRepository.AddAsync(book);
@@ -138,54 +139,6 @@ namespace Shelfy.Infrastructure.Services
 
             await _bookRepository.RemoveAsync(book.BookId);
             _logger.LogInformation($"Book '{book.Title}' with id '{id}' was deleted at {DateTime.UtcNow}'");
-        }
-
-        /// <summary>
-        /// Get authors by link IDs in book. 
-        /// </summary>
-        /// <param name="authorsId"></param>
-        /// <returns>List of authors</returns>
-        private async Task<IEnumerable<Author>> GetAuthors(IEnumerable<Guid> authorsId)
-        {
-            var authors = new List<Author>();
-
-            foreach (var guid in authorsId)
-            {
-                var author = await _authorRepository.GetByIdAsync(guid);
-                authors.Add(author);
-            }
-
-            return authors;
-        }
-
-        /// <summary>
-        /// Set up bookDto, assign name of authors
-        /// </summary>
-        /// <param name="book"></param>
-        /// <param name="authors"></param>
-        /// <returns></returns>
-        private BookDetailsDto SetUpBook(Book book, IEnumerable<Author> authors)
-        {
-            var bookDto = _mapper.Map<BookDetailsDto>(book);
-            var authorsDto = _mapper.Map<IEnumerable<AuthorFullNameDto>>(authors);
-            bookDto.Authors = authorsDto;
-
-            return bookDto;
-        }
-
-        /// <summary>
-        /// Set up books for browsing
-        /// </summary>
-        /// <param name="book"></param>
-        /// <param name="authors"></param>
-        /// <returns></returns>
-        private BookDto SetupBookForBrowse(Book book, IEnumerable<Author> authors)
-        {
-            var bookDto = _mapper.Map<BookDto>(book);
-            var authorsDto = _mapper.Map<IEnumerable<AuthorNameDto>>(authors);
-            bookDto.Authors = authorsDto;
-
-            return bookDto;
         }
     }
 }
