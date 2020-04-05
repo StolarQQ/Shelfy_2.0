@@ -38,8 +38,8 @@ namespace Shelfy.Tests.Extensions
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
+        [InlineData(null)] 
+        [InlineData("")] 
         public void IsEmpty_should_return_true_for_null_or_whitespace(string input)
         {
             //Arrange
@@ -70,7 +70,6 @@ namespace Shelfy.Tests.Extensions
         public async Task GetOrFailAsync_for_BookRepository_should_return_book_when_id_exist()
         {
             //Arrange
-            var exMsg = $"Book with id '{_book.BookId}' was not found.";
             var repoMock = new Mock<IBookRepository>();
             repoMock.Setup(x => x.GetByIdAsync(_book.BookId)).ReturnsAsync(_book);
 
@@ -221,7 +220,7 @@ namespace Shelfy.Tests.Extensions
             var defaultCover = "https://www.stolarstate.pl/avatar/book/default.png";
 
             //Act
-            var result = cover.DefaultBookCoverNotEmpty();
+            var result = cover.SetUpDefaultCoverWhenEmpty();
 
             //Assert
             result.Should().BeEquivalentTo(defaultCover);
@@ -234,7 +233,7 @@ namespace Shelfy.Tests.Extensions
             var validCover = "https://www.stolarstate.pl/avatar/book/valid.jpeg";
 
             //Act
-            var result = validCover.DefaultBookCoverNotEmpty();
+            var result = validCover.SetUpDefaultCoverWhenEmpty();
 
             //Assert
             result.Should().BeEquivalentTo(validCover);

@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="cover"></param>
         /// <returns></returns>
-        public static string DefaultBookCoverNotEmpty(this string cover)
+        public static string SetUpDefaultCoverWhenEmpty(this string cover)
         {
             var defaultCover = "https://www.stolarstate.pl/avatar/book/default.png";
 

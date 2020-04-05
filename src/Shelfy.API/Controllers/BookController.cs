@@ -38,8 +38,7 @@ namespace Shelfy.API.Controllers
         {
             var paginatedBook = await _bookService.BrowseAsync(currentPage, pageSize, query);
 
-            Response.AddPaginationHeader(paginatedBook.CurrentPage, paginatedBook.PageSize,
-                paginatedBook.TotalCount, paginatedBook.TotalPages, query);
+            Response.AddPaginationHeader(paginatedBook.CurrentPage, paginatedBook.PageSize,paginatedBook.TotalCount, paginatedBook.TotalPages, query);
 
             return Ok(paginatedBook.Source);
         }

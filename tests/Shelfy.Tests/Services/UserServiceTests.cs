@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
@@ -10,7 +9,6 @@ using Shelfy.Core.Domain;
 using Shelfy.Core.Repositories;
 using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
-using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Pagination;
 using Shelfy.Infrastructure.Services;
 using Xunit;
@@ -165,6 +163,7 @@ namespace Shelfy.Tests.Services
             await userService.DeleteAsync(_user.UserId);
 
             // Assert
+            
             repoMock.Verify(x => x.RemoveAsync(_user.UserId), Times.Once);
         }
 

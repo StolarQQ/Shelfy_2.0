@@ -10,8 +10,8 @@ namespace Shelfy.API.Framework.Extensions
             Log.Logger = new LoggerConfiguration()
                 .Enrich
                 .FromLogContext()
-                .MinimumLevel.Warning()
-                .WriteTo.File("Logs/logs.txt")
+                .MinimumLevel.Information()
+                .WriteTo.File("Logs/logs.txt") // Just for testing purpose
                 .CreateLogger();
 
             return builder;

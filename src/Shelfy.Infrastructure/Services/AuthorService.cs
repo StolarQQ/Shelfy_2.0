@@ -35,7 +35,7 @@ namespace Shelfy.Infrastructure.Services
         
         public async Task<IEnumerable<AuthorSearchDto>> BrowseByPhraseAsync(string phrase)
         {
-            if (string.IsNullOrWhiteSpace(phrase) || phrase.Length < 3)
+            if (phrase.IsEmpty() || phrase.Length < 3)
             {
                throw new ServiceException(ErrorCodes.InvalidInput, "Phrase must contains at least 3 characters");
             }

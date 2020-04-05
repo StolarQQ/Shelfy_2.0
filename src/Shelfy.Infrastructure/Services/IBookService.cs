@@ -14,6 +14,7 @@ namespace Shelfy.Infrastructure.Services
         Task<BookDetailsDto> GetByIsbnAsync(string isbn);
         Task<PagedResult<BookDto>> BrowseAsync(int currentPage = 1,
             int pageSize = 5, string query = "");
+        Task<IEnumerable<BookDto>> GetAllBooks();
         Task AddAsync(Guid bookId, string title, string originalTitle,string description,
             string isbn, string cover, int pages, string publisher,
             DateTime publishedAt, IEnumerable<Guid> authorsId, Guid userId);
