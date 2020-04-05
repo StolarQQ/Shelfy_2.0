@@ -3,16 +3,16 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 using Shelfy.API.Framework.Extensions;
 using Shelfy.Infrastructure.IoC;
 using Shelfy.Infrastructure.Mongodb;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Shelfy.API
 {
@@ -32,24 +32,25 @@ namespace Shelfy.API
 
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", cors =>
-                    cors.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
+                options.AddPolicy("CorsPolicy",
+                    corsPolicyBuilder =>
+                    {
+                        corsPolicyBuilder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
             });
+
+            services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Shelfy API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shelfy API", Version = "v1" });
             });
 
             // JWT configuration
             services.RegisterJwt(Configuration);
             services.AddMemoryCache();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(x => x.SerializerSettings.Formatting = Formatting.Indented);
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -58,19 +59,24 @@ namespace Shelfy.API
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
-        
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             // Serilog configuration
             loggerFactory.AddSerilog();
             app.RegisterSerilog();
 
+            app.UseRouting();
+            app.UseStaticFiles();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             else
             {
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
@@ -87,7 +93,10 @@ namespace Shelfy.API
             app.UseMyExceptionHandler();
             app.UseAuthentication();
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
         }
     }
 }
