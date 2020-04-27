@@ -31,7 +31,7 @@ namespace Shelfy.Core.Domain
         public string Cover { get; private set; }
         public string BookUrl => $"https://localhost:5001/book/{ISBN}";
         //User that added book
-        public Guid UserId { get; private set; }
+        public Guid CreatorId { get; private set; }
 
         public int ReviewCount => _reviews.Count;
         public double Rating =>
@@ -48,7 +48,7 @@ namespace Shelfy.Core.Domain
 
         public Book(Guid bookId, string title, string originalTitle,
             string description, string isbn, string cover,
-            int pages, string publisher, DateTime publishedAt, Guid userId)
+            int pages, string publisher, DateTime publishedAt, Guid creatorId)
         {
             BookId = bookId;
             SetTitle(title);
@@ -61,7 +61,7 @@ namespace Shelfy.Core.Domain
             PublishedAt = publishedAt;
             UpdatedAt = DateTime.UtcNow;
             CreatedAt = DateTime.UtcNow;
-            UserId = userId;
+            CreatorId = creatorId;
         }
 
         public void SetTitle(string title)
@@ -166,10 +166,10 @@ namespace Shelfy.Core.Domain
 
         public void AddReview(Review review)
         {
-            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == review.UserId);
+            var reviewExist = Reviews.SingleOrDefault(x => x.CreatorId == review.CreatorId);
             if (reviewExist != null)
             {
-                throw new DomainException(ErrorCodes.ReviewAlreadyAdded, $"User with id '{review.UserId}' already added review for book {Title}.");
+                throw new DomainException(ErrorCodes.ReviewAlreadyAdded, $"User with id '{review.CreatorId}' already added review for book {Title}.");
             }
 
             _reviews.Add(review);
@@ -178,7 +178,7 @@ namespace Shelfy.Core.Domain
 
         public void DeleteReview(Guid userId)
         {
-            var reviewExist = Reviews.SingleOrDefault(x => x.UserId == userId);
+            var reviewExist = Reviews.SingleOrDefault(x => x.CreatorId == userId);
             if (reviewExist == null)
             {
                 throw new DomainException(ErrorCodes.ReviewNotFound, $"Review by user with id '{userId}' not exist for book {Title}.");

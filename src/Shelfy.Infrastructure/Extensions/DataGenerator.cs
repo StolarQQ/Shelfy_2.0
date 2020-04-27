@@ -24,7 +24,7 @@ namespace Shelfy.Infrastructure.Extensions
         public static string GenerateTitles()
             => new Faker().Commerce.Product();
 
-        public static  string GenerateRandomIsbn(int stringLength)
+        public static string GenerateRandomIsbn(int stringLength)
         {
             var rnd = new Random();
             var sb = new StringBuilder();

@@ -18,8 +18,7 @@ namespace Shelfy.Core.Domain
         public string Username { get; private set; }
         public string Password { get; private set; }
         public string Salt { get; private set; }
-        // Path to user avatar
-        public string Avatar { get; private set; }
+        public string AvatarPath { get; private set; }
         public Role Role { get; private set; }
         public State State { get; private set; }
         public string ProfileUrl => $"https://localhost:5001/user/{UserId}";
@@ -142,21 +141,21 @@ namespace Shelfy.Core.Domain
                 throw new DomainException(ErrorCodes.InvalidAvatar, $"URL {avatar} doesn't meet required criteria");
             }
 
-            if (Avatar == avatar)
+            if (AvatarPath == avatar)
                 return;
 
-            Avatar = avatar;
+            AvatarPath = avatar;
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void DeleteAvatar()
         {
-            if (Avatar == DefaultAvatar)
+            if (AvatarPath == DefaultAvatar)
             {
-                throw new DomainException(ErrorCodes.InvalidAvatar, "Avatar cannot be deleted, you are using default one");
+                throw new DomainException(ErrorCodes.InvalidAvatar, "AvatarPath cannot be deleted, you are using default one");
             }
 
-            Avatar = DefaultAvatar;
+            AvatarPath = DefaultAvatar;
             UpdatedAt = DateTime.UtcNow;
         }
 

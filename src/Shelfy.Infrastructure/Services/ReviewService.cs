@@ -57,7 +57,7 @@ namespace Shelfy.Infrastructure.Services
             var userReviews = new List<Review>();
             
             foreach (var review in reviews)
-                if (review.UserId == userId)
+                if (review.CreatorId == userId)
                     userReviews.Add(review);
 
             return _mapper.Map<IEnumerable<ReviewDto>>(userReviews);
@@ -87,7 +87,7 @@ namespace Shelfy.Infrastructure.Services
         public async Task UpdateAsync(Guid bookId, Guid userId, JsonPatchDocument<UpdateReview> updateReview)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
-            var reviewToUpdate = book.Reviews.SingleOrDefault(x => x.UserId == userId);
+            var reviewToUpdate = book.Reviews.SingleOrDefault(x => x.CreatorId == userId);
             if (reviewToUpdate == null)
             {
                 throw new ServiceException(ErrorCodes.ReviewNotFound,

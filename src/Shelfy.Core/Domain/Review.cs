@@ -10,7 +10,7 @@ namespace Shelfy.Core.Domain
         public Guid ReviewId { get; private set; }
         public int Rating { get; private set; }
         public string Comment { get; private set; }
-        public Guid UserId { get; private set; }
+        public Guid CreatorId { get; private set; }
         public Guid BookId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
@@ -20,12 +20,12 @@ namespace Shelfy.Core.Domain
             
         }
         
-        public Review(Guid reviewId, int rating, string comment, Guid userId, Guid bookId)
+        public Review(Guid reviewId, int rating, string comment, Guid creatorId, Guid bookId)
         {
             ReviewId = reviewId;
             SetRating(rating);
             SetComment(comment);
-            UserId = userId;
+            CreatorId = creatorId;
             BookId = bookId;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

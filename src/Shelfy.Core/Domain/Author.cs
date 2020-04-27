@@ -17,7 +17,6 @@ namespace Shelfy.Core.Domain
         public string LastName { get; private set; }
         public string FullName { get; private set; }
         public string Description { get; private set; }
-        // Path to Author photo
         public string ImageUrl { get; private set; }
         public DateTime? DateOfBirth { get; private set; }
         public DateTime? DateOfDeath { get; private set; }
@@ -25,11 +24,11 @@ namespace Shelfy.Core.Domain
         public string AuthorWebsite { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
+
         // Evidence that showing the authenticity of author.
         public string AuthorSource { get; private set; }
         public string ProfileUrl => $"https://localhost:5001/author/{AuthorId}";
-        // User that send request for add an author.
-        public Guid UserId { get; private set; }
+        public Guid CreatorId { get; private set; }
 
         // For mongo driver
         private Author()
@@ -38,7 +37,7 @@ namespace Shelfy.Core.Domain
         }
         
         public Author(Guid authorId, string firstName, string lastName, string description, string imageUrl,
-            DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource, Guid userId)
+            DateTime? dateOfBirth, DateTime? dateOfDeath, string birthPlace, string authorWebsite, string authorSource, Guid creatorId)
         {
             AuthorId = authorId;
             SetFirstName(firstName);
@@ -53,7 +52,7 @@ namespace Shelfy.Core.Domain
             SetAuthorSource(authorSource);
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
-            UserId = userId;
+            CreatorId = creatorId;
         }
 
         public void SetFirstName(string firstName)

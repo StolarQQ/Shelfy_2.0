@@ -46,7 +46,7 @@ namespace Shelfy.Tests.Services
                 DateOfBirth = _author.DateOfBirth,
                 ImageUrl = _author.ImageUrl,
                 DateOfDeath = _author.DateOfDeath,
-                UserId = _author.UserId
+                UserId = _author.CreatorId
             };
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();

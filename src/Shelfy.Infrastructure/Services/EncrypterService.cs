@@ -12,13 +12,11 @@ namespace Shelfy.Infrastructure.Services
 
         public string GetSalt()
         {
-            using (var randomNumberGenerator = new RNGCryptoServiceProvider())
-            {
-                var saltBytes = new byte[SaltSize];
-                randomNumberGenerator.GetBytes(saltBytes);
+            using var randomNumberGenerator = new RNGCryptoServiceProvider();
+            var saltBytes = new byte[SaltSize];
+            randomNumberGenerator.GetBytes(saltBytes);
 
-                return Convert.ToBase64String(saltBytes);
-            }
+            return Convert.ToBase64String(saltBytes);
         }
 
         /// <summary>
@@ -40,11 +38,9 @@ namespace Shelfy.Infrastructure.Services
             {
                 throw new Exception("Can not generate hash for an empty salt.");
             }
-            
-            using (var rfc2898 = new Rfc2898DeriveBytes(password, GetBytes(salt), DeriveBytesIterationsCount))
-            {
-                return Convert.ToBase64String(rfc2898.GetBytes(SaltSize));
-            }
+
+            using var rfc2898 = new Rfc2898DeriveBytes(password, GetBytes(salt), DeriveBytesIterationsCount);
+            return Convert.ToBase64String(rfc2898.GetBytes(SaltSize));
         }
 
         // Converting string to byte array
