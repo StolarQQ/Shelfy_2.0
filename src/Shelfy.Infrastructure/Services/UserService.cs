@@ -11,6 +11,7 @@ using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Extensions;
 using Shelfy.Infrastructure.Pagination;
+using Shelfy.Infrastructure.Validators;
 using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
@@ -23,9 +24,10 @@ namespace Shelfy.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
         private readonly IMemoryCache _cache;
+        private readonly ICredentialValidator _credentialValidator;
 
         public UserService(IUserRepository userRepository, IEncrypterService encrypterService,
-            IJwtHandler jwtHandler, IMapper mapper, ILogger<UserService> logger, IMemoryCache cache)
+            IJwtHandler jwtHandler, IMapper mapper, ILogger<UserService> logger, IMemoryCache cache, ICredentialValidator credentialValidator)
         {
             _userRepository = userRepository;
             _encrypterService = encrypterService;
@@ -33,6 +35,7 @@ namespace Shelfy.Infrastructure.Services
             _mapper = mapper;
             _logger = logger;
             _cache = cache;
+            _credentialValidator = credentialValidator;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -71,15 +74,19 @@ namespace Shelfy.Infrastructure.Services
                 throw new ServiceException(ErrorCodes.UsernameInUse, $"User with username '{username}' already exist.");
             }
 
-            password.PasswordValidation();
-            var defaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
+            var validationResult = _credentialValidator.ValidatePassword(password);
+
+            // TODO 
+            //if (validationResult.IsValid == false)
+            //    throw new ServiceException(ErrorCodes.InvalidCredentials, $"User with username '{username}' already exist.");
+
 
             var salt = _encrypterService.GetSalt();
             var hash = _encrypterService.GetHash(password, salt);
 
             try
             {
-                user = new User(userid, email, username, hash, salt, role, defaultAvatar);
+                user = new User(userid, email, username, hash, salt, role, "https://www.stolarstate.pl/avatar/user/default.png");
             }
             catch (DomainException ex)
             {
