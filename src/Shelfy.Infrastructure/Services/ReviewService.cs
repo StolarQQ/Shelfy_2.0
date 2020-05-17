@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
@@ -16,17 +17,20 @@ using ErrorCodes = Shelfy.Infrastructure.Exceptions.ErrorCodes;
 
 namespace Shelfy.Infrastructure.Services
 {
+    
     public class ReviewService : IReviewService
     {
         private readonly IBookRepository _bookRepository;
         private readonly ILogger<ReviewService> _logger;
         private readonly IMapper _mapper;
+        private readonly IValidator<Review> _reviewValidator;
 
-        public ReviewService(IBookRepository bookRepository, ILogger<ReviewService> logger, IMapper mapper)
+        public ReviewService(IBookRepository bookRepository, ILogger<ReviewService> logger, IMapper mapper, IValidator<Review> reviewValidator)
         {
             _bookRepository = bookRepository;
             _logger = logger;
             _mapper = mapper;
+            _reviewValidator = reviewValidator;
         }
 
         public async Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
@@ -51,6 +55,7 @@ namespace Shelfy.Infrastructure.Services
 
         public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
+            //TODO Redundant data in userModel ?
             var books = await _bookRepository.GetAllBooks();
 
             var reviews = books.SelectMany(x => x.Reviews);
@@ -99,15 +104,13 @@ namespace Shelfy.Infrastructure.Services
 
             reviewToUpdate = _mapper.Map(review, reviewToUpdate);
 
-            try
-            {
-                reviewToUpdate.IsValid();
-            }
-            catch (DomainException ex)
-            {
-                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
-            }
+            var reviewValidationResult = this._reviewValidator.Validate(reviewToUpdate);
 
+            if (reviewValidationResult.IsValid == false)
+            {
+                throw new ServiceException(ErrorCodes.InvalidInput, reviewValidationResult.Errors.MergeResults());
+            }
+        
             await _bookRepository.UpdateAsync(book);
 
         }

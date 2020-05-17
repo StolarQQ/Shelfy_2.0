@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
@@ -23,14 +24,16 @@ namespace Shelfy.Infrastructure.Services
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<BookService> _logger;
+        private readonly IValidator<Book> _bookValidator;
 
         public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository,
-            IMapper mapper, ILogger<BookService> logger)
+            IMapper mapper, ILogger<BookService> logger, IValidator<Book> bookValidator)
         {
             _bookRepository = bookRepository;
             _authorRepository = authorRepository;
             _mapper = mapper;
             _logger = logger;
+            _bookValidator = bookValidator;
         }
 
         public async Task<BookDetailsDto> GetByIdAsync(Guid id)
@@ -117,15 +120,13 @@ namespace Shelfy.Infrastructure.Services
             // Mapping changes to bookToUpdate
             bookToUpdate = _mapper.Map(book, bookToUpdate);
 
-            try
+            //TODO Enhancement error msg
+            var bookValidationResult = this._bookValidator.Validate(bookToUpdate);
+            if (bookValidationResult.IsValid == false)
             {
-                bookToUpdate.IsValid();
+                throw new ServiceException(ErrorCodes.InvalidInput, bookValidationResult.Errors.MergeResults());
             }
-            catch (DomainException ex)
-            {
-                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
-            }
-
+            
             await _bookRepository.UpdateAsync(bookToUpdate);
             _logger.LogInformation($"Book '{bookToUpdate.Title}' with id '{id}' was updated at {DateTime.UtcNow}'");
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Shelfy.Core.Domain;
 using Shelfy.Core.Exceptions;
@@ -19,11 +20,13 @@ namespace Shelfy.Infrastructure.Services
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IValidator<Author> _authorValidator;
 
-        public AuthorService(IAuthorRepository authorRepository, IMapper mapper)
+        public AuthorService(IAuthorRepository authorRepository, IMapper mapper, IValidator<Author> authorValidator)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _authorValidator = authorValidator;
         }
 
         public async Task<AuthorDto> GetByIdAsync(Guid id)
@@ -89,14 +92,11 @@ namespace Shelfy.Infrastructure.Services
             authorToUpdate = _mapper.Map(author, authorToUpdate);
             authorToUpdate.SetFullName(authorToUpdate.FirstName, authorToUpdate.LastName);
 
-            try
+            var authorValidationResult = this._authorValidator.Validate(authorToUpdate);
+            if (authorValidationResult.IsValid == false)
             {
-                authorToUpdate.IsValid();
-            }
+                throw new ServiceException(ErrorCodes.InvalidInput, authorValidationResult.Errors.MergeResults());
 
-            catch (DomainException ex)
-            {
-                throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
             }
             
             await _authorRepository.UpdateAsync(authorToUpdate);
