@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Shelfy.Infrastructure.DTO.Review
+namespace Shelfy.Core.Domain
 {
-    public class ReviewDto
+    public class ReviewShortcut
     {
         public Guid ReviewId { get; set; }
         public int Rating { get; set; }
         public string Comment { get; set; }
-        public Guid UserId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

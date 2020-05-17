@@ -27,6 +27,7 @@ namespace Shelfy.Infrastructure.AutoMapper
                     cfg.CreateMap<User, UserDto>();
                     cfg.CreateMap<Review, ReviewDto>();
                     cfg.CreateMap<Review, UpdateReview>();
+                    cfg.CreateMap<Review, UserReviewDto>();
                     cfg.CreateMap<UpdateReview, Review>();
                 })
                 .CreateMapper();

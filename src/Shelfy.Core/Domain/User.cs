@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MongoDB.Bson.Serialization.Attributes;
 using Shelfy.Core.Exceptions;
@@ -12,6 +13,8 @@ namespace Shelfy.Core.Domain
         private static readonly Regex TextRegex = new Regex(@"[^A-Za-z0-9]");
         private const string DefaultAvatar = "https://www.stolarstate.pl/avatar/user/default.png";
 
+        private readonly ISet<ReviewShortcut> _reviews = new HashSet<ReviewShortcut>();
+
         [BsonId]
         public Guid UserId { get; private set; }
         public string Email { get; private set; }
@@ -24,7 +27,8 @@ namespace Shelfy.Core.Domain
         public string ProfileUrl => $"https://localhost:5001/user/{UserId}";
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
-
+        public IEnumerable<ReviewShortcut> Reviews => _reviews;
+        
         private User()
         {
             
@@ -123,6 +127,19 @@ namespace Shelfy.Core.Domain
             State = state;
             UpdatedAt = DateTime.UtcNow;
         }
+
+        public void AddReview(ReviewShortcut review)
+        {
+            if (review == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            _reviews.Add(review);
+
+            UpdatedAt = DateTime.UtcNow;
+        }
+
 
         public void SetAvatar(string avatar)
         {

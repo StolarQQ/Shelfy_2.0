@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Shelfy.Core.Domain;
@@ -21,16 +22,18 @@ namespace Shelfy.Infrastructure.Services
     public class ReviewService : IReviewService
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ILogger<ReviewService> _logger;
         private readonly IMapper _mapper;
         private readonly IValidator<Review> _reviewValidator;
 
-        public ReviewService(IBookRepository bookRepository, ILogger<ReviewService> logger, IMapper mapper, IValidator<Review> reviewValidator)
+        public ReviewService(IBookRepository bookRepository, ILogger<ReviewService> logger, IMapper mapper, IValidator<Review> reviewValidator, IUserRepository userRepository)
         {
             _bookRepository = bookRepository;
             _logger = logger;
             _mapper = mapper;
             _reviewValidator = reviewValidator;
+            _userRepository = userRepository;
         }
 
         public async Task<ReviewDto> GetAsync(Guid bookId, Guid reviewId)
@@ -53,39 +56,33 @@ namespace Shelfy.Infrastructure.Services
             return _mapper.Map<IEnumerable<ReviewDto>>(book.Reviews);
         }
 
-        public async Task<IEnumerable<ReviewDto>> GetReviewsForUserAsync(Guid userId)
+        public async Task<IEnumerable<UserReviewDto>> GetReviewsForUserAsync(Guid userId)
         {
-            //TODO Redundant data in userModel ?
-            var books = await _bookRepository.GetAllBooks();
+            var user = await _userRepository.GetOrFailAsync(userId);
 
-            var reviews = books.SelectMany(x => x.Reviews);
-            var userReviews = new List<Review>();
-            
-            foreach (var review in reviews)
-                if (review.CreatorId == userId)
-                    userReviews.Add(review);
-
-            return _mapper.Map<IEnumerable<ReviewDto>>(userReviews);
+            return _mapper.Map<IEnumerable<UserReviewDto>>(user.Reviews);
         }
 
         public async Task AddAsync(int rating, string comment, Guid userId, Guid bookId)
         {
             var book = await _bookRepository.GetOrFailAsync(bookId);
+            var user = await _userRepository.GetOrFailAsync(userId);
 
             try
             {
                 var review = Review.Create(Guid.NewGuid(), rating, comment, userId, bookId);
                 book.AddReview(review);
+                user.AddReview(_mapper.Map<ReviewShortcut>(review));
             }
             catch (DomainException ex)
             {
                 throw new ServiceException(ex, ErrorCodes.InvalidInput, ex.Message);
             }
-
+            
             await _bookRepository.UpdateAsync(book);
+            await _userRepository.UpdateAsync(user);
 
-            _logger.LogInformation($"Review was created for book '{book.Title}'" +
-                                   $" by user with id '{userId}'");
+            _logger.LogInformation($"Review was created for book '{book.Title} by user with id '{userId}'");
 
         }
 
@@ -105,15 +102,12 @@ namespace Shelfy.Infrastructure.Services
             reviewToUpdate = _mapper.Map(review, reviewToUpdate);
 
             var reviewValidationResult = this._reviewValidator.Validate(reviewToUpdate);
-
             if (reviewValidationResult.IsValid == false)
             {
                 throw new ServiceException(ErrorCodes.InvalidInput, reviewValidationResult.Errors.MergeResults());
             }
-            
         
             await _bookRepository.UpdateAsync(book);
-
         }
 
         public async Task DeleteAsync(Guid bookId, Guid userId)

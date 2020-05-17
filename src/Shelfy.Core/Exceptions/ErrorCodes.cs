@@ -38,5 +38,6 @@
         public static string AccountAlreadyActivated => "account_already_activated";
         public static string AccountAlreadyUnlocked => "account_already_locked";
         public static string AccountAlreadyLocked => "account_already_locked";
+        public static string InvalidReviewData => "invalid_review_data";
     }
 }
