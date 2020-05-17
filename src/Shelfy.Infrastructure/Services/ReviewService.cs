@@ -84,7 +84,7 @@ namespace Shelfy.Infrastructure.Services
 
             await _bookRepository.UpdateAsync(book);
 
-            _logger.LogInformation($"Review was created  was created for book '{book.Title}'" +
+            _logger.LogInformation($"Review was created for book '{book.Title}'" +
                                    $" by user with id '{userId}'");
 
         }
@@ -110,6 +110,7 @@ namespace Shelfy.Infrastructure.Services
             {
                 throw new ServiceException(ErrorCodes.InvalidInput, reviewValidationResult.Errors.MergeResults());
             }
+            
         
             await _bookRepository.UpdateAsync(book);
 

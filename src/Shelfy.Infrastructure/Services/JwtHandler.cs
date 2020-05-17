@@ -24,7 +24,7 @@ namespace Shelfy.Infrastructure.Services
         {
             var now = DateTime.UtcNow;
 
-            var claims = new Claim[]
+            var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, userId.ToString()),

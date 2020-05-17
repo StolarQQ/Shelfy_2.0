@@ -53,7 +53,7 @@ namespace Shelfy.API.Controllers
             await _userService.RegisterAsync(userId, command.Email,
                 command.Username, command.Password);
 
-            return CreatedAtRoute("GetUserByUserName", new { Username = command.Username }, null);
+            return CreatedAtRoute("GetUserByUserName", new {command.Username }, null);
         }
 
         [HttpDelete("{id}")]

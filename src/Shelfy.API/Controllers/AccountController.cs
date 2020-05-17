@@ -44,12 +44,14 @@ namespace Shelfy.API.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize(Policy = "HasUserRole")]
+        [Authorize(Policy = "HasUserRole")]     
         public async Task<IActionResult> Post([FromBody]ChangePassword command)
         {
             await _userService.ChangePassword(UserId, command.CurrentPassword, command.NewPassword);
-
+           
             return NoContent();
+
+            
         }
 
         [HttpPost("set-avatar")]
