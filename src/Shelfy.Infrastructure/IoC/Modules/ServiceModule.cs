@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using Shelfy.Infrastructure.Services;
+using Shelfy.Infrastructure.Validators;
 
 namespace Shelfy.Infrastructure.IoC.Modules
 {
@@ -23,6 +24,10 @@ namespace Shelfy.Infrastructure.IoC.Modules
 
             builder.RegisterType<JwtHandler>()
                 .As<IJwtHandler>()
+                .SingleInstance(); 
+            
+            builder.RegisterType<CredentialValidator>()
+                .As<ICredentialValidator>()
                 .SingleInstance();
         }
     }

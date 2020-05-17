@@ -2,7 +2,7 @@
 {
     public class ValidationMessage
     {
-        private string Message { get; set; }
+        public string Message { get; }
 
         private ValidationMessage(string message)
         {

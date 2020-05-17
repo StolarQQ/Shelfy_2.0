@@ -73,17 +73,17 @@ namespace Shelfy.Infrastructure.Services
             {
                 throw new ServiceException(ErrorCodes.UsernameInUse, $"User with username '{username}' already exist.");
             }
-
+            
             var validationResult = _credentialValidator.ValidatePassword(password);
-
-            // TODO 
-            //if (validationResult.IsValid == false)
-            //    throw new ServiceException(ErrorCodes.InvalidCredentials, $"User with username '{username}' already exist.");
-
+            if (validationResult.IsValid == false)
+            {
+                throw new ServiceException(ErrorCodes.InvalidCredentials, validationResult.ValidationMessage.MergeResults());
+            }
 
             var salt = _encrypterService.GetSalt();
             var hash = _encrypterService.GetHash(password, salt);
 
+            // Logic component ?? How to handle object with multiple parameters ??
             try
             {
                 user = new User(userid, email, username, hash, salt, role, "https://www.stolarstate.pl/avatar/user/default.png");
@@ -137,16 +137,20 @@ namespace Shelfy.Infrastructure.Services
         public async Task ChangePassword(Guid id, string oldPassword, string newPassword)
         {
             var user = await _userRepository.GetOrFailAsync(id);
-
-            var salt = user.Salt;
-            var hash = _encrypterService.GetHash(oldPassword, salt);
+            
+            var hash = _encrypterService.GetHash(oldPassword, user.Salt);
 
             if (user.Password != hash)
             {
                 throw new ServiceException(ErrorCodes.InvalidPassword, "Your current password is incorrect, try again.");
             }
 
-            newPassword.PasswordValidation();
+            var validationResult = _credentialValidator.ValidatePassword(newPassword);
+
+            if (validationResult.IsValid == false)
+            {
+                throw new ServiceException(ErrorCodes.InvalidCredentials, validationResult.ValidationMessage.MergeResults());
+            }
 
             var newHash = _encrypterService.GetHash(newPassword, user.Salt);
             user.SetPassword(newHash);
