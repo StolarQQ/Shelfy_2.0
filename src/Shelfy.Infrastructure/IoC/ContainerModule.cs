@@ -21,6 +21,7 @@ namespace Shelfy.Infrastructure.IoC
             builder.RegisterModule<RepositoryModule>();
             builder.RegisterModule(new MongoModule(_configuration));
             builder.RegisterModule<ServiceModule>();
+            builder.RegisterModule<ValidationModule>();
         }
     }
 }
