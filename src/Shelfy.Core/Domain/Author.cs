@@ -137,7 +137,7 @@ namespace Shelfy.Core.Domain
 
         public void SetDateOfDeath(DateTime? dateOfDeath)
         {
-            if (dateOfDeath != null & dateOfDeath < DateOfBirth)
+            if (dateOfDeath != null && dateOfDeath < DateOfBirth)
             {
                 throw new DomainException(ErrorCodes.InvalidDateOfDeath, $"DateOfDeath '{dateOfDeath}' cannot be earlier than DateOfBirth '{DateOfBirth}'.");
             }

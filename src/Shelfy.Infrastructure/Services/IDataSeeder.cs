@@ -7,3 +7,5 @@ namespace Shelfy.Infrastructure.Services
         Task SeedAsync();
     }
 }
+
+                

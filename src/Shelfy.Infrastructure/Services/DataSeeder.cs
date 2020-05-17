@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -49,7 +48,6 @@ namespace Shelfy.Infrastructure.Services
                 await _userService.RegisterAsync(userId,
                     $"email{i}@gmail.com", $"username{i}", "secret123");
 
-
                 var authorId = Guid.NewGuid();
                 await _authorService.RegisterAsync(authorId, DataGenerator.GenerateFirstName(), DataGenerator.GenerateFirstName()
                     , DataGenerator.GenerateDescription(), null, DataGenerator.GenerateDate(), null, DataGenerator.GenerateCity(), DataGenerator.GenerateWebsite(),
@@ -61,7 +59,7 @@ namespace Shelfy.Infrastructure.Services
                 await _bookService.AddAsync(bookId, DataGenerator.GenerateTitles(), null, DataGenerator.GenerateDescription(),
                     DataGenerator.GenerateRandomIsbn(13), null, 999, DataGenerator.GenerateCity(), DateTime.Now, authorsId, userId);
 
-                await _reviewService.AddAsync(random.Next(1, 6), DataGenerator.GenerateDescription(), userId, bookId);
+                await _reviewService.AddAsync(random.Next(1, 7), DataGenerator.GenerateDescription(), userId, bookId);
             }
 
             for (int i = 0; i < 3; i++)

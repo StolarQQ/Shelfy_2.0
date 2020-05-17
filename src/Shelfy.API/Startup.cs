@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 using Serilog;
 using Shelfy.API.Framework.Extensions;
 using Shelfy.Infrastructure.IoC;

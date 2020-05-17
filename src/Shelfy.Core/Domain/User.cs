@@ -88,16 +88,6 @@ namespace Shelfy.Core.Domain
                 throw new DomainException(ErrorCodes.InvalidPassword, "Password cannot be empty.");
             }
 
-            if (password.Length < 5)
-            {
-                throw new DomainException(ErrorCodes.InvalidPassword, "Password must contain at least 5 characters.");
-            }
-
-            if (password.Length > 75)
-            {
-                throw new DomainException(ErrorCodes.InvalidPassword, "Password can not contain more than 75 characters.");
-            }
-
             Password = password;
             UpdatedAt = DateTime.UtcNow;
 
