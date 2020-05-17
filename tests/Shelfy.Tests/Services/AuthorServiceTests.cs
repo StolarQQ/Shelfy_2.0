@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using Newtonsoft.Json;
@@ -50,8 +51,9 @@ namespace Shelfy.Tests.Services
             };
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
+            var validatorMock = new Mock<IValidator<Author>>();
             mapperMock.Setup(x => x.Map<AuthorDto>(_author)).Returns(authorDto);
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
             authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
             // Act
@@ -70,9 +72,10 @@ namespace Shelfy.Tests.Services
             var notExistingAuthorId = Guid.NewGuid();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
+            var validatorMock = new Mock<IValidator<Author>>();
             authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
             var expectedExMessage = $"Author with id '{notExistingAuthorId}' was not found.";
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () => await authorService.GetByIdAsync(notExistingAuthorId));
@@ -90,7 +93,8 @@ namespace Shelfy.Tests.Services
             var userId = Guid.NewGuid();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var validatorMock = new Mock<IValidator<Author>>();
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act
             await authorService.RegisterAsync(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
@@ -113,7 +117,8 @@ namespace Shelfy.Tests.Services
                 new DateTime(1984, 01, 01), null, "Texas", authorWebsite, authorWebsite, userId);
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var validatorMock = new Mock<IValidator<Author>>();
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act
             await authorService.RegisterAsync(authorId, "Jon", "Skeet", "C# in Depth Author", defaultAuthorImage,
@@ -135,7 +140,8 @@ namespace Shelfy.Tests.Services
             var expectedExMessage = $"URL {incorrectImageUrl} doesn't meet required criteria.";
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var validatorMock = new Mock<IValidator<Author>>();
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () => await authorService.RegisterAsync
@@ -163,13 +169,14 @@ namespace Shelfy.Tests.Services
             };
             var mapperMock = new Mock<IMapper>();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
+            var validatorMock = new Mock<IValidator<Author>>();
             authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
             mapperMock.Setup(x => x.Map<UpdateAuthor>(_author)).Returns(updateAuthor);
             mapperMock.Setup(x => x.Map(It.IsAny<UpdateAuthor>(), It.IsAny<Author>())).Returns(_author);
 
             var jsonDoc = "[{\"op\":\"replace\",\"path\":\"/FirstName\",\"value\":\"Marcelo\"}]";
             var partialUpdate = JsonConvert.DeserializeObject<JsonPatchDocument<UpdateAuthor>>(jsonDoc);
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act
             await authorService.UpdateAsync(_author.AuthorId, partialUpdate);
@@ -185,12 +192,13 @@ namespace Shelfy.Tests.Services
             var notExistAuthorId = Guid.NewGuid();
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
             var mapperMock = new Mock<IMapper>();
+            var validatorMock = new Mock<IValidator<Author>>();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
             var serialized = "[{\"op\":\"replace\",\"path\":\"/FirstName\",\"value\":\"Test\"}]";
             var partialUpdate = JsonConvert.DeserializeObject<JsonPatchDocument<UpdateAuthor>>(serialized);
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ServiceException>(async () =>
@@ -205,7 +213,8 @@ namespace Shelfy.Tests.Services
             // Arrange
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var validatorMock = new Mock<IValidator<Author>>();
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
             authorRepositoryMock.Setup(x => x.GetByIdAsync(_author.AuthorId)).ReturnsAsync(_author);
 
             // Act
@@ -224,7 +233,8 @@ namespace Shelfy.Tests.Services
             var notExistAuthorId = Guid.NewGuid();
             var authorRepositoryMock = new Mock<IAuthorRepository>();
             var mapperMock = new Mock<IMapper>();
-            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object);
+            var validatorMock = new Mock<IValidator<Author>>();
+            var authorService = new AuthorService(authorRepositoryMock.Object, mapperMock.Object, validatorMock.Object);
             var expectedExMessage = $"Author with id '{notExistAuthorId}' was not found.";
 
             // Act & Assert

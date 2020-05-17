@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
+using FluentValidation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,6 +12,7 @@ using Shelfy.Infrastructure.DTO.User;
 using Shelfy.Infrastructure.Exceptions;
 using Shelfy.Infrastructure.Pagination;
 using Shelfy.Infrastructure.Services;
+using Shelfy.Infrastructure.Validators;
 using Xunit;
 
 namespace Shelfy.Tests.Services
@@ -36,8 +38,10 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
+
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByIdAsync(_user.UserId)).ReturnsAsync(_user);
 
             // Act
@@ -59,8 +63,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByIdAsync(_user.UserId)).ReturnsAsync(_user);
 
             // Act & Assert
@@ -81,8 +86,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByUsernameAsync(_user.Username)).ReturnsAsync(_user);
 
             // Act
@@ -105,8 +111,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<CredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByUsernameAsync(_user.Username)).ReturnsAsync(_user);
 
             // Act & Assert
@@ -129,8 +136,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             var userPagedResult = PagedResult<User>.Create(null, currentPage, pageSize, 1, 5);
             repoMock.Setup(x => x.BrowseAsync(1, 5)).ReturnsAsync(userPagedResult);
             mapperMock.Setup(x => x.Map<PagedResult<UserDto>>(userPagedResult))
@@ -155,8 +163,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByIdAsync(_user.UserId)).ReturnsAsync(_user);
 
             // Act 
@@ -178,8 +187,9 @@ namespace Shelfy.Tests.Services
             var mapperMock = new Mock<IMapper>();
             var loggerMock = new Mock<ILogger<UserService>>();
             var cacheMock = new Mock<IMemoryCache>();
+            var validatorMock = new Mock<ICredentialValidator>();
             var userService = new UserService(repoMock.Object, encrypterMock.Object,
-                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object);
+                jwtMock.Object, mapperMock.Object, loggerMock.Object, cacheMock.Object, validatorMock.Object);
             repoMock.Setup(x => x.GetByIdAsync(_user.UserId)).ReturnsAsync(_user);
 
             // Act & Assert

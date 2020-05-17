@@ -248,7 +248,7 @@ namespace Shelfy.Tests.Extensions
             var defaultCover = "https://www.stolarstate.pl/avatar/author/default.png";
 
             //Act
-            var result = authorImg.DefaultAuthorImageNotEmpty();
+            var result = authorImg.SetUpDefaultCoverWhenEmpty();
 
             //Assert
             result.Should().BeEquivalentTo(defaultCover);
@@ -261,7 +261,7 @@ namespace Shelfy.Tests.Extensions
             var validCover = "https://www.stolarstate.pl/avatar/author/default.jpeg";
 
             //Act
-            var result = validCover.DefaultAuthorImageNotEmpty();
+            var result = validCover.SetUpDefaultCoverWhenEmpty();
 
             //Assert
             result.Should().BeEquivalentTo(validCover);
