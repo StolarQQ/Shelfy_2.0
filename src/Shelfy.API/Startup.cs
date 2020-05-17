@@ -27,8 +27,6 @@ namespace Shelfy.API
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AuthorizationExtension();
-
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -40,7 +38,9 @@ namespace Shelfy.API
                     });
             });
 
-            services.AddControllers();
+            services.AddControllers(x => x.InputFormatters
+                .Insert(0, JsonFormatterExtension.GetJsonPatchInputFormatter())).AddNewtonsoftJson();
+          
 
             services.AddSwaggerGen(c =>
             {
@@ -50,6 +50,7 @@ namespace Shelfy.API
             // JWT configuration
             services.RegisterJwt(Configuration);
             services.AddMemoryCache();
+            services.AuthorizationExtension();
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -58,7 +59,7 @@ namespace Shelfy.API
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
-
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             // Serilog configuration
@@ -91,6 +92,9 @@ namespace Shelfy.API
 
             app.UseMyExceptionHandler();
             app.UseAuthentication();
+            app.UseAuthorization();
+
+        
             app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints => {
